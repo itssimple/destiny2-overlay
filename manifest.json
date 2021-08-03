@@ -1,0 +1,95 @@
+{
+  "manifest_version": 1,
+  "type": "WebApp",
+  "meta": {
+    "name": "Destiny 2 - Goal tracker",
+    "description": "Allows you to always see your tracked goals and their progress (slightly delay in increments, as we don't want to spam the API)",
+    "version": "1.0.0",
+    "author": "NoLifeKing85",
+    "minimum-overwolf-version": "0.170.0",
+    "icon": "resources/images/logo.png",
+    "icon_gray": "resources/images/logo_bw.png",
+    "window_icon": "resources/images/logo.png",
+    "splash_image": "resources/images/splash.png",
+    "launcher_icon": "resources/images/gtt-logo.ico"
+  },
+  "permissions": ["GameInfo", "Extensions", "FileSystem", "Hotkeys", "Web"],
+  "data": {
+    "game_targeting": {
+      "type": "dedicated",
+      "game_ids": [21812]
+    },
+    "externally_connectable": {
+      "matches": ["https://www.bungie.net"]
+    },
+    "start_window": "background",
+    "windows": {
+      "background": {
+        "file": "resources/compiled/windows/background-window.html",
+        "show_in_taskbar": false,
+        "is_background_page": true,
+        "background_optimization": false,
+        "block_top_window_navigation": true
+      },
+      "overlayWindow": {
+        "file": "resources/compiled/windows/overlay-window.html",
+        "show_in_taskbar": false,
+        "transparent": true,
+        "resizable": false,
+        "clickthrough": false,
+        "in_game_only": true,
+        "is_background_page": false,
+        "restrict_to_game_bounds": true
+      },
+      "mainWindow": {
+        "file": "resources/compiled/windows/main-window.html",
+        "show_in_taskbar": true,
+        "is_background_page": false,
+        "block_top_window_navigation": true,
+        "grab_focus_on_desktop": true,
+        "desktop_only": true,
+        "transparent": false,
+        "native_window": true,
+        "show_minimize": true,
+        "show_maximize": false,
+        "resizable": false,
+        "keep_window_location": true,
+        "disable_hardware_acceleration": true,
+        "disable_auto_dpi_sizing": true,
+        "min_size": {
+          "width": 1000,
+          "height": 775
+        },
+        "size": {
+          "width": 1000,
+          "height": 775
+        },
+        "max_size": {
+          "width": 1000,
+          "height": 775
+        }
+      }
+    },
+    "force_browser": "overwolf",
+    "launch_events": [
+      {
+        "event": "GameLaunch",
+        "event_data": {
+          "game_ids": [21812]
+        },
+        "tracked": true,
+        "include_launchers": false
+      }
+    ],
+    "game_events": [21812],
+    "disable_dt": true,
+    "developer": {
+      "enable_auto_refresh": true,
+      "reload_delay": 1000,
+      "filter": "*.js;*.html;*.css"
+    },
+    "url_protocol": {
+      "scheme": "d2overlay"
+    }
+  }
+}

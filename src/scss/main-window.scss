@@ -1,0 +1,78 @@
+#main-win-container {
+  overflow-y: scroll;
+  max-height: 682px;
+}
+
+.desktop {
+  display: flex;
+  height: 100vh;
+}
+
+#gameStarts div {
+  margin-bottom: 2px;
+}
+
+.statsColumn {
+  margin-left: 10px;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-width: 300px;
+  max-width: 100%;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+
+#weekSummaryGraph {
+  background-color: #272b30;
+}
+
+#sessionStats td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.ct-label {
+  color: white;
+}
+
+.ct-grid {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.ct-bar {
+  stroke-width: 50px;
+  stroke: var(--default-backgroundcolor) !important;
+}
+
+.fade {
+  transition: opacity 0.08s;
+}
+
+.chartist-tooltip {
+  background: #272b30;
+  border: 1px solid #515960;
+  color: #fff;
+}
+
+.chartist-tooltip:before {
+  border-top-color: #272b30;
+}
+
+#changelog {
+  h1 {
+    margin-top: 0;
+  }
+}
+
+#last10Sessions table td {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

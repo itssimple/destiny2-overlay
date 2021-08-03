@@ -1,0 +1,4 @@
+node_modules
+*.opk
+.vscode
+resources/compiled

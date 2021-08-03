@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Destiny 2 Goal Tracker - Main Window - Overwolf</title>
+    <link
+      type="text/css"
+      href="../css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      type="text/css"
+      href="../css/main-window.css"
+      rel="stylesheet"
+    />
+    <link
+      type="text/css"
+      href="../css/window-styles.css"
+      rel="stylesheet"
+    />
+    <script
+      type="text/javascript"
+      src="../scripts/draggable-window.js"
+    ></script>
+    <script type="text/javascript" src="../scripts/utils.js"></script>
+    <script type="text/javascript" src="../scripts/log.js"></script>
+    <script type="text/javascript" src="../scripts/date.js"></script>
+    <script
+      type="text/javascript"
+      src="../scripts/mainWindow.js"
+    ></script>
+  </head>
+  <body>
+    <nav class="navbar bg-dark navbar-dark" id="titleBar">
+      <span class="navbar-brand text-white text-bold" id="titleBarName"
+        >Destiny 2 - Goal Tracker</span
+      >
+      <button class="btn btn-primary btn-sm" id="exitButton">X</button>
+    </nav>
+    <ul class="nav nav-tabs" id="main-navigation" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link active"
+          id="home-tab"
+          data-toggle="tab"
+          href="#home"
+          role="tab"
+          aria-controls="home"
+          aria-selected="true"
+        >Dashboard</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link"
+          id="settings-tab"
+          data-toggle="tab"
+          href="#settings"
+          aria-controls="settings"
+          aria-selected="true"
+        >Settings / Support</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+        class="nav-link"
+        id="changelog-tab"
+        data-toggle="tab"
+        href="#changelog"
+        aria-controls="changelog"
+        aria-selected="true">Changelog</a>
+      </li>
+
+    </ul>
+    <div class="container-fluid h-80" id="main-win-container">
+      <div class="tab-content" id="main-tabcontent">
+        <div
+          class="tab-pane fade show active"
+          id="home"
+          role="tabpanel"
+          aria-labelledby="home-tab"
+        >
+          <div class="row h-100">
+            <div class="col-8 pt-2">
+              <div
+                class="card text-white border-secondary mb-3"
+                style="min-height: 649px; max-height: 649px"
+              >
+                <div class="card-header" id="weekSummaryText">
+                  The last 7 days you spent 9999 hours and 59 minutes in-game.
+                </div>
+                <div class="card-body">
+                </div>
+              </div>
+            </div>
+            <div class="col-4 pt-2">
+              <div
+                class="card text-white border-secondary mb-3"
+                style="max-width: 20rem; max-height: 175px; min-height: 175px"
+              >
+                <div class="card-header">Top Game</div>
+                <div class="card-body">
+                  <h4 class="card-title" id="topGameTitle">{topGameTitle}</h4>
+                  <p class="card-text" id="topGameTime">Played {topGameTime}</p>
+                </div>
+              </div>
+              <div
+                class="card text-white border-secondary mb-3"
+                style="max-width: 20rem; max-height: 328px; min-height: 328px"
+              >
+                <div class="card-header">Top 10 Game Starts</div>
+                <div class="card-body">
+                  <p class="card-text" id="gameStarts">
+                    {gameStart[x].count} {gameStart[x].title}
+                  </p>
+                </div>
+              </div>
+              <div
+                class="card text-white border-secondary mb-3"
+                style="max-width: 20rem"
+              >
+                <div class="card-header">Contact / Support</div>
+                <div class="card-body">
+                  <p class="card-text">
+                    <a href="https://discord.gg/mnVZfcF2S8" target="_blank">
+                      <img
+                        src="../../images/Discord-Logo-White.svg"
+                        alt="Discord link"
+                        style="width: 24px; height: 24px"
+                      />
+                      Discord
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+          <div class="row h-100">
+            <div class="col-12 pt-2">
+              <div class="card text-white border-secondary mb-3">
+                <div class="card-header">
+                  Here you can change how Game Time Tracker works, a little bit at least!
+                </div>
+                <div class="card-body" style="min-height: 599px; max-height: 599px; overflow: auto;">
+                  <h3>Settings</h3>
+                  <i>No settings here yet. :)</i>
+                  <hr noshade>
+                  <h3>Support</h3>
+                  <p class="form-text">To help us help you out with detection issues and other things, we need you to send us your logs, which can be done by pressing the button below!
+                  After you sent the logs, be sure to open a ticket in the Game Time Tracker-Discord (#support channel) that you've done so</p>
+                  <button class="btn btn-primary" id="send-logs">Send logs to the developer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="changelog" role="tabpanel" aria-labelledby="changelog-tab">
+          <div class="row h-100">
+            <div class="col-12 pt-2">
+              <div class="card text-white border-secondary mb-3">
+                <div class="card-header">
+                  Destiny 2 Overlay - Changelog - What happens in the app updates?
+                </div>
+                <div class="card-body" id="changelog-cardbody" style="min-height: 589px; max-height: 589px; overflow: auto;">
+                  $CHANGELOG$
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="../../scripts/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../scripts/bootstrap.min.js"
+    ></script>
+  </body>
+</html>

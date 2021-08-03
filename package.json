@@ -1,0 +1,22 @@
+{
+  "name": "overwolf-destiny2-overlay",
+  "version": "1.0.0",
+  "repository": "https://github.com/itssimple/overwolf-destiny2-overlay.git",
+  "author": "Chris Gårdenberg <webmaster@itssimple.se>",
+  "license": "MIT",
+  "scripts": {
+    "release": "yarn standard-version && yarn gulp deploy && git commit -am \"chore: version bump\" && git push --follow-tags origin master"
+  },
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-purgecss": "^4.0.3",
+    "gulp-replace": "^1.1.2",
+    "gulp-sass": "^4.1.0",
+    "gulp-uglify": "^3.0.2",
+    "standard-version": "^9.3.0"
+  },
+  "devDependencies": {
+    "markdown-it": "^12.0.6"
+  }
+}
