@@ -7,6 +7,7 @@ const purgecss = require("gulp-purgecss");
 const exec = require("child_process").exec;
 var uglify = require("gulp-uglify");
 const fs = require("fs");
+
 const md = require("markdown-it")();
 
 gulp.task("fix-version", function () {
@@ -73,10 +74,12 @@ gulp.task("default", function () {
       "build-archive"
     )
   );
+
   gulp.watch(
     "src/manifest.json",
     gulp.series("fix-version", "fix-windows", "build-archive")
   );
+
   gulp.watch(
     "src/windows/*.*",
     gulp.series(
@@ -87,11 +90,14 @@ gulp.task("default", function () {
       "build-archive"
     )
   );
+
   gulp.watch(
     "package.json",
     gulp.series("fix-version", "fix-windows", "build-archive")
   );
+
   gulp.watch("CHANGELOG.md", gulp.series("fix-windows"));
+
   gulp.watch(
     "src/scripts/**/*.js",
     gulp.series("minify-scripts", "fix-windows", "build-archive")

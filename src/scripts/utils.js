@@ -89,15 +89,15 @@ function formatTimespan(startDate, endDate, latestSession) {
  * @param {Number} seconds
  * @returns {String}
  */
-function outputTimesObject(days, hours, minutes, seconds) {
+function outputTimesObject(days, hours, minutes) {
   return `${days > 0 ? days + "d, " : ""}${hours > 0 ? hours + "h, " : ""}${
-    minutes > 0 ? minutes + "m, " : ""
-  }${seconds + "s"}`;
+    minutes > 0 ? minutes + "m" : ""
+  }`;
 }
 
 function outputTimesObjectFromDifference(differenceInSeconds) {
-  let { days, hours, minutes, seconds } = getTimeObject(differenceInSeconds);
-  return outputTimesObject(days, hours, minutes, seconds);
+  let { days, hours, minutes } = getTimeObject(differenceInSeconds);
+  return outputTimesObject(days, hours, minutes);
 }
 
 /**

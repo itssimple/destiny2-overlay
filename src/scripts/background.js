@@ -1,12 +1,11 @@
 /// <reference path="log.js" />
+/// <reference path="indexedDB.js" />
 /// <reference path="eventEmitter.js" />
 /// <reference path="destiny2/apiClient.js" />
 
 var firstLaunch = true;
 var mainWindowId = null;
 var overlayWindowId = null;
-
-var destinyApiClient = new DestinyApiClient();
 
 function openWindow(event, originEvent) {
   if (event) {
@@ -54,6 +53,16 @@ function handleUrlLaunch(urlSchemeStart) {
     if (urlSchemeType == "authenticate") {
       if (urlSchemeId) {
         var queryParams = parseQueryString(urlSchemeId);
+
+        let _state = queryParams.find((i) => i.key == "state");
+        let _code = queryParams.find((i) => i.key == "code");
+
+        if (_state && _code) {
+          let res = destinyApiClient.getToken(_state.value, _code.value);
+          if (res == null) {
+            // Something is wrong, we got the wrong state from a request, so we are just ignoring it for now.
+          }
+        }
       }
     }
   }
@@ -70,7 +79,7 @@ function parseQueryString(queryString) {
 }
 
 function gameLaunched(game) {
-  if (game) {
+  if (game && game.classId == 21812) {
     log("GAME:LAUNCH", game);
     eventEmitter.emit("game-launched", game);
   }
@@ -157,6 +166,16 @@ if (firstLaunch) {
   window.eventEmitter.addEventListener("game-launched", function (gameInfo) {
     log("EVENT:GAME-LAUNCHED", gameInfo);
 
+    openOverlay();
+  });
+
+  window.eventEmitter.addEventListener("overlay-opened", function () {
+    setTimeout(async function () {
+      await destinyApiClient.getTrackableData(true);
+    }, 5000);
+  });
+
+  function openOverlay() {
     if (overlayWindowId == null) {
       overwolf.windows.obtainDeclaredWindow("overlayWindow", (result) => {
         if (!result.success) {
@@ -167,7 +186,7 @@ if (firstLaunch) {
         overwolf.windows.restore(overlayWindowId);
         overwolf.windows.changePosition(
           overlayWindowId,
-          window.screen.availWidth / 2 - 400,
+          30,
           window.screen.availHeight / 4 - 50,
           console.log
         );
@@ -183,7 +202,7 @@ if (firstLaunch) {
         );
       });
     }
-  });
+  }
 
   window.eventEmitter.addEventListener("game-exited", function (gameInfo) {
     log("EVENT:GAME-EXITED", gameInfo);
@@ -317,4 +336,14 @@ if (firstLaunch) {
   }, 3600000); // Once every hour
 
   log("INIT", "All eventhandlers have been set");
+
+  if (!window.db) {
+    log("DATABASE", "Initializing database");
+    window.db = new Destiny2Database();
+    db.initializeDatabase().then(() => {
+      window.destinyApiClient = new DestinyApiClient();
+
+      openOverlay();
+    });
+  }
 }

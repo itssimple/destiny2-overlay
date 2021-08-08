@@ -76,6 +76,7 @@ h4 {
 body {
   height: 100vh;
   overflow: hidden;
+  line-height: 1.2;
 }
 
 .container-fluid {
@@ -85,9 +86,15 @@ body {
 
 .list-group-item {
   background-color: #32383ec4;
+  padding: 0.5rem;
 }
 
 .media-object {
   width: 48px;
   margin-right: 10px;
+}
+
+.media-body h5 {
+  line-height: 1;
+  margin-bottom: 2px;
 }
