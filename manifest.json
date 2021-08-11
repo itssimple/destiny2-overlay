@@ -13,14 +13,24 @@
     "splash_image": "resources/images/splash.png",
     "launcher_icon": "resources/images/gtt-logo.ico"
   },
-  "permissions": ["GameInfo", "Extensions", "FileSystem", "Hotkeys", "Web"],
+  "permissions": [
+    "GameInfo",
+    "Extensions",
+    "FileSystem",
+    "Hotkeys",
+    "Web"
+  ],
   "data": {
     "game_targeting": {
       "type": "dedicated",
-      "game_ids": [21812]
+      "game_ids": [
+        21812
+      ]
     },
     "externally_connectable": {
-      "matches": ["https://www.bungie.net"]
+      "matches": [
+        "https://www.bungie.net"
+      ]
     },
     "start_window": "background",
     "windows": {
@@ -75,13 +85,17 @@
       {
         "event": "GameLaunch",
         "event_data": {
-          "game_ids": [21812]
+          "game_ids": [
+            21812
+          ]
         },
         "tracked": true,
         "include_launchers": false
       }
     ],
-    "game_events": [21812],
+    "game_events": [
+      21812
+    ],
     "disable_dt": false,
     "developer": {
       "enable_auto_refresh": true,
@@ -91,5 +105,6 @@
     "url_protocol": {
       "scheme": "d2overlay"
     }
-  }
+  },
+  "version": "0.1.2"
 }
