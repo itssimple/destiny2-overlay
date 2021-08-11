@@ -189,15 +189,15 @@ if (firstLaunch) {
         overwolf.windows.changePosition(
           overlayWindowId,
           30,
-          window.screen.availHeight / 4 - 50,
+          parseInt(window.screen.availHeight / 4 - 50),
           console.log
         );
 
         overwolf.windows.changeSize(
           {
             window_id: overlayWindowId,
-            width: 400,
-            height: window.screen.availHeight * 0.5,
+            width: 250,
+            height: parseInt(window.screen.availHeight * 0.75),
             auto_dpi_resize: false,
           },
           console.log
