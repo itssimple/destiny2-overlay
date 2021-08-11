@@ -74,6 +74,7 @@ body {
   height: 100vh;
   overflow: hidden;
   line-height: 1.2;
+  font-size: 0.7rem;
 }
 
 .container-fluid {
@@ -87,11 +88,11 @@ body {
 }
 
 .media-object {
-  width: 48px;
-  margin-right: 10px;
+  width: 32px;
 }
 
 .media-body h5 {
   line-height: 1;
+  font-size: 0.8rem;
   margin-bottom: 2px;
 }

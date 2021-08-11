@@ -82,7 +82,7 @@
       }
     ],
     "game_events": [21812],
-    "disable_dt": true,
+    "disable_dt": false,
     "developer": {
       "enable_auto_refresh": true,
       "reload_delay": 1000,

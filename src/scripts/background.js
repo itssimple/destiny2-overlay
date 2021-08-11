@@ -43,7 +43,7 @@ function openWindow(event, originEvent) {
 var appUpdateCheck = null;
 
 // function that handles the url-scheme event based on what comes directly after "d2overlay://"
-function handleUrlLaunch(urlSchemeStart) {
+async function handleUrlLaunch(urlSchemeStart) {
   if (urlSchemeStart.indexOf("d2overlay://") == 0) {
     let urlScheme = urlSchemeStart.substr(12);
     let urlSchemeParts = urlScheme.split("/");
@@ -63,6 +63,9 @@ function handleUrlLaunch(urlSchemeStart) {
             // Something is wrong, we got the wrong state from a request, so we are just ignoring it for now.
           } else {
             log("BUNGIEAUTH", "Successful");
+            await destinyApiClient.checkManifestVersion();
+            await destinyApiClient.getUserMemberships();
+            await destinyApiClient.getTrackableData(true);
           }
         }
       }
