@@ -90,9 +90,13 @@ function formatTimespan(startDate, endDate, latestSession) {
  * @returns {String}
  */
 function outputTimesObject(days, hours, minutes) {
-  return `${days > 0 ? days + "d, " : ""}${hours > 0 ? hours + "h, " : ""}${
-    minutes > 0 ? minutes + "m" : ""
-  }`;
+  let time = [];
+
+  if (days > 0) time.push(`${days}d`);
+  if (hours > 0) time.push(`${hours}h`);
+  if (minutes > 0) time.push(`${minutes}m`);
+
+  return time.join(", ");
 }
 
 function outputTimesObjectFromDifference(differenceInSeconds) {

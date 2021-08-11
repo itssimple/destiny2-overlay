@@ -4,7 +4,7 @@
   "meta": {
     "name": "Destiny 2 - Goal tracker",
     "description": "Allows you to always see your tracked goals and their progress (slightly delay in increments, as we don't want to spam the API)",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "author": "NoLifeKing85",
     "minimum-overwolf-version": "0.170.0",
     "icon": "resources/images/logo.png",

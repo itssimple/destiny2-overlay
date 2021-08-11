@@ -2,6 +2,7 @@
 /// <reference path="date.js" />
 /// <reference path="log.js" />
 /// <reference path="utils.js" />
+/// <reference path="destiny2/apiClient.js" />
 /// <reference path="../../resources/scripts/bootstrap.min.js" />
 
 const backgroundWindow = overwolf.windows.getMainWindow();
@@ -14,6 +15,45 @@ const db = backgroundWindow.db;
 const destinyApiClient = backgroundWindow.destinyApiClient;
 
 const intlFormat = new Intl.NumberFormat();
+
+function renderProgress(goal) {
+  let progress = "";
+
+  if (goal.inProgressValueStyle === 0) {
+    if (goal.nextLevelAt === 1) {
+      goal.inProgressValueStyle = 2;
+    }
+  }
+
+  switch (goal.inProgressValueStyle) {
+    case 2:
+      progress = `<span class="badge badge-primary badge-pill float-right">${
+        goal.progressToNextLevel == 0 ? "Incomplete" : "Complete"
+      }</span>`;
+      break;
+    case 3:
+      let progressPercent = (
+        (goal.progressToNextLevel / goal.nextLevelAt) *
+        100
+      ).toFixed(0);
+      progress = `<span class="badge badge-primary badge-pill float-right">${progressPercent} %</span>`;
+      break;
+    case 8:
+      progress = "";
+      break;
+    case 12:
+      progress = `<span class="badge badge-primary badge-pill float-right">${goal.progressToNextLevel} %</span>`;
+      break;
+    case 6:
+    default:
+      progress = `<span class="badge badge-primary badge-pill float-right">${intlFormat.format(
+        goal.progressToNextLevel
+      )} / ${intlFormat.format(goal.nextLevelAt)}</span>`;
+      break;
+  }
+
+  return typeof goal.nextLevelAt !== "undefined" ? ` ${progress}` : "";
+}
 
 function renderGoalItem(goal) {
   let icon =
@@ -29,12 +69,7 @@ function renderGoalItem(goal) {
         )}</i>`
       : "";
 
-  let progress =
-    typeof goal.nextLevelAt !== "undefined"
-      ? ` <span class="badge badge-primary badge-pill float-right">${intlFormat.format(
-          goal.progressToNextLevel
-        )} / ${intlFormat.format(goal.nextLevelAt)}</span>`
-      : "";
+  let progress = renderProgress(goal);
 
   let listItem = document.createElement("div");
   listItem.innerHTML = `<li class="list-group-item d-flex justify-content-between align-items-center">
@@ -72,4 +107,4 @@ eventEmitter.emit("overlay-opened", {});
 
 setInterval(async function () {
   await destinyApiClient.getTrackableData(true);
-}, 30 * 1000);
+}, 60 * 1000);

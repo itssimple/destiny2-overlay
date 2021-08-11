@@ -2,6 +2,7 @@
 /// <reference path="date.js" />
 /// <reference path="log.js" />
 /// <reference path="utils.js" />
+/// <reference path="destiny2/apiClient.js" />
 /// <reference path="../../resources/scripts/bootstrap.min.js" />
 
 const backgroundWindow = overwolf.windows.getMainWindow();
@@ -10,6 +11,8 @@ const backgroundWindow = overwolf.windows.getMainWindow();
 const eventEmitter = backgroundWindow.eventEmitter;
 var overwolfAdvertiseObject = null;
 var overwolfAdvertiseInitialized = false;
+
+const destinyApiClient = backgroundWindow.destinyApiClient;
 
 eventEmitter.addEventListener("game-launched", function (game) {});
 
@@ -93,6 +96,12 @@ function sendLogsToDeveloper() {
   };
 }
 
+function authenticateWithBungie() {
+  overwolf.utils.openUrlInDefaultBrowser(
+    destinyApiClient.getAuthenticationUrl()
+  );
+}
+
 function bindExitButtonEvent(window) {
   document.getElementById("exitButton").addEventListener("click", function () {
     localStorage.removeItem("mainWindow_opened");
@@ -112,7 +121,19 @@ function bindExitButtonEvent(window) {
 
     document
       .getElementById("send-logs")
+      .removeEventListener("click", sendLogsToDeveloper);
+
+    document
+      .getElementById("send-logs")
       .addEventListener("click", sendLogsToDeveloper);
+
+    document
+      .getElementById("authenticateWithBungie")
+      .removeEventListener("click", authenticateWithBungie);
+
+    document
+      .getElementById("authenticateWithBungie")
+      .addEventListener("click", authenticateWithBungie);
   });
 
   localStorage.setItem("mainWindow_opened", true);

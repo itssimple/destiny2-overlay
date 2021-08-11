@@ -61,6 +61,8 @@ function handleUrlLaunch(urlSchemeStart) {
           let res = destinyApiClient.getToken(_state.value, _code.value);
           if (res == null) {
             // Something is wrong, we got the wrong state from a request, so we are just ignoring it for now.
+          } else {
+            log("BUNGIEAUTH", "Successful");
           }
         }
       }
@@ -195,7 +197,7 @@ if (firstLaunch) {
           {
             window_id: overlayWindowId,
             width: 400,
-            height: window.screen.availHeight * 0.75,
+            height: window.screen.availHeight * 0.5,
             auto_dpi_resize: false,
           },
           console.log

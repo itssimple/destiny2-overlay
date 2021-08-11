@@ -23,6 +23,7 @@ function DestinyApiClient() {
     "DestinyChecklistDefinition",
     "DestinyClassDefinition",
     "DestinyDestinationDefinition",
+    "DestinyDamageTypeDefinition",
     "DestinyFactionDefinition",
     "DestinyGenderDefinition",
     "DestinyItemCategoryDefinition",
@@ -407,14 +408,26 @@ function DestinyApiClient() {
   this.getUserProfile = async function (membershipId) {
     let interestingComponents = [
       profileComponents.Profiles,
+      profileComponents.ProfileInventories,
+      profileComponents.ProfileCurrencies,
       profileComponents.ProfileProgression,
       profileComponents.Characters,
+      profileComponents.CharacterInventories,
       profileComponents.CharacterProgressions,
       profileComponents.CharacterActivities,
+      profileComponents.CharacterEquipment,
+      profileComponents.ItemInstances,
       profileComponents.ItemObjectives,
+      profileComponents.ItemSockets,
+      profileComponents.ItemTalentGrids,
+      profileComponents.ItemCommonData,
+      profileComponents.ItemPlugStates,
       profileComponents.ItemPlugObjectives,
+      profileComponents.ItemReusablePlugs,
       profileComponents.Metrics,
       profileComponents.Records,
+      profileComponents.Collectibles,
+      profileComponents.StringVariables,
     ];
 
     await refreshTokenIfExpired();
@@ -434,7 +447,7 @@ function DestinyApiClient() {
 
           db.setItem("destiny-profile", JSON.stringify(profile.Response));
 
-          this.profile = profile.Response;
+          self.profile = profile.Response;
 
           resolve(profile.Response);
         } else {
@@ -483,11 +496,25 @@ function DestinyApiClient() {
         _profile.characterProgressions.data[_last.characterId],
       characterActivities: _profile.characterActivities.data[_last.characterId],
       characterUninstancedItemComponents:
-        _profile.characterUninstancedItemComponents[_last.characterId],
+        _profile.characterUninstancedItemComponents[_last.characterId]
+          .objectives.data,
+      characterInventory:
+        _profile.characterInventories.data[_last.characterId].items,
+      characterEquipment:
+        _profile.characterEquipment.data[_last.characterId].items,
+      characterPlugSets:
+        _profile.characterPlugSets.data[_last.characterId].plugs,
+      characterCollectibles:
+        _profile.characterCollectibles.data[_last.characterId].collectibles,
+      characterRecords: _profile.characterRecords.data[_last.characterId],
       profileProgression: _profile.profileProgression.data,
       metrics: _profile.metrics.data.metrics,
       itemComponents: _profile.itemComponents,
       records: _profile.profileRecords.data,
+      profileInventory: _profile.profileInventory.data.items,
+      profileCurrency: _profile.profileCurrencies.data.items,
+      profilePlugSets: _profile.profilePlugSets.data.plugs,
+      profileCollectibles: _profile.profileCollectibles.data,
     };
 
     return lastPlayedCharacter;
@@ -581,6 +608,24 @@ function DestinyApiClient() {
       };
     }
 
+    let characterRecordKeys = Object.keys(
+      namedDataObject.characterRecords.records
+    );
+    for (let recordKey of characterRecordKeys) {
+      namedDataObject.characterRecords.records[recordKey] = {
+        ...namedDataObject.characterRecords.records[recordKey],
+        recordName:
+          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
+            .displayProperties.name,
+        recordDescription:
+          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
+            .displayProperties.description,
+        recordIcon:
+          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
+            .displayProperties.icon,
+      };
+    }
+
     namedDataObject = self.mapHashesToDefinitionsInObject(namedDataObject);
 
     return namedDataObject;
@@ -615,6 +660,13 @@ function DestinyApiClient() {
             .replace("current", "")
             .toLowerCase();
 
+          switch (_hashType) {
+            case "item":
+            case "plugitem":
+              _hashType = "inventoryitem";
+              break;
+          }
+
           let dataType = destinyDataTypes.find(
             (i) =>
               i.toLowerCase() == `Destiny${_hashType}Definition`.toLowerCase()
@@ -631,6 +683,13 @@ function DestinyApiClient() {
             ) {
               _objectCopy[`${_hashType}Name`] =
                 definitionData[_field].displayProperties.name;
+            } else if (
+              definitionData[_field].setData &&
+              definitionData[_field].setData.questLineName &&
+              definitionData[_field].setData.questLineName.length > 0
+            ) {
+              _objectCopy[`${_hashType}Name`] =
+                definitionData[_field].setData.questLineName;
             }
 
             if (
@@ -655,6 +714,25 @@ function DestinyApiClient() {
             ) {
               _objectCopy[`${_hashType}ProgressDescription`] =
                 definitionData[_field].progressDescription;
+            }
+
+            if (
+              typeof definitionData[_field].inProgressValueStyle !== "undefined"
+            ) {
+              _objectCopy[`${_hashType}InProgressValueStyle`] =
+                definitionData[_field].inProgressValueStyle;
+            }
+
+            if (
+              typeof definitionData[_field].completedValueStyle !== "undefined"
+            ) {
+              _objectCopy[`${_hashType}CompletedValueStyle`] =
+                definitionData[_field].completedValueStyle;
+            }
+
+            if (typeof definitionData[_field].itemType !== "undefined") {
+              _objectCopy[`${_hashType}ItemType`] =
+                definitionData[_field].itemType;
             }
           }
         }
@@ -686,6 +764,22 @@ function DestinyApiClient() {
     let milestoneData = self.goalApi.getMilestoneData(namedObject);
     for (let milestone of milestoneData) {
       trackableDataItems.push(milestone);
+    }
+
+    let bountyData = self.goalApi.getBounties(namedObject);
+    for (let bounty of bountyData) {
+      trackableDataItems.push(bounty);
+    }
+
+    let questData = self.goalApi.getQuests(namedObject);
+    for (let quest of questData) {
+      trackableDataItems.push(quest);
+    }
+
+    let characterRecords = self.goalApi.getCharacterRecords(namedObject);
+
+    for (let characterRecord of characterRecords) {
+      trackableDataItems.push(characterRecord);
     }
 
     trackableDataItems = trackableDataItems.sort((a, b) => {

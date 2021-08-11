@@ -85,9 +85,10 @@
                 style="min-height: 649px; max-height: 649px"
               >
                 <div class="card-header" id="weekSummaryText">
-                  The last 7 days you spent 9999 hours and 59 minutes in-game.
+                  All the things we can track
                 </div>
                 <div class="card-body">
+                  <button class="btn btn-primary" id="authenticateWithBungie">Authenticate with Bungie.net</button>
                 </div>
               </div>
             </div>
@@ -96,21 +97,10 @@
                 class="card text-white border-secondary mb-3"
                 style="max-width: 20rem; max-height: 175px; min-height: 175px"
               >
-                <div class="card-header">Top Game</div>
+                <div class="card-header">Last played character</div>
                 <div class="card-body">
-                  <h4 class="card-title" id="topGameTitle">{topGameTitle}</h4>
-                  <p class="card-text" id="topGameTime">Played {topGameTime}</p>
-                </div>
-              </div>
-              <div
-                class="card text-white border-secondary mb-3"
-                style="max-width: 20rem; max-height: 328px; min-height: 328px"
-              >
-                <div class="card-header">Top 10 Game Starts</div>
-                <div class="card-body">
-                  <p class="card-text" id="gameStarts">
-                    {gameStart[x].count} {gameStart[x].title}
-                  </p>
+                  <h4 class="card-title" id="topGameTitle">{class}</h4>
+                  <p class="card-text" id="topGameTime">Played {totalPlayTime}</p>
                 </div>
               </div>
               <div
@@ -120,7 +110,7 @@
                 <div class="card-header">Contact / Support</div>
                 <div class="card-body">
                   <p class="card-text">
-                    <a href="https://discord.gg/mnVZfcF2S8" target="_blank">
+                    <a href="https://discord.gg/6fP8vWW" target="_blank">
                       <img
                         src="../../images/Discord-Logo-White.svg"
                         alt="Discord link"
