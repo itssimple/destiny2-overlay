@@ -221,7 +221,8 @@ function Destiny2Goals() {
           }
 
           if (typeof objective.objectiveProgressDescription !== "undefined") {
-            bountyDataItem.description = `${bountyDataItem.description}<br /><b>${objective.objectiveProgressDescription}</b>`;
+            // ${bountyDataItem.description}<br />
+            bountyDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
           }
 
           bountyData.push(bountyDataItem);
@@ -289,7 +290,8 @@ function Destiny2Goals() {
           }
 
           if (typeof objective.objectiveProgressDescription !== "undefined") {
-            questDataItem.description = `${questDataItem.description}<br /><b>${objective.objectiveProgressDescription}</b>`;
+            // ${questDataItem.description}<br />
+            questDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
           }
 
           questData.push(questDataItem);
@@ -333,7 +335,8 @@ function Destiny2Goals() {
           }
 
           if (typeof objective.objectiveProgressDescription !== "undefined") {
-            questDataItem.description = `${questDataItem.description}<br /><b>${objective.objectiveProgressDescription}</b>`;
+            // ${questDataItem.description}<br />
+            questDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
           }
 
           questData.push(questDataItem);
@@ -366,9 +369,8 @@ function Destiny2Goals() {
           type: "characterRecord",
           order: 100,
           icon: characterRecord.recordIcon,
-          description: `${characterRecord.recordDescription}<br /><b>${
-            objective.objectiveProgressDescription ?? ""
-          }</b>`,
+          // ${characterRecord.recordDescription}<br />
+          description: `<b>${objective.objectiveProgressDescription ?? ""}</b>`,
           progressToNextLevel: objective.progress,
           nextLevelAt: objective.completionValue,
           inProgressValueStyle: objective.objectiveInProgressValueStyle,
