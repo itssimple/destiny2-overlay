@@ -351,7 +351,7 @@ function DestinyApiClient() {
             JSON.stringify(memberships.Response)
           );
 
-          this.userMemberships = memberships.Response;
+          self.userMembership = memberships.Response;
 
           resolve(memberships.Response);
         } else {
