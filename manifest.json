@@ -4,7 +4,7 @@
   "meta": {
     "name": "Destiny 2 - Goal tracker",
     "description": "Allows you to always see your tracked goals and their progress (slightly delay in increments, as we don't want to spam the API)",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "author": "NoLifeKing85",
     "minimum-overwolf-version": "0.170.0",
     "icon": "resources/images/logo.png",
@@ -13,24 +13,14 @@
     "splash_image": "resources/images/splash.png",
     "launcher_icon": "resources/images/gtt-logo.ico"
   },
-  "permissions": [
-    "GameInfo",
-    "Extensions",
-    "FileSystem",
-    "Hotkeys",
-    "Web"
-  ],
+  "permissions": ["GameInfo", "Extensions", "FileSystem", "Hotkeys", "Web"],
   "data": {
     "game_targeting": {
       "type": "dedicated",
-      "game_ids": [
-        21812
-      ]
+      "game_ids": [21812]
     },
     "externally_connectable": {
-      "matches": [
-        "https://www.bungie.net"
-      ]
+      "matches": ["https://www.bungie.net"]
     },
     "start_window": "background",
     "windows": {
@@ -85,17 +75,13 @@
       {
         "event": "GameLaunch",
         "event_data": {
-          "game_ids": [
-            21812
-          ]
+          "game_ids": [21812]
         },
         "tracked": true,
         "include_launchers": false
       }
     ],
-    "game_events": [
-      21812
-    ],
+    "game_events": [21812],
     "disable_dt": false,
     "developer": {
       "enable_auto_refresh": true,
@@ -105,6 +91,5 @@
     "url_protocol": {
       "scheme": "d2overlay"
     }
-  },
-  "version": "0.1.2"
+  }
 }
