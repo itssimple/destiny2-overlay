@@ -61,11 +61,14 @@ async function handleUrlLaunch(urlSchemeStart) {
           let res = destinyApiClient.getToken(_state.value, _code.value);
           if (res == null) {
             // Something is wrong, we got the wrong state from a request, so we are just ignoring it for now.
+            eventEmitter.emit("auth-unsuccessful");
           } else {
             log("BUNGIEAUTH", "Successful");
             await destinyApiClient.checkManifestVersion();
             await destinyApiClient.getUserMemberships();
             await destinyApiClient.getTrackableData(true);
+
+            eventEmitter.emit("auth-successful");
           }
         }
       }
@@ -120,43 +123,6 @@ if (firstLaunch) {
   }
 
   log("INIT:LAUNCHREASON", location.search);
-
-  let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
-
-  let locSearch = location.search;
-
-  if (
-    locSearch.indexOf("-from-desktop") > -1 ||
-    locSearch.indexOf("source=commandline") > -1 ||
-    locSearch.indexOf("source=dock") > -1 ||
-    locSearch.indexOf("source=storeapi") > -1 ||
-    locSearch.indexOf("source=odk") > -1 ||
-    locSearch.indexOf("source=after-install") > -1 ||
-    locSearch.indexOf("source=tray") > -1 ||
-    (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
-  ) {
-    localStorage.removeItem("mainWindow_opened");
-    openWindow(null, locSearch);
-  } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
-    log("GAME:LAUNCH", "Application was started by game");
-    overwolf.games.getRunningGameInfo(function (data) {
-      if (data) {
-        gameLaunched(data);
-      }
-    });
-  } else if (locSearch.indexOf("source=urlscheme")) {
-    log("URL-LAUNCH", "Application was started by url", locSearch);
-    let urlSchemeStart = unescape(locSearch.replace("?source=urlscheme&", ""));
-
-    handleUrlLaunch(urlSchemeStart);
-  }
-
-  // Removes the source-value from location.search, so we don't trigger multiple times
-  history.replaceState(
-    {},
-    window.title,
-    location.href.replace(location.search, "")
-  );
 
   firstLaunch = false;
 
@@ -300,6 +266,47 @@ if (firstLaunch) {
     exitApp(reason);
   });
 
+  window.eventEmitter.addEventListener("auth-successful", function () {
+    overwolf.notifications.showToastNotification(
+      {
+        header: "Authentication Successful",
+        texts: [
+          "Bungie.net authentication succeeded",
+          "The Goal tracker will now have access (read only) to your account.",
+          "We use it to be able to pull information about milestones, records, challenges and so on!",
+        ],
+      },
+      console.log
+    );
+  });
+
+  window.eventEmitter.addEventListener("auth-unsuccessful", function () {
+    overwolf.notifications.showToastNotification(
+      {
+        header: "Authentication Unsuccessful",
+        texts: [
+          "Bungie.net authentication didn't succeed",
+          "The Goal tracker will not be able to read data from the API.",
+          "We use it to be able to pull information about milestones, records, challenges and so on!",
+        ],
+      },
+      console.log
+    );
+  });
+
+  window.eventEmitter.addEventListener(
+    "destiny-data-loaded",
+    async function () {
+      if (await destinyApiClient.isAuthenticated()) {
+        await destinyApiClient.checkManifestVersion();
+        await destinyApiClient.getUserMemberships();
+        await destinyApiClient.getTrackableData(true);
+      } else {
+        window.eventEmitter.emit("destiny-not-authed");
+      }
+    }
+  );
+
   function checkExtensionUpdate() {
     overwolf.extensions.checkForExtensionUpdate((updateState) => {
       if (updateState.success) {
@@ -358,6 +365,45 @@ if (firstLaunch) {
       window.destinyApiClient = new DestinyApiClient();
 
       openOverlay();
+
+      let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
+
+      let locSearch = location.search;
+
+      if (
+        locSearch.indexOf("-from-desktop") > -1 ||
+        locSearch.indexOf("source=commandline") > -1 ||
+        locSearch.indexOf("source=dock") > -1 ||
+        locSearch.indexOf("source=storeapi") > -1 ||
+        locSearch.indexOf("source=odk") > -1 ||
+        locSearch.indexOf("source=after-install") > -1 ||
+        locSearch.indexOf("source=tray") > -1 ||
+        (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
+      ) {
+        localStorage.removeItem("mainWindow_opened");
+        openWindow(null, locSearch);
+      } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
+        log("GAME:LAUNCH", "Application was started by game");
+        overwolf.games.getRunningGameInfo(function (data) {
+          if (data) {
+            gameLaunched(data);
+          }
+        });
+      } else if (locSearch.indexOf("source=urlscheme")) {
+        log("URL-LAUNCH", "Application was started by url", locSearch);
+        let urlSchemeStart = unescape(
+          locSearch.replace("?source=urlscheme&", "")
+        );
+
+        handleUrlLaunch(urlSchemeStart);
+      }
+
+      // Removes the source-value from location.search, so we don't trigger multiple times
+      history.replaceState(
+        {},
+        window.title,
+        location.href.replace(location.search, "")
+      );
     });
   }
 }
