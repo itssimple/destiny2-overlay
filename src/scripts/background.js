@@ -364,7 +364,7 @@ if (firstLaunch) {
     db.initializeDatabase().then(() => {
       window.destinyApiClient = new DestinyApiClient();
 
-      openOverlay();
+      //openOverlay();
 
       let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
 

@@ -79,7 +79,7 @@
         }
       }
     },
-    "force_browser": "overwolf",
+    "force_browser": "user",
     "launch_events": [
       {
         "event": "GameLaunch",
