@@ -4,8 +4,9 @@ const SIGNIFICANT_MOUSE_MOVE_THRESHOLD = 1;
  *
  * @param {String} window WindowId from Overwolf
  * @param {HTMLElement} dragElement The element that should be draggable
+ * @param {String} windowName The name of the window, for saving position
  */
-function DraggableWindow(window, dragElement) {
+function DraggableWindow(window, dragElement, windowName) {
   this.currentWindow = window;
   this.initialMousePosition = 0;
   this.isMouseDown = false;
@@ -30,7 +31,19 @@ function DraggableWindow(window, dragElement) {
     this.isMouseDown = false;
 
     if (this.currentWindow) {
-      overwolf.windows.dragMove(this.currentWindow.id);
+      overwolf.windows.dragMove(this.currentWindow.id, (result) => {
+        overwolf.windows.getCurrentWindow(async (_currentWindow) => {
+          if (_currentWindow.window) {
+            await db.setItem(
+              `${_currentWindow.window.id}-position`,
+              JSON.stringify({
+                left: _currentWindow.window.left,
+                top: _currentWindow.window.top,
+              })
+            );
+          }
+        });
+      });
     }
   };
 

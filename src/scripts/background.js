@@ -182,18 +182,27 @@ if (firstLaunch) {
 
   function openOverlay() {
     if (overlayWindowId == null) {
-      overwolf.windows.obtainDeclaredWindow("overlayWindow", (result) => {
+      overwolf.windows.obtainDeclaredWindow("overlayWindow", async (result) => {
         if (!result.success) {
           return;
         }
+
+        let windowPosition = JSON.parse(
+          await db.getItem(`${result.window.id}-position`)
+        ) || {
+          left: 30,
+          top: parseInt(window.screen.availHeight / 4 - 50),
+        };
+
+        console.log(windowPosition);
 
         overlayWindowId = result.window.id;
         overwolf.windows.restore(overlayWindowId);
         overwolf.windows.changePosition(
           overlayWindowId,
-          30,
-          parseInt(window.screen.availHeight / 4 - 50),
-          console.log
+          windowPosition.left,
+          windowPosition.top,
+          () => {}
         );
 
         overwolf.windows.changeSize(
@@ -203,7 +212,7 @@ if (firstLaunch) {
             height: parseInt(window.screen.availHeight * 0.75),
             auto_dpi_resize: false,
           },
-          console.log
+          () => {}
         );
       });
     }
