@@ -1,6 +1,6 @@
 #main-win-container {
   overflow-y: scroll;
-  max-height: 682px;
+  max-height: 739px;
 }
 
 .desktop {
@@ -28,40 +28,8 @@
   padding: 5px;
 }
 
-#weekSummaryGraph {
-  background-color: #272b30;
-}
-
-#sessionStats td {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.ct-label {
-  color: white;
-}
-
-.ct-grid {
-  stroke: rgba(255, 255, 255, 0.2);
-}
-
-.ct-bar {
-  stroke-width: 50px;
-  stroke: var(--default-backgroundcolor) !important;
-}
-
 .fade {
   transition: opacity 0.08s;
-}
-
-.chartist-tooltip {
-  background: #272b30;
-  border: 1px solid #515960;
-  color: #fff;
-}
-
-.chartist-tooltip:before {
-  border-top-color: #272b30;
 }
 
 #changelog {
@@ -70,9 +38,16 @@
   }
 }
 
-#last10Sessions table td {
-  max-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+#main-card {
+  min-height: 649px;
+  max-height: 649px;
+}
+
+#adContainer .card-body {
+  background-color: black;
+  background-image: url(../../images/ads_placeholder_bg.png);
+  width: 400px;
+  height: 300px;
+  padding: 0;
+  margin-left: 10px;
 }

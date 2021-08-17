@@ -9,6 +9,9 @@ const backgroundWindow = overwolf.windows.getMainWindow();
 
 /** @type EventEmitter */
 const eventEmitter = backgroundWindow.eventEmitter;
+
+const db = backgroundWindow.db;
+
 var overwolfAdvertiseObject = null;
 var overwolfAdvertiseInitialized = false;
 
@@ -29,12 +32,39 @@ eventEmitter.addEventListener("refresh-window", function (window) {
   }
 });
 
+function setLastPlayedCharacter(lastPlayed) {
+  let lastPlayedClass = document.querySelector("#lastPlayedClass");
+  let lastPlayedTotalTime = document.querySelector("#lastPlayedTotalTime");
+
+  lastPlayedClass.innerText = `${lastPlayed.genderName} ${lastPlayed.raceName} ${lastPlayed.className}`;
+  lastPlayedTotalTime.innerText = `Played ${formatTimespan(
+    new Date(),
+    new Date(Date.now() + lastPlayed.minutesPlayedTotal * 60 * 1000)
+  )}`;
+}
+
+eventEmitter.addEventListener("destiny-data-loaded", async function () {
+  await destinyApiClient.getNamedDataObject(true);
+});
+
+eventEmitter.addEventListener("destiny-not-authed", function () {
+  document.querySelector("#authenticateWithBungie").style.display = "";
+});
+
+eventEmitter.addEventListener(
+  "destiny2-api-update",
+  function (namedDataObject) {
+    let lastPlayedCharacter = namedDataObject.characterInfo;
+
+    setLastPlayedCharacter(lastPlayedCharacter);
+  }
+);
+
 eventEmitter.addEventListener("game-exited", function () {});
 
-/*
 function onOwAdReady() {
-  if (!OwAd) {
-    // TODO: Handle fallback if the OwAd-API doesn't load
+  if (typeof OwAd === "undefined") {
+    document.getElementById("adContainer").style.display = "none";
     return;
   }
 
@@ -42,7 +72,7 @@ function onOwAdReady() {
   overwolfAdvertiseObject.addEventListener("ow_internal_rendered", () => {
     overwolfAdvertiseInitialized = true;
   });
-}*/
+}
 
 function loadSettings() {}
 
@@ -110,7 +140,7 @@ function bindExitButtonEvent(window) {
 }
 
 (function () {
-  overwolf.windows.getCurrentWindow(function (window) {
+  overwolf.windows.getCurrentWindow(async function (window) {
     new DraggableWindow(window.window, document.getElementById("titleBar"));
     bindExitButtonEvent(window);
 
@@ -118,6 +148,31 @@ function bindExitButtonEvent(window) {
       windowTitle = `${windowTitle} - v${app.meta.version}`;
       document.getElementById("titleBarName").innerHTML = windowTitle;
     });
+
+    document.getElementById("visibleItems").value = await db.getItem(
+      "d2-visible-items"
+    );
+
+    document.getElementById("trackMilestones").checked = JSON.parse(
+      (await db.getItem("d2-track-milestones")) || "true"
+    )
+      ? "checked"
+      : "";
+    document.getElementById("trackBounties").checked = JSON.parse(
+      (await db.getItem("d2-track-bounties")) || "true"
+    )
+      ? "checked"
+      : "";
+    document.getElementById("trackQuests").checked = JSON.parse(
+      (await db.getItem("d2-track-quests")) || "true"
+    )
+      ? "checked"
+      : "";
+    document.getElementById("trackRecords").checked = JSON.parse(
+      (await db.getItem("d2-track-records")) || "true"
+    )
+      ? "checked"
+      : "";
 
     document
       .getElementById("send-logs")
@@ -134,6 +189,64 @@ function bindExitButtonEvent(window) {
     document
       .getElementById("authenticateWithBungie")
       .addEventListener("click", authenticateWithBungie);
+
+    document
+      .getElementById("visibleItems")
+      .addEventListener("change", async (event) => {
+        await db.setItem("d2-visible-items", event.target.value);
+        eventEmitter.emit(
+          "visible-items-changed",
+          parseInt(event.target.value)
+        );
+      });
+
+    document
+      .getElementById("trackMilestones")
+      .addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+        console.log("milestones", checked);
+        await db.setItem("d2-track-milestones", checked);
+
+        eventEmitter.emit("tracked-items-changed");
+      });
+
+    document
+      .getElementById("trackBounties")
+      .addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+
+        console.log("bounties", checked);
+        await db.setItem("d2-track-bounties", checked);
+
+        eventEmitter.emit("tracked-items-changed");
+      });
+
+    document
+      .getElementById("trackQuests")
+      .addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+
+        console.log("quests", checked);
+        await db.setItem("d2-track-quests", checked);
+
+        eventEmitter.emit("tracked-items-changed");
+      });
+
+    document
+      .getElementById("trackRecords")
+      .addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+
+        console.log("records", checked);
+        await db.setItem("d2-track-records", checked);
+
+        eventEmitter.emit("tracked-items-changed");
+      });
+
+    let hasAuthed = await destinyApiClient.isAuthenticated();
+    if (hasAuthed) {
+      document.querySelector("#authenticateWithBungie").style.display = "none";
+    }
   });
 
   localStorage.setItem("mainWindow_opened", true);
