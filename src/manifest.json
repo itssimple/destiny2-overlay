@@ -13,15 +13,23 @@
     "splash_image": "resources/images/splash.png",
     "launcher_icon": "resources/images/gtt-logo.ico"
   },
-  "permissions": ["GameInfo", "Extensions", "FileSystem", "Hotkeys", "Web"],
+  "permissions": [
+    "GameInfo",
+    "Extensions",
+    "FileSystem",
+    "Hotkeys",
+    "Web",
+    "Streaming"
+  ],
   "data": {
     "game_targeting": {
       "type": "dedicated",
       "game_ids": [21812]
     },
     "externally_connectable": {
-      "matches": ["https://www.bungie.net"]
+      "matches": ["https://www.bungie.net", "https://o2g.itssimple.se"]
     },
+    "protocol_override_domains": { "googlesyndication": "http" },
     "start_window": "background",
     "windows": {
       "background": {
@@ -33,13 +41,14 @@
       },
       "overlayWindow": {
         "file": "resources/compiled/windows/overlay-window.html",
-        "show_in_taskbar": false,
+        "show_in_taskbar": true,
         "transparent": true,
         "resizable": false,
         "clickthrough": false,
-        "in_game_only": true,
+        "in_game_only": false,
         "is_background_page": false,
-        "restrict_to_game_bounds": true
+        "background_optimization": false,
+        "restrict_to_game_bounds": false
       },
       "mainWindow": {
         "file": "resources/compiled/windows/main-window.html",
@@ -57,16 +66,16 @@
         "disable_hardware_acceleration": true,
         "disable_auto_dpi_sizing": true,
         "min_size": {
-          "width": 1000,
-          "height": 775
+          "width": 1366,
+          "height": 750
         },
         "size": {
-          "width": 1000,
-          "height": 775
+          "width": 1366,
+          "height": 750
         },
         "max_size": {
-          "width": 1000,
-          "height": 775
+          "width": 1366,
+          "height": 750
         }
       }
     },
