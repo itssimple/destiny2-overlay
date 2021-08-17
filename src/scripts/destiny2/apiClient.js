@@ -153,6 +153,8 @@ function DestinyApiClient() {
         await db.getItem("destiny-userMembership")
       );
     }
+
+    eventEmitter.emit("destiny-data-loaded");
   }
 
   this.loadDestinyContentData = async function () {
@@ -302,14 +304,17 @@ function DestinyApiClient() {
 
           handleTokenResponse(tokenResponse);
           resolve(tokenResponse);
+          eventEmitter.emit("destiny2-auth-refreshed");
           return;
         }
 
         reject(tokenRequest.responseText);
+        eventEmitter.emit("destiny2-auth-refresh-failed");
       };
 
       tokenRequest.onerror = function () {
         reject(tokenRequest.responseText);
+        eventEmitter.emit("destiny2-auth-refresh-failed");
       };
 
       tokenRequest.send(
@@ -628,6 +633,8 @@ function DestinyApiClient() {
 
     namedDataObject = self.mapHashesToDefinitionsInObject(namedDataObject);
 
+    eventEmitter.emit("destiny2-api-update", namedDataObject);
+
     return namedDataObject;
   };
 
@@ -814,6 +821,19 @@ function DestinyApiClient() {
     eventEmitter.emit("goal-list-update", trackableDataItems);
 
     return trackableDataItems;
+  };
+
+  this.isAuthenticated = async function () {
+    try {
+      await refreshTokenIfExpired();
+      const isAuthenticated = (await db.getItem("destinyToken")) !== null;
+      eventEmitter.emit("destiny2-is-authenticated", isAuthenticated);
+      return isAuthenticated;
+    } catch (e) {
+      log("AUTH-FAIL", e);
+      eventEmitter.emit("destiny2-is-authenticated", false);
+      return false;
+    }
   };
 
   var self = this;
