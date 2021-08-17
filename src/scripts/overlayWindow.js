@@ -84,26 +84,89 @@ function renderGoalItem(goal) {
   return listItem.children[0];
 }
 
-eventEmitter.addEventListener("goal-list-update", function (goals) {
+async function updateGoalList(goals) {
+  await loadSettings();
+
   var goalList = document.getElementById("goal-list");
 
   goalList.innerHTML = "";
 
+  let goalsVisible = 0;
+
   for (let goal of goals) {
-    goalList.appendChild(renderGoalItem(goal));
+    if (window.visibleItems > 0 && goalsVisible >= window.visibleItems) {
+      break;
+    }
+
+    let addGoal = true;
+
+    switch (goal.type) {
+      case "milestone":
+        addGoal = window.trackingItems.milestones;
+        break;
+      case "quest":
+        addGoal = window.trackingItems.quests;
+        break;
+      case "bounty":
+        addGoal = window.trackingItems.bounties;
+        break;
+      case "characterRecord":
+        addGoal = window.trackingItems.records;
+        break;
+    }
+
+    if (addGoal) {
+      goalList.appendChild(renderGoalItem(goal));
+      goalsVisible++;
+    }
   }
 
+  window.cachedGoals = goals;
+
   //log("DEBUG", "Goals updated", goals, new Date().toISOString());
+}
+
+eventEmitter.addEventListener("goal-list-update", updateGoalList);
+
+eventEmitter.addEventListener("tracked-items-changed", () => {
+  if (window.cachedGoals && window.cachedGoals.length > 0) {
+    updateGoalList(window.cachedGoals);
+  }
 });
 
+async function loadSettings() {
+  window.visibleItems = parseInt((await db.getItem("d2-visible-items")) ?? 0);
+
+  window.trackingItems = {
+    milestones: JSON.parse((await db.getItem("d2-track-milestones")) ?? true),
+    bounties: JSON.parse((await db.getItem("d2-track-bounties")) ?? true),
+    quests: JSON.parse((await db.getItem("d2-track-quests")) ?? true),
+    records: JSON.parse((await db.getItem("d2-track-records")) ?? true),
+  };
+}
+
 (function () {
-  overwolf.windows.getCurrentWindow(function (window) {
-    new DraggableWindow(window.window, document.getElementById("titleBar"));
+  overwolf.windows.getCurrentWindow(async function (_window) {
+    new DraggableWindow(
+      _window.window,
+      document.getElementById("titleBar"),
+      "overlay"
+    );
+
+    await loadSettings();
   });
 })();
 
 // Here we just signal to the rest of the app that we have opened the overlay, so that we can start sending the initial data
 eventEmitter.emit("overlay-opened", {});
+
+eventEmitter.addEventListener("visible-items-changed", (visibleItems) => {
+  window.visibleItems = visibleItems;
+
+  if (window.cachedGoals && window.cachedGoals.length > 0) {
+    updateGoalList(window.cachedGoals);
+  }
+});
 
 setInterval(async function () {
   await destinyApiClient.getTrackableData(true);
