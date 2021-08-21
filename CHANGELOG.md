@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/itssimple/destiny2-overlay/compare/v0.1.4...v0.1.5) (2021-08-21)
+
+
+### Features
+
+* Added plugin to handle communication with Bungie instead for possible cache break ([2b059c6](https://github.com/itssimple/destiny2-overlay/commit/2b059c6f09e2dc242da5e73db3733c0afc614f79))
+
 ### [0.1.4](https://github.com/itssimple/destiny2-overlay/compare/v0.1.3...v0.1.4) (2021-08-21)
 
 
