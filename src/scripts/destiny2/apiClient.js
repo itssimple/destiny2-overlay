@@ -1,5 +1,7 @@
-function DestinyApiClient() {
+function DestinyApiClient(d2ApiClient) {
   const apiToken = "c32cd3cb4eb94a84acc468a1cf333dac";
+
+  const pluginClient = d2ApiClient;
 
   /**
    * @description Used for the base URL of content, like images and such.
@@ -341,34 +343,26 @@ function DestinyApiClient() {
     await refreshTokenIfExpired();
 
     return new Promise(async (resolve, reject) => {
-      let xhr = getXMLHttpRequestClient(
-        "GET",
+      await pluginClient.GET(
         `${destinyApiUrl}/User/GetMembershipsForCurrentUser/`,
-        await getUserToken()
-      );
+        await getUserToken(),
+        (result) => {
+          if (result.statusCode === 200) {
+            let memberships = JSON.parse(result.content);
 
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          let memberships = JSON.parse(xhr.responseText);
+            db.setItem(
+              "destiny-userMembership",
+              JSON.stringify(memberships.Response)
+            );
 
-          db.setItem(
-            "destiny-userMembership",
-            JSON.stringify(memberships.Response)
-          );
+            self.userMembership = memberships.Response;
 
-          self.userMembership = memberships.Response;
-
-          resolve(memberships.Response);
-        } else {
-          reject(xhr.statusText);
+            resolve(memberships.Response);
+          } else {
+            reject(result);
+          }
         }
-      };
-
-      xhr.onerror = function () {
-        reject(xhr.statusText);
-      };
-
-      xhr.send(null);
+      );
     });
   };
 
@@ -438,33 +432,24 @@ function DestinyApiClient() {
     await refreshTokenIfExpired();
 
     return new Promise(async (resolve, reject) => {
-      let xhr = getXMLHttpRequestClient(
-        "GET",
+      await pluginClient.GET(
         `${destinyApiUrl}/Destiny2/3/Profile/${membershipId}/?components=${interestingComponents.join(
           ","
-        )}&_=${new Date().getTime()}`,
-        await getUserToken()
-      );
+        )}`,
+        await getUserToken(),
+        (result) => {
+          if (result.statusCode === 200) {
+            let profile = JSON.parse(result.content);
 
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          let profile = JSON.parse(xhr.responseText);
+            db.setItem("destiny-profile", JSON.stringify(profile.Response));
+            self.profile = profile.Response;
 
-          db.setItem("destiny-profile", JSON.stringify(profile.Response));
-
-          self.profile = profile.Response;
-
-          resolve(profile.Response);
-        } else {
-          reject(xhr.statusText);
+            resolve(profile.Response);
+          } else {
+            reject(result);
+          }
         }
-      };
-
-      xhr.onerror = function () {
-        reject(xhr.statusText);
-      };
-
-      xhr.send(null);
+      );
     });
   };
 
@@ -552,12 +537,35 @@ function DestinyApiClient() {
     CanEquipTitle: 64,
   };
 
+  this.equipItems = async function (_lastPlayer) {
+    return new Promise(async (resolve, reject) => {
+      await pluginClient.POSTJson(
+        `${destinyApiUrl}/Destiny2/Actions/Items/EquipItems/`,
+        JSON.stringify({
+          characterId: _lastPlayer.characterInfo.characterId,
+          itemIds: [],
+          membershipType: 3,
+        }),
+        await getUserToken(),
+        (result) => {
+          if (result.statusCode === 200) {
+            resolve(result.content);
+          } else {
+            reject(result);
+          }
+        }
+      );
+    });
+  };
+
   this.getNamedDataObject = async function (forceRefresh = false) {
     let _lastPlayer = await self.getLastPlayedCharacter(forceRefresh);
 
     if (_lastPlayer == null) {
       return null;
     }
+
+    await self.equipItems(_lastPlayer);
 
     let namedDataObject = {
       ..._lastPlayer,
@@ -790,6 +798,12 @@ function DestinyApiClient() {
     }
 
     trackableDataItems = trackableDataItems.sort((a, b) => {
+      if (typeof a.endDate !== "undefined") {
+        return typeof b.endDate === "undefined" || a.endDate < b.endDate
+          ? 1
+          : -1;
+      }
+
       if (
         typeof a.nextLevelAt !== "undefined" &&
         typeof b.nextLevelAt !== "undefined"
@@ -798,12 +812,6 @@ function DestinyApiClient() {
         let bProgress = (b.progressToNextLevel / b.nextLevelAt) * 100;
 
         return aProgress < bProgress ? 1 : -1;
-      }
-
-      if (typeof a.endDate !== "undefined") {
-        return typeof b.endDate === "undefined" || a.endDate < b.endDate
-          ? -1
-          : 1;
       }
 
       return a.order < b.order ? 1 : -1;

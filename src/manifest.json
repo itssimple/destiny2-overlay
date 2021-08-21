@@ -99,6 +99,12 @@
     },
     "url_protocol": {
       "scheme": "d2overlay"
+    },
+    "extra-objects": {
+      "destiny2ApiClient": {
+        "file": "plugin/Destiny2.GoalTracker.Client.dll",
+        "class": "Destiny2.GoalTracker.Client.ApiClient"
+      }
     }
   }
 }

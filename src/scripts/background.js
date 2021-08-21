@@ -362,7 +362,18 @@ if (firstLaunch) {
     log("DATABASE", "Initializing database");
     window.db = new Destiny2Database();
     db.initializeDatabase().then(() => {
-      window.destinyApiClient = new DestinyApiClient();
+      log("ApiClient-Plugin", "Initializing plugin");
+
+      overwolf.extensions.current.getExtraObject(
+        "destiny2ApiClient",
+        (result) => {
+          if (result.status == "success") {
+            window.d2ApiClient = result.object;
+
+            window.destinyApiClient = new DestinyApiClient(d2ApiClient);
+          }
+        }
+      );
 
       //openOverlay();
 

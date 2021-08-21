@@ -1,3 +1,4 @@
 resources\*
+plugin\*
 .\manifest.json
 .\CHANGELOG.md
