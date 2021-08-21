@@ -24,12 +24,19 @@
   "data": {
     "game_targeting": {
       "type": "dedicated",
-      "game_ids": [21812]
+      "game_ids": [
+        21812
+      ]
     },
     "externally_connectable": {
-      "matches": ["https://www.bungie.net", "https://o2g.itssimple.se"]
+      "matches": [
+        "https://www.bungie.net",
+        "https://o2g.itssimple.se"
+      ]
     },
-    "protocol_override_domains": { "googlesyndication": "http" },
+    "protocol_override_domains": {
+      "googlesyndication": "http"
+    },
     "start_window": "background",
     "windows": {
       "background": {
@@ -84,13 +91,17 @@
       {
         "event": "GameLaunch",
         "event_data": {
-          "game_ids": [21812]
+          "game_ids": [
+            21812
+          ]
         },
         "tracked": true,
         "include_launchers": false
       }
     ],
-    "game_events": [21812],
+    "game_events": [
+      21812
+    ],
     "disable_dt": false,
     "developer": {
       "enable_auto_refresh": true,
@@ -106,5 +117,6 @@
         "class": "Destiny2.GoalTracker.Client.ApiClient"
       }
     }
-  }
+  },
+  "version": "0.1.6"
 }

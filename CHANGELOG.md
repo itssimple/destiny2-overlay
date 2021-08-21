@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/itssimple/destiny2-overlay/compare/v0.1.5...v0.1.6) (2021-08-21)
+
+
+### Features
+
+* CSS styling based on screen size ([ccf2f7a](https://github.com/itssimple/destiny2-overlay/commit/ccf2f7ad9878858ccb7f4cd96b26f143fc336283))
+
 ### [0.1.5](https://github.com/itssimple/destiny2-overlay/compare/v0.1.4...v0.1.5) (2021-08-21)
 
 
