@@ -110,11 +110,10 @@ function Destiny2Goals() {
                     milestoneDataItem.icon = step.activityIcon;
                   }
 
-                  break;
+                  break; //milestoneData.push(milestoneDataItem);
                 }
               }
             }
-            break;
           }
         }
       }
@@ -150,7 +149,7 @@ function Destiny2Goals() {
                     challenge.objective.completionValue;
                 }
 
-                break;
+                break; //milestoneData.push(milestoneDataItem);
               }
             }
           }
@@ -355,7 +354,7 @@ function Destiny2Goals() {
       let characterRecord = namedObject.characterRecords.records[key];
       if (
         typeof characterRecord.objectives === "undefined" ||
-        characterRecord.recordName.length === 0
+        (characterRecord.recordName ?? "").length === 0
       )
         continue;
 

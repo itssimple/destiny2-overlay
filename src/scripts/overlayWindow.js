@@ -160,6 +160,12 @@ async function loadSettings() {
 // Here we just signal to the rest of the app that we have opened the overlay, so that we can start sending the initial data
 eventEmitter.emit("overlay-opened", {});
 
+eventEmitter.addEventListener("game-exited", function () {
+  overwolf.windows.getCurrentWindow(function (_window) {
+    overwolf.windows.close(_window.window.id, function () {});
+  });
+});
+
 eventEmitter.addEventListener("visible-items-changed", (visibleItems) => {
   window.visibleItems = visibleItems;
 

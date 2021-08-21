@@ -253,7 +253,7 @@ function DestinyApiClient(d2ApiClient) {
     }
   }
 
-  this.getToken = function (state, code) {
+  this.getToken = async function (state, code) {
     if (state != this.randomState) {
       // We're getting a bad state, so we'll just return null here.
       return null;
@@ -290,6 +290,11 @@ function DestinyApiClient(d2ApiClient) {
   };
 
   this.refreshToken = async function () {
+    const refreshToken = await db.getItem("destinyRefreshToken");
+    if (refreshToken === null) {
+      return null;
+    }
+
     return new Promise(async (resolve, reject) => {
       let tokenRequest = getXMLHttpRequestClient(
         "POST",
@@ -321,7 +326,7 @@ function DestinyApiClient(d2ApiClient) {
 
       tokenRequest.send(
         JSON.stringify({
-          refresh_token: await db.getItem("destinyRefreshToken"),
+          refresh_token: refreshToken,
         })
       );
     });
@@ -526,17 +531,6 @@ function DestinyApiClient(d2ApiClient) {
     );
   };
 
-  const recordState = {
-    None: 0,
-    RecordRedeemed: 1,
-    RewardUnavailable: 2,
-    ObjectiveNotCompleted: 4,
-    Obscured: 8,
-    Invisible: 16,
-    EntitlementUnowned: 32,
-    CanEquipTitle: 64,
-  };
-
   this.equipItems = async function (_lastPlayer) {
     return new Promise(async (resolve, reject) => {
       await pluginClient.POSTJson(
@@ -571,71 +565,39 @@ function DestinyApiClient(d2ApiClient) {
       ..._lastPlayer,
     };
 
-    let statKeys = Object.keys(namedDataObject.characterInfo.stats);
-
-    for (let statKey of statKeys) {
+    for (let statKey of Object.keys(namedDataObject.characterInfo.stats)) {
       namedDataObject.characterInfo.stats[statKey] = {
-        statName:
-          self.destinyDataDefinition.DestinyStatDefinition[statKey]
-            .displayProperties.name,
-        statDescription:
-          self.destinyDataDefinition.DestinyStatDefinition[statKey]
-            .displayProperties.description,
-        statIcon:
-          self.destinyDataDefinition.DestinyStatDefinition[statKey]
-            .displayProperties.icon,
         statValue: namedDataObject.characterInfo.stats[statKey],
+        statHash: statKey,
       };
     }
 
-    let metricKeys = Object.keys(namedDataObject.metrics);
-
-    for (let metricKey of metricKeys) {
+    for (let metricKey of Object.keys(namedDataObject.metrics)) {
       namedDataObject.metrics[metricKey] = {
         ...namedDataObject.metrics[metricKey],
-        metricName:
-          self.destinyDataDefinition.DestinyMetricDefinition[metricKey]
-            .displayProperties.name,
-        metricDescription:
-          self.destinyDataDefinition.DestinyMetricDefinition[metricKey]
-            .displayProperties.description,
-        metricIcon:
-          self.destinyDataDefinition.DestinyMetricDefinition[metricKey]
-            .displayProperties.icon,
+        metricHash: metricKey,
       };
     }
 
-    let recordKeys = Object.keys(namedDataObject.records.records);
-    for (let recordKey of recordKeys) {
+    for (let recordKey of Object.keys(namedDataObject.records.records)) {
       namedDataObject.records.records[recordKey] = {
         ...namedDataObject.records.records[recordKey],
-        recordName:
+        recordHash: recordKey,
+        parentNodeHashes:
           self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-            .displayProperties.name,
-        recordDescription:
-          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-            .displayProperties.description,
-        recordIcon:
-          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-            .displayProperties.icon,
+            .parentNodeHashes,
       };
     }
 
-    let characterRecordKeys = Object.keys(
+    for (let recordKey of Object.keys(
       namedDataObject.characterRecords.records
-    );
-    for (let recordKey of characterRecordKeys) {
+    )) {
       namedDataObject.characterRecords.records[recordKey] = {
         ...namedDataObject.characterRecords.records[recordKey],
-        recordName:
+        recordHash: recordKey,
+        parentNodeHashes:
           self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-            .displayProperties.name,
-        recordDescription:
-          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-            .displayProperties.description,
-        recordIcon:
-          self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-            .displayProperties.icon,
+            .parentNodeHashes,
       };
     }
 
@@ -644,6 +606,30 @@ function DestinyApiClient(d2ApiClient) {
     eventEmitter.emit("destiny2-api-update", namedDataObject);
 
     return namedDataObject;
+  };
+
+  this.getPresentationNodeFromHash = function (hash) {
+    const presentationNameArray = [];
+
+    const presentationNode =
+      self.destinyDataDefinition.DestinyPresentationNodeDefinition[hash];
+    if (presentationNode) {
+      presentationNameArray.unshift({
+        name: presentationNode.displayProperties.name,
+        description: presentationNode.displayProperties.description,
+        icon: presentationNode.displayProperties.icon,
+        hash: hash,
+      });
+
+      for (let _hash of presentationNode.parentNodeHashes) {
+        const subItems = self.getPresentationNodeFromHash(_hash);
+        for (let item of subItems) {
+          presentationNameArray.push(item);
+        }
+      }
+    }
+
+    return presentationNameArray;
   };
 
   this.mapHashesToDefinitionsInObject = function (object) {
@@ -663,15 +649,15 @@ function DestinyApiClient(d2ApiClient) {
             _field[x] = arrItem;
           }
         }
+        _objectCopy[key] = _field;
       } else if (_type === "object" && _field !== null) {
         _objectCopy[key] = self.mapHashesToDefinitionsInObject(
-          _objectCopy[key],
-          _objectCopy
+          _objectCopy[key]
         );
       } else {
-        if (key.indexOf("Hash") > -1 && _type === "number" && _field > 0) {
+        if (key.indexOf("Hash") > -1 && !Array.isArray(_field)) {
           let _hashType = key
-            .replace("Hash", "")
+            .split("Hash")[0]
             .replace("current", "")
             .toLowerCase();
 
@@ -692,65 +678,67 @@ function DestinyApiClient(d2ApiClient) {
             definitionData[_field] &&
             definitionData[_field].displayProperties
           ) {
+            const dField = definitionData[_field];
             if (
-              definitionData[_field].displayProperties.name &&
-              definitionData[_field].displayProperties.name.length > 0
+              dField.displayProperties.name &&
+              dField.displayProperties.name.length > 0
             ) {
-              _objectCopy[`${_hashType}Name`] =
-                definitionData[_field].displayProperties.name;
+              _objectCopy[`${_hashType}Name`] = dField.displayProperties.name;
             } else if (
-              definitionData[_field].setData &&
-              definitionData[_field].setData.questLineName &&
-              definitionData[_field].setData.questLineName.length > 0
+              dField.setData &&
+              dField.setData.questLineName &&
+              dField.setData.questLineName.length > 0
             ) {
-              _objectCopy[`${_hashType}Name`] =
-                definitionData[_field].setData.questLineName;
+              _objectCopy[`${_hashType}Name`] = dField.setData.questLineName;
             }
 
             if (
-              definitionData[_field].displayProperties.description &&
-              definitionData[_field].displayProperties.description.length > 0
+              dField.displayProperties.description &&
+              dField.displayProperties.description.length > 0
             ) {
               _objectCopy[`${_hashType}Description`] =
-                definitionData[_field].displayProperties.description;
+                dField.displayProperties.description;
             }
 
             if (
-              definitionData[_field].displayProperties.icon &&
-              definitionData[_field].displayProperties.icon.length > 0
+              dField.displayProperties.icon &&
+              dField.displayProperties.icon.length > 0
             ) {
-              _objectCopy[`${_hashType}Icon`] =
-                definitionData[_field].displayProperties.icon;
+              _objectCopy[`${_hashType}Icon`] = dField.displayProperties.icon;
             }
 
             if (
-              definitionData[_field].progressDescription &&
-              definitionData[_field].progressDescription.length > 0
+              dField.progressDescription &&
+              dField.progressDescription.length > 0
             ) {
               _objectCopy[`${_hashType}ProgressDescription`] =
-                definitionData[_field].progressDescription;
+                dField.progressDescription;
             }
 
-            if (
-              typeof definitionData[_field].inProgressValueStyle !== "undefined"
-            ) {
+            if (typeof dField.inProgressValueStyle !== "undefined") {
               _objectCopy[`${_hashType}InProgressValueStyle`] =
-                definitionData[_field].inProgressValueStyle;
+                dField.inProgressValueStyle;
             }
 
-            if (
-              typeof definitionData[_field].completedValueStyle !== "undefined"
-            ) {
+            if (typeof dField.completedValueStyle !== "undefined") {
               _objectCopy[`${_hashType}CompletedValueStyle`] =
-                definitionData[_field].completedValueStyle;
+                dField.completedValueStyle;
             }
 
-            if (typeof definitionData[_field].itemType !== "undefined") {
-              _objectCopy[`${_hashType}ItemType`] =
-                definitionData[_field].itemType;
+            if (typeof dField.itemType !== "undefined") {
+              _objectCopy[`${_hashType}ItemType`] = dField.itemType;
+            }
+
+            if (typeof dField.parentNodeHashes !== "undefined") {
+              _objectCopy[`parentNodeHashes`] = dField.parentNodeHashes.map(
+                (item) => {
+                  return self.getPresentationNodeFromHash(item);
+                }
+              );
             }
           }
         }
+
         _objectCopy[key] = _field;
       }
     }
@@ -797,11 +785,11 @@ function DestinyApiClient(d2ApiClient) {
       trackableDataItems.push(characterRecord);
     }
 
-    trackableDataItems = trackableDataItems.sort((a, b) => {
+    function sortTrackableItems(a, b) {
       if (typeof a.endDate !== "undefined") {
         return typeof b.endDate === "undefined" || a.endDate < b.endDate
-          ? 1
-          : -1;
+          ? -1
+          : 1;
       }
 
       if (
@@ -815,7 +803,16 @@ function DestinyApiClient(d2ApiClient) {
       }
 
       return a.order < b.order ? 1 : -1;
-    });
+    }
+
+    const itemsWithExpiration = trackableDataItems
+      .filter((i) => i.endDate)
+      .sort(sortTrackableItems);
+    const itemsWithoutExpiration = trackableDataItems
+      .filter((i) => !i.endDate)
+      .sort(sortTrackableItems);
+
+    trackableDataItems = [...itemsWithExpiration, ...itemsWithoutExpiration];
 
     trackableDataItems.unshift(
       self.goalApi.getSeasonRankData(

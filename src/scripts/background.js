@@ -42,7 +42,6 @@ function openWindow(event, originEvent) {
 
 var appUpdateCheck = null;
 
-// function that handles the url-scheme event based on what comes directly after "d2overlay://"
 async function handleUrlLaunch(urlSchemeStart) {
   if (urlSchemeStart.indexOf("d2overlay://") == 0) {
     let urlScheme = urlSchemeStart.substr(12);
@@ -50,26 +49,24 @@ async function handleUrlLaunch(urlSchemeStart) {
     let urlSchemeType = urlSchemeParts[0];
     let urlSchemeId = urlSchemeParts[1];
 
-    if (urlSchemeType == "authenticate") {
-      if (urlSchemeId) {
-        var queryParams = parseQueryString(urlSchemeId);
+    if (urlSchemeType == "authenticate" && urlSchemeId) {
+      var queryParams = parseQueryString(urlSchemeId);
 
-        let _state = queryParams.find((i) => i.key == "state");
-        let _code = queryParams.find((i) => i.key == "code");
+      let _state = queryParams.find((i) => i.key == "state");
+      let _code = queryParams.find((i) => i.key == "code");
 
-        if (_state && _code) {
-          let res = destinyApiClient.getToken(_state.value, _code.value);
-          if (res == null) {
-            // Something is wrong, we got the wrong state from a request, so we are just ignoring it for now.
-            eventEmitter.emit("auth-unsuccessful");
-          } else {
-            log("BUNGIEAUTH", "Successful");
-            await destinyApiClient.checkManifestVersion();
-            await destinyApiClient.getUserMemberships();
-            await destinyApiClient.getTrackableData(true);
+      if (_state && _code) {
+        let res = await destinyApiClient.getToken(_state.value, _code.value);
+        if (res == null) {
+          // Something is wrong, we got the wrong state from a request, so we are just ignoring it for now.
+          eventEmitter.emit("auth-unsuccessful");
+        } else {
+          log("BUNGIEAUTH", "Successful");
+          await destinyApiClient.checkManifestVersion();
+          await destinyApiClient.getUserMemberships();
+          await destinyApiClient.getTrackableData(true);
 
-            eventEmitter.emit("auth-successful");
-          }
+          eventEmitter.emit("auth-successful");
         }
       }
     }
@@ -171,10 +168,20 @@ if (firstLaunch) {
           () => {}
         );
 
+        let overlayWidth = 250;
+
+        if (window.screen.availWidth > 1950) {
+          overlayWidth = 250;
+        } else if (window.screen.availWidth > 1900) {
+          overlayWidth = 200;
+        } else if (window.screen.availWidth > 1800) {
+          overlayWidth = 150;
+        }
+
         overwolf.windows.changeSize(
           {
             window_id: overlayWindowId,
-            width: 250,
+            width: overlayWidth,
             height: parseInt(window.screen.availHeight * 0.75),
             auto_dpi_resize: false,
           },
@@ -375,7 +382,7 @@ if (firstLaunch) {
         }
       );
 
-      //openOverlay();
+      openOverlay();
 
       let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
 

@@ -50,22 +50,6 @@
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
-h1 {
-  font-size: 1.9rem;
-}
-
-h2 {
-  font-size: 1.7rem;
-}
-
-h3 {
-  font-size: 1.3rem;
-}
-
-h4 {
-  font-size: 1.1rem;
-}
-
 .custom-control-input:checked ~ .custom-control-label::before {
   background-color: #000;
 }
@@ -74,7 +58,6 @@ body {
   height: 100vh;
   overflow: hidden;
   line-height: 1.2;
-  font-size: 0.7rem;
 }
 
 .container-fluid {
@@ -96,4 +79,60 @@ body {
   line-height: 1;
   font-size: 0.8rem;
   margin-bottom: 2px;
+}
+
+@media (max-width: 250px) {
+  body {
+    font-size: 0.7rem;
+  }
+
+  .media-body h5 {
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  h2 {
+    font-size: 1.7rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  h4 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 200px) {
+  body {
+    font-size: 0.5rem;
+  }
+
+  .navbar-brand {
+    font-size: 0.9rem;
+  }
+
+  .media-body h5 {
+    font-size: 0.6rem;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+  }
 }

@@ -49,6 +49,7 @@ eventEmitter.addEventListener("destiny-data-loaded", async function () {
 
 eventEmitter.addEventListener("destiny-not-authed", function () {
   document.querySelector("#authenticateWithBungie").style.display = "";
+  document.querySelector("#logoutFromBungie").style.display = "none";
 });
 
 eventEmitter.addEventListener(
@@ -132,6 +133,15 @@ function authenticateWithBungie() {
   );
 }
 
+async function logoutFromBungie() {
+  await db.removeItem("destinyToken");
+  await db.removeItem("destinyExpires");
+  await db.removeItem("destinyRefreshToken");
+  await db.removeItem("destinyRefreshTokenExpires");
+
+  eventEmitter.emit("destiny-not-authed");
+}
+
 function bindExitButtonEvent(window) {
   document.getElementById("exitButton").addEventListener("click", function () {
     localStorage.removeItem("mainWindow_opened");
@@ -154,22 +164,22 @@ function bindExitButtonEvent(window) {
     );
 
     document.getElementById("trackMilestones").checked = JSON.parse(
-      (await db.getItem("d2-track-milestones")) || "true"
+      ((await db.getItem("d2-track-milestones")) ?? "true").toString()
     )
       ? "checked"
       : "";
     document.getElementById("trackBounties").checked = JSON.parse(
-      (await db.getItem("d2-track-bounties")) || "true"
+      ((await db.getItem("d2-track-bounties")) ?? "true").toString()
     )
       ? "checked"
       : "";
     document.getElementById("trackQuests").checked = JSON.parse(
-      (await db.getItem("d2-track-quests")) || "true"
+      ((await db.getItem("d2-track-quests")) ?? "true").toString()
     )
       ? "checked"
       : "";
     document.getElementById("trackRecords").checked = JSON.parse(
-      (await db.getItem("d2-track-records")) || "true"
+      ((await db.getItem("d2-track-records")) ?? "true").toString()
     )
       ? "checked"
       : "";
@@ -189,6 +199,14 @@ function bindExitButtonEvent(window) {
     document
       .getElementById("authenticateWithBungie")
       .addEventListener("click", authenticateWithBungie);
+
+    document
+      .getElementById("logoutFromBungie")
+      .removeEventListener("click", logoutFromBungie);
+
+    document
+      .getElementById("logoutFromBungie")
+      .addEventListener("click", logoutFromBungie);
 
     document
       .getElementById("visibleItems")
@@ -246,6 +264,10 @@ function bindExitButtonEvent(window) {
     let hasAuthed = await destinyApiClient.isAuthenticated();
     if (hasAuthed) {
       document.querySelector("#authenticateWithBungie").style.display = "none";
+      document.querySelector("#logoutFromBungie").style.display = "";
+    } else {
+      document.querySelector("#authenticateWithBungie").style.display = "";
+      document.querySelector("#logoutFromBungie").style.display = "none";
     }
   });
 
