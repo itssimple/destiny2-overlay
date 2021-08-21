@@ -191,6 +191,14 @@ if (firstLaunch) {
     }
   }
 
+  window.eventEmitter.addEventListener("main-window-closed", function () {
+    overwolf.games.getRunningGameInfo(function (data) {
+      if (data == null) {
+        exitApp("No game running, no need to run in the background");
+      }
+    });
+  });
+
   window.eventEmitter.addEventListener("game-exited", function (gameInfo) {
     log("EVENT:GAME-EXITED", gameInfo);
 

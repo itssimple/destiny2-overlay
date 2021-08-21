@@ -145,6 +145,7 @@ async function logoutFromBungie() {
 function bindExitButtonEvent(window) {
   document.getElementById("exitButton").addEventListener("click", function () {
     localStorage.removeItem("mainWindow_opened");
+    eventEmitter.emit("main-window-closed");
     overwolf.windows.close(window.window.id, function () {});
   });
 }
