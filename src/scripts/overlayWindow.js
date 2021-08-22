@@ -176,4 +176,4 @@ eventEmitter.addEventListener("visible-items-changed", (visibleItems) => {
 
 setInterval(async function () {
   await destinyApiClient.getTrackableData(true);
-}, 30 * 1000);
+}, 15 * 1000);

@@ -7,6 +7,8 @@ var firstLaunch = true;
 var mainWindowId = null;
 var overlayWindowId = null;
 
+const destiny2ClassId = 21812;
+
 function openWindow(event, originEvent) {
   if (event) {
     log("WINDOW", "Got launch event: ", event);
@@ -84,7 +86,7 @@ function parseQueryString(queryString) {
 }
 
 function gameLaunched(game) {
-  if (game && game.classId == 21812) {
+  if (game && game.classId == destiny2ClassId) {
     log("GAME:LAUNCH", game);
     eventEmitter.emit("game-launched", game);
   }
@@ -193,7 +195,7 @@ if (firstLaunch) {
 
   window.eventEmitter.addEventListener("main-window-closed", function () {
     overwolf.games.getRunningGameInfo(function (data) {
-      if (data == null) {
+      if (data == null || data.classId != destiny2ClassId) {
         exitApp("No game running, no need to run in the background");
       }
     });

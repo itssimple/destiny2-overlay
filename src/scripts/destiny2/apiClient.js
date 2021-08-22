@@ -510,6 +510,7 @@ function DestinyApiClient(d2ApiClient) {
       profileCurrency: _profile.profileCurrencies.data.items,
       profilePlugSets: _profile.profilePlugSets.data.plugs,
       profileCollectibles: _profile.profileCollectibles.data,
+      profile: _profile.profile.data,
     };
 
     return lastPlayedCharacter;
@@ -552,14 +553,39 @@ function DestinyApiClient(d2ApiClient) {
     });
   };
 
+  this.lockItem = async function (
+    membershipType,
+    characterId,
+    itemId,
+    lockState
+  ) {
+    return new Promise(async (resolve, reject) => {
+      await pluginClient.POSTJson(
+        `${destinyApiUrl}/Destiny2/Actions/Items/SetLockState/`,
+        JSON.stringify({
+          membershipType: membershipType,
+          characterId: characterId,
+          itemId: itemId,
+          state: lockState,
+        }),
+        await getUserToken(),
+        (result) => {
+          if (result.statusCode === 200) {
+            resolve(result.content);
+          } else {
+            reject(result);
+          }
+        }
+      );
+    });
+  };
+
   this.getNamedDataObject = async function (forceRefresh = false) {
     let _lastPlayer = await self.getLastPlayedCharacter(forceRefresh);
 
     if (_lastPlayer == null) {
       return null;
     }
-
-    await self.equipItems(_lastPlayer);
 
     let namedDataObject = {
       ..._lastPlayer,
@@ -602,6 +628,19 @@ function DestinyApiClient(d2ApiClient) {
     }
 
     namedDataObject = self.mapHashesToDefinitionsInObject(namedDataObject);
+
+    const lockableItems = _lastPlayer.characterInventory.filter(
+      (i) => i.lockable && i.inventoryitemItemType == 3
+    );
+
+    if (lockableItems.length > 0) {
+      await self.lockItem(
+        _lastPlayer.characterInfo.membershipType,
+        _lastPlayer.characterInfo.characterId,
+        lockableItems[0].itemInstanceId,
+        lockableItems[0].state
+      );
+    }
 
     eventEmitter.emit("destiny2-api-update", namedDataObject);
 
