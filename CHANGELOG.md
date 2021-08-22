@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/itssimple/destiny2-overlay/compare/v0.1.7...v0.1.8) (2021-08-22)
+
+
+### Features
+
+* Fixed cache breaker so it's near instant (well almost), also changed interval to 15 seconds ([5fbf5fd](https://github.com/itssimple/destiny2-overlay/commit/5fbf5fd06712e1622d2e098a8cb44e213c329bd2))
+
 ### [0.1.7](https://github.com/itssimple/destiny2-overlay/compare/v0.1.6...v0.1.7) (2021-08-21)
 
 
