@@ -62,7 +62,8 @@ function DestinyApiClient(d2ApiClient) {
   this.checkManifestVersion = async function () {
     return new Promise(async function (resolve, reject) {
       let manifest = await self.getManifest();
-      if (manifest.Response.version !== self.lastVersion) {
+      let lastVersion = (await db.getItem("manifestVersion")) ?? "null";
+      if (manifest.Response.version !== lastVersion) {
         /* Currently cached data is older than 60 minutes, so we clear it. */
         await db.removeItem("lastManifestUpdate");
         await db.removeItem("manifest");
@@ -72,12 +73,11 @@ function DestinyApiClient(d2ApiClient) {
           await db.removeItem(`destinyContent-${dataType}`);
         }
 
-        self.lastVersion = manifest.Response.version;
         self.cachedManifest = manifest.Response;
 
-        db.setItem("manifestVersion", self.lastVersion);
-        db.setItem("manifest", JSON.stringify(self.cachedManifest));
-        db.setItem("lastManifestUpdate", Date.now());
+        await db.setItem("manifestVersion", self.lastVersion);
+        await db.setItem("manifest", JSON.stringify(self.cachedManifest));
+        await db.setItem("lastManifestUpdate", Date.now());
 
         await self.loadDestinyContentData();
 
@@ -516,22 +516,6 @@ function DestinyApiClient(d2ApiClient) {
     return lastPlayedCharacter;
   };
 
-  this.getCurrentSeason = async function () {
-    await self.checkManifestVersion();
-
-    let utcNow = GetUTCDate();
-
-    let seasonArray = convertObjectToArray(
-      self.destinyDataDefinition.DestinySeasonDefinition
-    );
-
-    return seasonArray.find(
-      (i) =>
-        Date.parse(i.startDate) <= utcNow.getTime() &&
-        Date.parse(i.endDate) >= utcNow.getTime()
-    );
-  };
-
   this.equipItems = async function (_lastPlayer) {
     return new Promise(async (resolve, reject) => {
       await pluginClient.POSTJson(
@@ -792,13 +776,13 @@ function DestinyApiClient(d2ApiClient) {
       return null;
     }
 
-    let currentSeason = await self.getCurrentSeason();
-
     let seasonDefinition =
-      self.destinyDataDefinition.DestinySeasonDefinition[currentSeason.hash];
+      self.destinyDataDefinition.DestinySeasonDefinition[
+        namedObject.profile.currentSeasonHash
+      ];
     let seasonPassDefinition =
       self.destinyDataDefinition.DestinySeasonPassDefinition[
-        currentSeason.seasonPassHash
+        seasonDefinition.seasonPassHash
       ];
 
     let trackableDataItems = [];
@@ -825,12 +809,6 @@ function DestinyApiClient(d2ApiClient) {
     }
 
     function sortTrackableItems(a, b) {
-      if (typeof a.endDate !== "undefined") {
-        return typeof b.endDate === "undefined" || a.endDate < b.endDate
-          ? -1
-          : 1;
-      }
-
       if (
         typeof a.nextLevelAt !== "undefined" &&
         typeof b.nextLevelAt !== "undefined"
@@ -839,6 +817,12 @@ function DestinyApiClient(d2ApiClient) {
         let bProgress = (b.progressToNextLevel / b.nextLevelAt) * 100;
 
         return aProgress < bProgress ? 1 : -1;
+      }
+
+      if (typeof a.endDate !== "undefined") {
+        return typeof b.endDate === "undefined" || a.endDate < b.endDate
+          ? -1
+          : 1;
       }
 
       return a.order < b.order ? 1 : -1;
