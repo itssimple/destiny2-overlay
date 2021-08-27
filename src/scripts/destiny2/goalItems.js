@@ -23,19 +23,24 @@ function Destiny2Goals() {
         seasonDefinition.artifactItemHash
       ];
 
+    let seasonRank = seasonPassData.level;
+    let nextLevelAt = seasonPassData.nextLevelAt;
+    let progressToNextLevel = seasonPassData.progressToNextLevel;
+
+    if (seasonPassData.level == seasonPassData.levelCap) {
+      seasonRank += seasonPassProgressionData.level;
+      nextLevelAt += seasonPassProgressionData.nextLevelAt;
+      progressToNextLevel += seasonPassProgressionData.progressToNextLevel;
+    }
+
     let seasonRankDataItem = {
-      name: `Season Rank ${
-        seasonPassData.level + seasonPassProgressionData.level
-      }`,
+      name: `Season Rank ${seasonRank}`,
       description: seasonDefinition.displayProperties.name,
       icon: `${seasonArtifactData.displayProperties.icon}`,
       startDate: seasonDefinition.startDate,
       endDate: seasonDefinition.endDate,
-      nextLevelAt:
-        seasonPassData.nextLevelAt + seasonPassProgressionData.nextLevelAt,
-      progressToNextLevel:
-        seasonPassData.progressToNextLevel +
-        seasonPassProgressionData.progressToNextLevel,
+      nextLevelAt: nextLevelAt,
+      progressToNextLevel: progressToNextLevel,
       type: "seasonrank",
       order: -1,
       inProgressValueStyle: 0,
