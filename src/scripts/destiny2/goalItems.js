@@ -196,6 +196,7 @@ function Destiny2Goals() {
           type: "bounty",
           inProgressValueStyle: 0,
           completedValueStyle: 0,
+          tracked: bounty.state == 2,
         };
 
         if (typeof bounty.expirationDate !== "undefined") {
@@ -274,6 +275,7 @@ function Destiny2Goals() {
           type: "quest",
           inProgressValueStyle: 0,
           completedValueStyle: 0,
+          tracked: instanceQuest.state == 2,
         };
 
         if (typeof objective.completionValue !== "undefined") {
@@ -319,6 +321,7 @@ function Destiny2Goals() {
           type: "quest",
           inProgressValueStyle: 0,
           completedValueStyle: 0,
+          tracked: uninstancedQuest.state == 2,
         };
 
         if (typeof objective.completionValue !== "undefined") {

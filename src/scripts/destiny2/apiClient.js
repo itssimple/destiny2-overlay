@@ -828,14 +828,22 @@ function DestinyApiClient(d2ApiClient) {
       return a.order < b.order ? 1 : -1;
     }
 
-    const itemsWithExpiration = trackableDataItems
-      .filter((i) => i.endDate)
-      .sort(sortTrackableItems);
-    const itemsWithoutExpiration = trackableDataItems
-      .filter((i) => !i.endDate)
+    const trackedItems = trackableDataItems
+      .filter((i) => i.tracked)
       .sort(sortTrackableItems);
 
-    trackableDataItems = [...itemsWithExpiration, ...itemsWithoutExpiration];
+    const itemsWithExpiration = trackableDataItems
+      .filter((i) => i.endDate && !i.tracked)
+      .sort(sortTrackableItems);
+    const itemsWithoutExpiration = trackableDataItems
+      .filter((i) => !i.endDate && !i.tracked)
+      .sort(sortTrackableItems);
+
+    trackableDataItems = [
+      ...trackedItems,
+      ...itemsWithExpiration,
+      ...itemsWithoutExpiration,
+    ];
 
     trackableDataItems.unshift(
       self.goalApi.getSeasonRankData(
