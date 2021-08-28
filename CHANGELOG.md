@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.10](https://github.com/itssimple/destiny2-overlay/compare/v0.1.9...v0.1.10) (2021-08-28)
+
+
+### Features
+
+* Show tracked items first ([5e614a4](https://github.com/itssimple/destiny2-overlay/commit/5e614a4dec9662f15f85793bb9b364275b5060c0))
+
+
+### Bug Fixes
+
+* Fixing season rank, so it won't count extra levels until you reach cap of season ([106771f](https://github.com/itssimple/destiny2-overlay/commit/106771fb70904d1fc0f7bc1d84c0ef74a496a8ce))
+
 ### [0.1.9](https://github.com/itssimple/destiny2-overlay/compare/v0.1.8...v0.1.9) (2021-08-24)
 
 
