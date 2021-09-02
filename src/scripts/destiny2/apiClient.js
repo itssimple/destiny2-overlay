@@ -487,29 +487,52 @@ function DestinyApiClient(d2ApiClient) {
 
     let lastPlayedCharacter = {
       characterInfo: _last,
-      characterProgression:
-        _profile.characterProgressions.data[_last.characterId],
-      characterActivities: _profile.characterActivities.data[_last.characterId],
+
+      characterProgression: !!!_profile.characterProgressions.disabled
+        ? _profile.characterProgressions.data[_last.characterId]
+        : {},
+
+      characterActivities: !!!_profile.characterActivities.disabled
+        ? _profile.characterActivities.data[_last.characterId]
+        : {},
+
       characterUninstancedItemComponents:
         _profile.characterUninstancedItemComponents[_last.characterId]
           .objectives.data,
+
       characterInventory:
         _profile.characterInventories.data[_last.characterId].items,
+
       characterEquipment:
         _profile.characterEquipment.data[_last.characterId].items,
-      characterPlugSets:
-        _profile.characterPlugSets.data[_last.characterId].plugs,
+
+      characterPlugSets: !!!_profile.characterPlugSets.disabled
+        ? _profile.characterPlugSets.data[_last.characterId].plugs
+        : {},
+
       characterCollectibles:
         _profile.characterCollectibles.data[_last.characterId].collectibles,
+
       characterRecords: _profile.characterRecords.data[_last.characterId],
+
       profileProgression: _profile.profileProgression.data,
+
       metrics: _profile.metrics.data.metrics,
+
       itemComponents: _profile.itemComponents,
+
       records: _profile.profileRecords.data,
+
       profileInventory: _profile.profileInventory.data.items,
+
       profileCurrency: _profile.profileCurrencies.data.items,
-      profilePlugSets: _profile.profilePlugSets.data.plugs,
+
+      profilePlugSets: !!!_profile.profilePlugSets.disabled
+        ? _profile.profilePlugSets.data.plugs
+        : {},
+
       profileCollectibles: _profile.profileCollectibles.data,
+
       profile: _profile.profile.data,
     };
 
