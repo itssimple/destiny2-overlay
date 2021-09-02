@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.11](https://github.com/itssimple/destiny2-overlay/compare/v0.1.10...v0.1.11) (2021-09-02)
+
+
+### Bug Fixes
+
+* Added support for _some_ of the props being disabled in the API ([95d8e77](https://github.com/itssimple/destiny2-overlay/commit/95d8e7798fde89a3db0cdab2cdabf8a0ed0c7626))
+* Changed so that the data is loaded asynchronously instead ([a01667c](https://github.com/itssimple/destiny2-overlay/commit/a01667ce1b05166f609f1a4a04ed1ffe8ff7b1c8))
+* Disabled automatic opening of overlay on startup. ([0a33891](https://github.com/itssimple/destiny2-overlay/commit/0a338919352039f798cd019757e7dfc61f04d86a))
+* Fixed an error when a questItem doesn't have any itemObjectives ([2ed18cc](https://github.com/itssimple/destiny2-overlay/commit/2ed18ccbc261aeabd35064218f994582ea3a24d7))
+
 ### [0.1.10](https://github.com/itssimple/destiny2-overlay/compare/v0.1.9...v0.1.10) (2021-08-28)
 
 
