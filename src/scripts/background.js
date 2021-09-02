@@ -159,8 +159,6 @@ if (firstLaunch) {
           top: parseInt(window.screen.availHeight / 4 - 50),
         };
 
-        console.log(windowPosition);
-
         overlayWindowId = result.window.id;
         overwolf.windows.restore(overlayWindowId);
         overwolf.windows.changePosition(
@@ -392,7 +390,7 @@ if (firstLaunch) {
         }
       );
 
-      openOverlay();
+      //openOverlay();
 
       let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
 
