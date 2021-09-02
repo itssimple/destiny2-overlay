@@ -223,7 +223,7 @@ function bindExitButtonEvent(window) {
       .getElementById("trackMilestones")
       .addEventListener("change", async function (event) {
         let checked = event.target.checked;
-        console.log("milestones", checked);
+
         await db.setItem("d2-track-milestones", checked);
 
         eventEmitter.emit("tracked-items-changed");
@@ -234,7 +234,6 @@ function bindExitButtonEvent(window) {
       .addEventListener("change", async function (event) {
         let checked = event.target.checked;
 
-        console.log("bounties", checked);
         await db.setItem("d2-track-bounties", checked);
 
         eventEmitter.emit("tracked-items-changed");
@@ -245,7 +244,6 @@ function bindExitButtonEvent(window) {
       .addEventListener("change", async function (event) {
         let checked = event.target.checked;
 
-        console.log("quests", checked);
         await db.setItem("d2-track-quests", checked);
 
         eventEmitter.emit("tracked-items-changed");
@@ -256,20 +254,22 @@ function bindExitButtonEvent(window) {
       .addEventListener("change", async function (event) {
         let checked = event.target.checked;
 
-        console.log("records", checked);
         await db.setItem("d2-track-records", checked);
 
         eventEmitter.emit("tracked-items-changed");
       });
 
-    let hasAuthed = await destinyApiClient.isAuthenticated();
-    if (hasAuthed) {
-      document.querySelector("#authenticateWithBungie").style.display = "none";
-      document.querySelector("#logoutFromBungie").style.display = "";
-    } else {
-      document.querySelector("#authenticateWithBungie").style.display = "";
-      document.querySelector("#logoutFromBungie").style.display = "none";
-    }
+    setTimeout(async function () {
+      let hasAuthed = await destinyApiClient.isAuthenticated();
+      if (hasAuthed) {
+        document.querySelector("#authenticateWithBungie").style.display =
+          "none";
+        document.querySelector("#logoutFromBungie").style.display = "";
+      } else {
+        document.querySelector("#authenticateWithBungie").style.display = "";
+        document.querySelector("#logoutFromBungie").style.display = "none";
+      }
+    }, 100);
   });
 
   localStorage.setItem("mainWindow_opened", true);
