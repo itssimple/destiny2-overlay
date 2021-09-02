@@ -1,6 +1,19 @@
 :root {
-  --default-backgroundcolor: #515960;
-  --darker-background: #272b30;
+  --default-backgroundcolor: #192b34d2;
+  --darker-background: #272b30d2;
+
+  --header-bottom-border: #4f5b65d2;
+
+  --tab-active-color: #929292d2;
+  --tab-active-color-font: #d4d4d4d2;
+  --tab-inactive-color-font: #7c7c7cd2;
+  --tab-background-color: #00000077;
+
+  --card-background-color: #89949e3b;
+  --card-header-background-color: #5159607d;
+  --card-header-bottom-border: #8d99a3b2;
+
+  --default-close-button-color: #ff000059;
 }
 
 ::-webkit-scrollbar {
@@ -19,9 +32,10 @@
 }
 
 #titleBar {
-  height: 32px;
+  font-weight: bold;
+
   .navbar-brand {
-    padding: 0 0.5rem 0 0.5rem;
+    padding: 0.5rem 1rem 0.5rem 1rem;
   }
 
   padding-right: 0;
@@ -31,6 +45,53 @@
   padding-left: unset;
   padding-right: 1rem;
   background-color: var(--default-backgroundcolor) !important;
+  border-bottom: 4px solid var(--header-bottom-border);
+  margin-bottom: 0.5rem;
+}
+
+.nav-tabs {
+  border-bottom: 0;
+  margin-left: 1rem;
+
+  .nav-link {
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: none;
+    background-color: var(--tab-background-color);
+    color: var(--tab-inactive-color-font);
+  }
+
+  .nav-link:not([disabled]):not(.disabled).active,
+  .nav-link:not([disabled]):not(.disabled):active,
+  .nav-link:not([disabled]):not(.disabled):focus,
+  .nav-link:not([disabled]):not(.disabled):hover {
+    border-bottom: 3px solid var(--tab-active-color);
+    color: var(--tab-active-color-font);
+
+    background: none;
+    background-color: var(--tab-background-color);
+  }
+}
+
+.card {
+  background-color: var(--card-background-color);
+  border-radius: 0;
+  border: 0;
+
+  .card-header {
+    background-color: var(--card-header-background-color);
+    font-weight: bolder;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+    border-bottom: 2px solid var(--card-header-bottom-border);
+
+    &:first-child {
+      border-radius: 0;
+    }
+  }
+
+  .card-body {
+    padding: 0.5rem;
+  }
 }
 
 #exitButton {
@@ -38,6 +99,9 @@
   width: 3rem;
   border-radius: 0;
   height: 30px;
+  margin-right: 1rem;
+  background-color: var(--default-close-button-color);
+  border: 1px solid #ffffff33;
 }
 
 #ow_ad {
@@ -51,6 +115,8 @@
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+
+  /*font-family: "Neue Haas Grotesk", Helvetica, Arial, sans-serif;*/
 }
 
 h1 {
@@ -76,4 +142,6 @@ h4 {
 body {
   height: 100vh;
   overflow: hidden;
+  background-image: url(../../images/vincenzo-malagoli-flfhAlEwDq4-unsplash.jpg);
+  background-size: cover;
 }
