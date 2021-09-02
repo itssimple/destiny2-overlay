@@ -260,47 +260,54 @@ function Destiny2Goals() {
     );
 
     for (let instanceQuest of instancedQuestItems) {
-      let itemObjectives = namedObject.itemComponents.objectives.data[
-        instanceQuest.itemInstanceId
-      ].objectives.filter(
-        (objective) => objective.visible && !objective.complete
-      );
+      let itemObjectives =
+        namedObject.itemComponents.objectives.data[
+          instanceQuest.itemInstanceId
+        ];
 
-      for (let objective of itemObjectives) {
-        let questDataItem = {
-          name: instanceQuest.inventoryitemName,
-          description: instanceQuest.inventoryitemDescription,
-          order: 1000,
-          icon: instanceQuest.inventoryitemIcon,
-          type: "quest",
-          inProgressValueStyle: 0,
-          completedValueStyle: 0,
-          tracked: instanceQuest.state == 2,
-        };
+      if (itemObjectives) {
+        const _objectives = itemObjectives.objectives.filter(
+          (objective) => objective.visible && !objective.complete
+        );
 
-        if (typeof objective.completionValue !== "undefined") {
-          questDataItem.nextLevelAt = objective.completionValue;
+        for (let objective of _objectives) {
+          let questDataItem = {
+            name: instanceQuest.inventoryitemName,
+            description: instanceQuest.inventoryitemDescription,
+            order: 1000,
+            icon: instanceQuest.inventoryitemIcon,
+            type: "quest",
+            inProgressValueStyle: 0,
+            completedValueStyle: 0,
+            tracked: instanceQuest.state == 2,
+          };
 
-          if (typeof objective.objectiveInProgressValueStyle !== "undefined") {
-            questDataItem.inProgressValueStyle =
-              objective.objectiveInProgressValueStyle;
+          if (typeof objective.completionValue !== "undefined") {
+            questDataItem.nextLevelAt = objective.completionValue;
+
+            if (
+              typeof objective.objectiveInProgressValueStyle !== "undefined"
+            ) {
+              questDataItem.inProgressValueStyle =
+                objective.objectiveInProgressValueStyle;
+            }
+
+            if (typeof objective.objectiveCompletedValueStyle !== "undefined") {
+              questDataItem.completedValueStyle =
+                objective.objectiveCompletedValueStyle;
+            }
+
+            if (typeof objective.progress !== "undefined") {
+              questDataItem.progressToNextLevel = objective.progress;
+            }
+
+            if (typeof objective.objectiveProgressDescription !== "undefined") {
+              // ${questDataItem.description}<br />
+              questDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
+            }
+
+            questData.push(questDataItem);
           }
-
-          if (typeof objective.objectiveCompletedValueStyle !== "undefined") {
-            questDataItem.completedValueStyle =
-              objective.objectiveCompletedValueStyle;
-          }
-
-          if (typeof objective.progress !== "undefined") {
-            questDataItem.progressToNextLevel = objective.progress;
-          }
-
-          if (typeof objective.objectiveProgressDescription !== "undefined") {
-            // ${questDataItem.description}<br />
-            questDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
-          }
-
-          questData.push(questDataItem);
         }
       }
     }
