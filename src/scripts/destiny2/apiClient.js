@@ -636,7 +636,7 @@ function DestinyApiClient(d2ApiClient) {
 
     namedDataObject = self.mapHashesToDefinitionsInObject(namedDataObject);
 
-    const lockableItems = _lastPlayer.characterInventory.filter(
+    /*const lockableItems = _lastPlayer.characterInventory.filter(
       (i) => i.lockable && i.inventoryitemItemType == 3
     );
 
@@ -647,7 +647,7 @@ function DestinyApiClient(d2ApiClient) {
         lockableItems[0].itemInstanceId,
         lockableItems[0].state
       );
-    }
+    }*/
 
     eventEmitter.emit("destiny2-api-update", namedDataObject);
 
