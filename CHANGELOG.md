@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.12](https://github.com/itssimple/destiny2-overlay/compare/v0.1.11...v0.1.12) (2021-09-04)
+
+
+### Features
+
+* Updated resources ([42f60b4](https://github.com/itssimple/destiny2-overlay/commit/42f60b49b0ea8123eb217ede8925823dabd629e2))
+
+
+### Bug Fixes
+
+* Disable cache-breaker for now. It fills your D2 api activity with data. ([bdfd071](https://github.com/itssimple/destiny2-overlay/commit/bdfd071189b03dc616c22839dfc72385e3ec9742))
+
 ### [0.1.11](https://github.com/itssimple/destiny2-overlay/compare/v0.1.10...v0.1.11) (2021-09-02)
 
 
