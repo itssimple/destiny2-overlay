@@ -107,6 +107,10 @@
 #ow_ad {
 }
 
+.btn-sm {
+  line-height: 0.5;
+}
+
 * {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -115,24 +119,31 @@
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
-
-  /*font-family: "Neue Haas Grotesk", Helvetica, Arial, sans-serif;*/
+  font-family: "Neue Haas Grotesk Display Pro 55 Roman";
+  font-size: 18pt;
+  letter-spacing: 0.01rem;
 }
 
 h1 {
   font-size: 1.9rem;
+  font-family: "Neue Haas Grotesk Display Pro 75 Bold";
+  text-transform: uppercase;
+  letter-spacing: -0.01rem;
 }
 
 h2 {
   font-size: 1.7rem;
+  text-transform: uppercase;
 }
 
 h3 {
   font-size: 1.3rem;
+  text-transform: uppercase;
 }
 
 h4 {
   font-size: 1.1rem;
+  text-transform: uppercase;
 }
 
 .custom-control-input:checked ~ .custom-control-label::before {

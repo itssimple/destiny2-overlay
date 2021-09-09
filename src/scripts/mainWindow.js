@@ -90,7 +90,7 @@ function relaunchTheApp() {
   eventEmitter.emit("relaunch-check");
 }
 
-var windowTitle = "Destiny 2 Overlay";
+var windowTitle = "DESTINY 2 OVERLAY";
 
 eventEmitter.addEventListener("update-available", function (version) {
   document.getElementById(
@@ -111,21 +111,6 @@ eventEmitter.addEventListener(
     // TODO: Add notification message function
   }
 );
-
-function sendLogsToDeveloper() {
-  return function () {
-    let logButton = document.getElementById("send-logs");
-    logButton.innerText = "Uploading logs, please wait ...";
-    logButton.disabled = true;
-    overwolf.utils.uploadClientLogs(function () {
-      logButton.innerText = "Logs sent, thank you";
-      setTimeout(function () {
-        logButton.innerText = "Send logs to the developer";
-        logButton.disabled = false;
-      }, 5000);
-    });
-  };
-}
 
 function authenticateWithBungie() {
   overwolf.utils.openUrlInDefaultBrowser(
@@ -184,14 +169,6 @@ function bindExitButtonEvent(window) {
     )
       ? "checked"
       : "";
-
-    document
-      .getElementById("send-logs")
-      .removeEventListener("click", sendLogsToDeveloper);
-
-    document
-      .getElementById("send-logs")
-      .addEventListener("click", sendLogsToDeveloper);
 
     document
       .getElementById("authenticateWithBungie")

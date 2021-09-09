@@ -57,7 +57,7 @@ function Destiny2Database() {
     });
   };
 
-  this.getItem = async function (key) {
+  this.getItem = async function (key, defaultValue = null) {
     return new Promise((resolve, reject) => {
       let request = self.DBInstance.transaction("storage", "readonly")
         .objectStore("storage")
@@ -67,7 +67,7 @@ function Destiny2Database() {
         if (event.target.result) {
           resolve(event.target.result.value);
         } else {
-          resolve(null);
+          resolve(defaultValue);
         }
       };
 

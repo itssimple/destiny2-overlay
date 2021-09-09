@@ -636,18 +636,21 @@ function DestinyApiClient(d2ApiClient) {
 
     namedDataObject = self.mapHashesToDefinitionsInObject(namedDataObject);
 
-    /*const lockableItems = _lastPlayer.characterInventory.filter(
-      (i) => i.lockable && i.inventoryitemItemType == 3
-    );
-
-    if (lockableItems.length > 0) {
-      await self.lockItem(
-        _lastPlayer.characterInfo.membershipType,
-        _lastPlayer.characterInfo.characterId,
-        lockableItems[0].itemInstanceId,
-        lockableItems[0].state
+    const cacheBreaker = await db.getItem("destiny2-use-cachebreaker", false);
+    if (cacheBreaker) {
+      const lockableItems = _lastPlayer.characterInventory.filter(
+        (i) => i.lockable && i.inventoryitemItemType == 3
       );
-    }*/
+
+      if (lockableItems.length > 0) {
+        await self.lockItem(
+          _lastPlayer.characterInfo.membershipType,
+          _lastPlayer.characterInfo.characterId,
+          lockableItems[0].itemInstanceId,
+          lockableItems[0].state
+        );
+      }
+    }
 
     eventEmitter.emit("destiny2-api-update", namedDataObject);
 
