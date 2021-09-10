@@ -48,6 +48,9 @@
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+
+  font-family: "Neue Haas Grotesk Display Pro 55 Roman";
+  /*text-transform: uppercase;*/
 }
 
 .custom-control-input:checked ~ .custom-control-label::before {
@@ -78,6 +81,9 @@ body {
 .media-body h5 {
   line-height: 1;
   font-size: 0.8rem;
+  /*font-family: "Neue Haas Grotesk Display Pro 65 Medium";
+  text-transform: uppercase;
+  font-weight: bold;*/
   margin-bottom: 2px;
 }
 
