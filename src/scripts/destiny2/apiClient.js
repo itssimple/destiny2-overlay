@@ -75,7 +75,7 @@ function DestinyApiClient(d2ApiClient) {
 
         self.cachedManifest = manifest.Response;
 
-        await db.setItem("manifestVersion", self.lastVersion);
+        await db.setItem("manifestVersion", manifest.Response.version);
         await db.setItem("manifest", JSON.stringify(self.cachedManifest));
         await db.setItem("lastManifestUpdate", Date.now());
 
@@ -84,6 +84,9 @@ function DestinyApiClient(d2ApiClient) {
         resolve({ updatedManifest: true, version: self.lastVersion });
         return;
       }
+
+      await checkStoredDefinitions();
+
       resolve({ updatedManifest: false, version: self.lastVersion });
     });
   };
@@ -139,6 +142,8 @@ function DestinyApiClient(d2ApiClient) {
       self.lastVersion = await db.getItem("manifestVersion");
     }
 
+    await checkStoredDefinitions();
+
     for (let dataType of destinyDataTypes) {
       let data = await db.getItem(`destinyContent-${dataType}`);
       if (data !== null) {
@@ -157,6 +162,24 @@ function DestinyApiClient(d2ApiClient) {
     }
 
     eventEmitter.emit("destiny-data-loaded");
+  }
+
+  async function checkStoredDefinitions() {
+    let missingDefinitions = [];
+
+    for (let dataType of destinyDataTypes) {
+      if ((await db.getItem(`destinyContent-${dataType}`)) === null) {
+        missingDefinitions.push(dataType);
+      }
+    }
+
+    if (missingDefinitions.length > 0) {
+      for (let dataType of destinyDataTypes) {
+        await db.removeItem(`destinyContent-${dataType}`);
+      }
+
+      await self.loadDestinyContentData();
+    }
   }
 
   this.loadDestinyContentData = async function () {
