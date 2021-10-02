@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.14](https://github.com/itssimple/destiny2-overlay/compare/v0.1.13...v0.1.14) (2021-10-02)
+
+
+### Features
+
+* Made some loading asynchronous to speed up the time it took for the UI to get responsive ([07c3aa4](https://github.com/itssimple/destiny2-overlay/commit/07c3aa4822aaf4c41a23e79cdd3a92b6c7faf517))
+
+
+### Bug Fixes
+
+* Added code to help recover in case of manifests failing to download ([e76cbef](https://github.com/itssimple/destiny2-overlay/commit/e76cbefcd34441c0108772521a0a7094fc7732f5))
+* Changed cache breaker, to set lockState correctly, instead of passing itemState as is. ([5c374fc](https://github.com/itssimple/destiny2-overlay/commit/5c374fc5829280234729530890e125d2c5ec5272))
+
 ### [0.1.13](https://github.com/itssimple/destiny2-overlay/compare/v0.1.12...v0.1.13) (2021-09-10)
 
 ### [0.1.12](https://github.com/itssimple/destiny2-overlay/compare/v0.1.11...v0.1.12) (2021-09-04)
