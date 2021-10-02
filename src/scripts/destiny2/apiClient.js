@@ -47,6 +47,13 @@ function DestinyApiClient(d2ApiClient) {
     "DestinyTraitDefinition",
   ];
 
+  const DestinyItemState = {
+    None: 0,
+    Locked: 1,
+    Tracked: 2,
+    Masterwork: 4,
+  };
+
   this.lastVersion = null;
   this.cachedManifest = null;
 
@@ -670,7 +677,7 @@ function DestinyApiClient(d2ApiClient) {
           _lastPlayer.characterInfo.membershipType,
           _lastPlayer.characterInfo.characterId,
           lockableItems[0].itemInstanceId,
-          lockableItems[0].state
+          lockableItems[0].state & DestinyItemState.Locked
         );
       }
     }
