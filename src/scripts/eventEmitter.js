@@ -16,13 +16,17 @@ function EventEmitter() {
    * @param {String} eventName
    * @param {any} arguments
    */
-  this.emit = function (eventName, arguments) {
+  this.emit = async function (eventName, arguments) {
     log('EVENT:EMITTING', eventName);
+    return new Promise((resolve, reject) => {
     this.eventListeners
       .filter((ev) => ev.eventName == eventName)
-      .forEach((l) => {
-        l.handler(arguments);
+      .forEach(async (l) => {
+        await l.handler(arguments);
       });
+
+      resolve(true);
+    });
   };
 
   return this;

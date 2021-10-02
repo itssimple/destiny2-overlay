@@ -120,7 +120,7 @@
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
   font-family: "Neue Haas Grotesk Display Pro 55 Roman";
-  font-size: 18pt;
+
   letter-spacing: 0.01rem;
 }
 
@@ -155,4 +155,9 @@ body {
   overflow: hidden;
   background-image: url(../../images/vincenzo-malagoli-flfhAlEwDq4-unsplash.jpg);
   background-size: cover;
+  font-size: 18pt;
+}
+
+.selectable-text {
+  user-select: text;
 }

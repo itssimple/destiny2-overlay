@@ -195,6 +195,18 @@ function DestinyApiClient(d2ApiClient) {
     }
   };
 
+  this.loadCommonSettings = async function () {
+    return new Promise(async (resolve, reject) => {
+      await pluginClient.GET(
+        `${destinyApiUrl}/Settings`,
+        await getUserToken(),
+        (response) => {
+          resolve(JSON.parse(response.content));
+        }
+      );
+    });
+  };
+
   /**
    * @description Loads the manifest and then loads the content data.
    */

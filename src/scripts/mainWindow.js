@@ -75,7 +75,32 @@ function onOwAdReady() {
   });
 }
 
-function loadSettings() {}
+async function loadSettings() {
+  document.getElementById("visibleItems").value = await db.getItem(
+    "d2-visible-items"
+  );
+
+  document.getElementById("trackMilestones").checked = JSON.parse(
+    ((await db.getItem("d2-track-milestones")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
+  document.getElementById("trackBounties").checked = JSON.parse(
+    ((await db.getItem("d2-track-bounties")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
+  document.getElementById("trackQuests").checked = JSON.parse(
+    ((await db.getItem("d2-track-quests")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
+  document.getElementById("trackRecords").checked = JSON.parse(
+    ((await db.getItem("d2-track-records")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
+}
 
 function downloadUpdate() {
   log("UPDATE", "User clicked the 'Update available!' text");
@@ -135,7 +160,7 @@ function bindExitButtonEvent(window) {
   });
 }
 
-(function () {
+(async function () {
   overwolf.windows.getCurrentWindow(async function (window) {
     new DraggableWindow(window.window, document.getElementById("titleBar"));
     bindExitButtonEvent(window);
@@ -145,30 +170,7 @@ function bindExitButtonEvent(window) {
       document.getElementById("titleBarName").innerHTML = windowTitle;
     });
 
-    document.getElementById("visibleItems").value = await db.getItem(
-      "d2-visible-items"
-    );
-
-    document.getElementById("trackMilestones").checked = JSON.parse(
-      ((await db.getItem("d2-track-milestones")) ?? "true").toString()
-    )
-      ? "checked"
-      : "";
-    document.getElementById("trackBounties").checked = JSON.parse(
-      ((await db.getItem("d2-track-bounties")) ?? "true").toString()
-    )
-      ? "checked"
-      : "";
-    document.getElementById("trackQuests").checked = JSON.parse(
-      ((await db.getItem("d2-track-quests")) ?? "true").toString()
-    )
-      ? "checked"
-      : "";
-    document.getElementById("trackRecords").checked = JSON.parse(
-      ((await db.getItem("d2-track-records")) ?? "true").toString()
-    )
-      ? "checked"
-      : "";
+    await loadSettings();
 
     document
       .getElementById("authenticateWithBungie")
