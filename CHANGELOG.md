@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.15](https://github.com/itssimple/destiny2-overlay/compare/v0.1.14...v0.1.15) (2021-10-07)
+
+
+### Features
+
+* Added ability to disable tracking of season rank ([e0eb2f6](https://github.com/itssimple/destiny2-overlay/commit/e0eb2f6627f02c61ef2c74607fd2d1a6bc53eb9b))
+
 ### [0.1.14](https://github.com/itssimple/destiny2-overlay/compare/v0.1.13...v0.1.14) (2021-10-02)
 
 
