@@ -49,7 +49,8 @@
         aria-controls="changelog"
         aria-selected="true">CHANGELOG</a>
       </li>
-
+      <button class="btn btn-primary" id="authenticateWithBungie">Authenticate with Bungie.net</button>
+      <button class="btn btn-primary" id="logoutFromBungie">Log out from Bungie.net</button>
     </ul>
     <div class="container-fluid h-80" id="main-win-container">
       <div class="tab-content" id="main-tabcontent">
@@ -60,7 +61,7 @@
           aria-labelledby="home-tab"
         >
           <div class="row h-100">
-            <div class="col-8 pt-2">
+            <div class="col-12 pt-2">
               <div class="card text-white mb-3" id="main-card">
                 <div class="card-header" id="weekSummaryText">
                   GOALS AVAILABLE FOR TRACKING
@@ -70,25 +71,25 @@
                 </div>
               </div>
             </div>
-            <div class="col-4 pt-2">
-              <div class="card text-white mb-3">
+            <!--<div class="col-4 pt-2">
+              <!--<div class="card text-white mb-3">
                 <div class="card-header">LAST PLAYED CHARACTER</div>
                 <div class="card-body">
                   <h4 class="card-title" id="lastPlayedClass"><i>Loading data</i></h4>
                   <p class="card-text" id="lastPlayedTotalTime">&nbsp;</p>
                 </div>
-              </div>
+              </div>-->
               <!--<div class="card text-white mb-3" id="adContainer">
                 <div class="card-header">ADVERTISMENTS</div>
                 <div class="card-body">
                   <div id="ow_ad"></div>
                 </div>
               </div>-->
-              <div class="card text-white mb-3">
+              <!--<div class="card text-white mb-3">
                 <div class="card-header">CONTACT / SUPPORT</div>
                 <div class="card-body">
                   <p class="card-text">
-                    <a href="https://discord.gg/6fP8vWW" target="_blank">
+                    <a href="" target="_blank">
                       <img
                         src="../../images/Discord-Logo-White.svg"
                         alt="Discord link"
@@ -98,10 +99,9 @@
                     </a>
                   </p>
                 </div>
-              </div>
-              <button class="btn btn-primary" style="width: 100%;" id="authenticateWithBungie">Authenticate with Bungie.net</button>
-              <button class="btn btn-primary" style="width: 100%;"  id="logoutFromBungie">Log out from Bungie.net</button>
-            </div>
+              </div>-->
+
+            <!--</div>-->
 
           </div>
         </div>
@@ -126,6 +126,12 @@
                   </div>
                   <h4>What do you want the overlay to track?</h4>
                   <small class="form-text text-muted mb-2">Configures what items you want to show in the overlay</small>
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="trackSeasonRank" />
+                    <label for="trackSeasonRank" class="form-check-label">
+                      Season Rank
+                    </label>
+                  </div>
                   <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="trackMilestones">
                     <label for="trackMilestones" class="form-check-label">
@@ -153,9 +159,12 @@
                 </div>
                 <div class="col-6">
                   <h3>SUPPORT</h3>
-                  <p class="form-text">To help us help you out with potential issues and other things, we need you to send us your logs, which can be done by sending them to NoLifeKing on Discord!
-                  After you sent the logs, be sure to tell NoLifeKing that you've done so</p>
-                  <p class="form-text">You can find the logs located at <code class="selectable-text">%localappdata%\Overwolf\Log</code>. Just zip the entire folder and send it to me.</p>
+                  <a href="https://discord.gg/6fP8vWW" target="_blank>">
+                    <img src="../../images/Discord-Logo-White.svg" alt="Discord link" style="width: 24px; height: 24px" />
+                    Discord
+                  </a>
+                  <p class="form-text">For support on Destiny 2 Goal Tracker, join our Discord server. If you are in need of assistance, contact NoLifeKing in our support Discord.</p>
+                  <p class="form-text">You may be asked to collect the log files located at <code class="selectable-text">%localappdata%\Overwolf\Log</code> and zip up the folder so we can get you back to achieving your goals.</p>
                 </div>
                 </div>
               </div>
