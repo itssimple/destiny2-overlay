@@ -33,6 +33,7 @@ eventEmitter.addEventListener("refresh-window", function (window) {
 });
 
 function setLastPlayedCharacter(lastPlayed) {
+  return;
   let lastPlayedClass = document.querySelector("#lastPlayedClass");
   let lastPlayedTotalTime = document.querySelector("#lastPlayedTotalTime");
 
@@ -79,6 +80,12 @@ async function loadSettings() {
   document.getElementById("visibleItems").value = await db.getItem(
     "d2-visible-items"
   );
+
+  document.getElementById("trackSeasonRank").checked = JSON.parse(
+    ((await db.getItem("d2-track-seasonrank")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
 
   document.getElementById("trackMilestones").checked = JSON.parse(
     ((await db.getItem("d2-track-milestones")) ?? "true").toString()
@@ -196,6 +203,16 @@ function bindExitButtonEvent(window) {
           "visible-items-changed",
           parseInt(event.target.value)
         );
+      });
+
+    document
+      .getElementById("trackSeasonRank")
+      .addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+
+        await db.setItem("d2-track-seasonrank", checked);
+
+        eventEmitter.emit("tracked-items-changed");
       });
 
     document

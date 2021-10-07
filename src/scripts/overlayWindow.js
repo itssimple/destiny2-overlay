@@ -113,6 +113,9 @@ async function updateGoalList(goals) {
       case "characterRecord":
         addGoal = window.trackingItems.records;
         break;
+      case "seasonrank":
+        addGoal = window.trackingItems.seasonRank;
+        break;
     }
 
     if (addGoal) {
@@ -142,6 +145,7 @@ async function loadSettings() {
     bounties: JSON.parse((await db.getItem("d2-track-bounties")) ?? true),
     quests: JSON.parse((await db.getItem("d2-track-quests")) ?? true),
     records: JSON.parse((await db.getItem("d2-track-records")) ?? true),
+    seasonRank: JSON.parse((await db.getItem("d2-track-seasonrank")) ?? true),
   };
 }
 
