@@ -7,19 +7,20 @@
     <link type="text/css" href="../css/main-window.css" rel="stylesheet" />
     <link type="text/css" href="../css/window-styles.css" rel="stylesheet" />
     <link type="text/css" href="../../fonts/style.css" rel="stylesheet" />
+    <link type="text/css" href="../css/destiny2.css" rel="stylesheet" />
     <script type="text/javascript" src="../scripts/draggable-window.js" ></script>
     <script type="text/javascript" src="../scripts/utils.js"></script>
     <script type="text/javascript" src="../scripts/log.js"></script>
     <script type="text/javascript" src="../scripts/date.js"></script>
     <script type="text/javascript" src="../scripts/mainWindow.js" ></script>
   </head>
-  <body>
+  <body class="destiny">
     <nav class="navbar bg-dark navbar-dark" id="titleBar">
-      <span class="navbar-brand text-white text-bold" id="titleBarName">DESTINY 2 OVERLAY - v0.0.0</span>
+      <div class="navbar-brand header general" id="titleBarName">DESTINY 2 OVERLAY - v0.0.0</div>
       <button class="btn btn-sm" id="exitButton">X</button>
     </nav>
     <ul class="nav nav-tabs" id="main-navigation" role="tablist">
-      <li class="nav-item" role="presentation">
+      <li class="nav-item fui sub-title" role="presentation">
         <a
           class="nav-link active"
           id="home-tab"
@@ -30,7 +31,7 @@
           aria-selected="true"
         >DASHBOARD</a>
       </li>
-      <li class="nav-item" role="presentation">
+      <li class="nav-item fui sub-title" role="presentation">
         <a
           class="nav-link"
           id="settings-tab"
@@ -40,7 +41,7 @@
           aria-selected="true"
         >SETTINGS</a>
       </li>
-      <li class="nav-item" role="presentation">
+      <li class="nav-item fui sub-title" role="presentation">
         <a
         class="nav-link"
         id="changelog-tab"
@@ -63,53 +64,21 @@
           <div class="row h-100">
             <div class="col-12 pt-2">
               <div class="card text-white mb-3" id="main-card">
-                <div class="card-header" id="weekSummaryText">
+                <div class="card-header fui sub-title">
                   GOALS AVAILABLE FOR TRACKING
                 </div>
-                <div class="card-body">
-
+                <div class="card-body destiny" id="allGoals" style="min-height: 527px; max-height: 527px; overflow: auto;">
+                  Loading Destiny 2 Data ...
                 </div>
               </div>
             </div>
-            <!--<div class="col-4 pt-2">
-              <!--<div class="card text-white mb-3">
-                <div class="card-header">LAST PLAYED CHARACTER</div>
-                <div class="card-body">
-                  <h4 class="card-title" id="lastPlayedClass"><i>Loading data</i></h4>
-                  <p class="card-text" id="lastPlayedTotalTime">&nbsp;</p>
-                </div>
-              </div>-->
-              <!--<div class="card text-white mb-3" id="adContainer">
-                <div class="card-header">ADVERTISMENTS</div>
-                <div class="card-body">
-                  <div id="ow_ad"></div>
-                </div>
-              </div>-->
-              <!--<div class="card text-white mb-3">
-                <div class="card-header">CONTACT / SUPPORT</div>
-                <div class="card-body">
-                  <p class="card-text">
-                    <a href="" target="_blank">
-                      <img
-                        src="../../images/Discord-Logo-White.svg"
-                        alt="Discord link"
-                        style="width: 24px; height: 24px"
-                      />
-                      Discord
-                    </a>
-                  </p>
-                </div>
-              </div>-->
-
-            <!--</div>-->
-
           </div>
         </div>
         <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
           <div class="row h-100">
             <div class="col-12 pt-2">
               <div class="card text-white mb-3">
-                <div class="card-header">
+                <div class="card-header fui sub-title">
                   TRACKING SETTINGS
                 </div>
                 <div class="card-body">
@@ -159,7 +128,7 @@
                 </div>
                 <div class="col-6">
                   <h3>SUPPORT</h3>
-                  <a href="https://discord.gg/6fP8vWW" target="_blank>">
+                  <a href="https://discord.gg/ZAMNfRpRDb" target="_blank>">
                     <img src="../../images/Discord-Logo-White.svg" alt="Discord link" style="width: 24px; height: 24px" />
                     Discord
                   </a>
@@ -176,8 +145,8 @@
           <div class="row h-100">
             <div class="col-12 pt-2">
               <div class="card text-white mb-3">
-                <div class="card-header">
-                  CHANGELOG - WHAT HAPPENS IN THE UPDATES?
+                <div class="card-header fui sub-title">
+                  WHAT HAPPENS IN THE UPDATES?
                 </div>
                 <div class="card-body" id="changelog-cardbody" style="min-height: 527px; max-height: 527px; overflow: auto;">
                   $CHANGELOG$
