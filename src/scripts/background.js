@@ -372,7 +372,6 @@ if (firstLaunch) {
   }, 3600000); // Once every hour
 
   log("INIT", "All eventhandlers have been set");
-
   if (!window.db) {
     log("DATABASE", "Initializing database");
     window.db = new Destiny2Database();
@@ -430,6 +429,7 @@ if (firstLaunch) {
         window.title,
         location.href.replace(location.search, "")
       );
+      log("DATABASE", "Database initialized");
     });
   }
 }
