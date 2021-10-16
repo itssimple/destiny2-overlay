@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.16](https://github.com/itssimple/destiny2-overlay/compare/v0.1.15...v0.1.16) (2021-10-16)
+
+
+### Features
+
+* Added crude version of showing available goals for tracking. Shows triumps as of now ([733a5ee](https://github.com/itssimple/destiny2-overlay/commit/733a5ee08c50aa32d183e18e032d196ae32560dc))
+* Added my Destiny 2 UI framework ([fd4e28c](https://github.com/itssimple/destiny2-overlay/commit/fd4e28ca2cfbc29be1b75e13d3d2cb647ef21f27))
+* Make sure destiny2.css gets copied as well ([b0f058a](https://github.com/itssimple/destiny2-overlay/commit/b0f058a625eba5bee4f4dd5b466fdd207bacb9bd))
+
+
+### Refactoring
+
+* Added some more logging ([168504a](https://github.com/itssimple/destiny2-overlay/commit/168504a343fa6da261a656864db23ec11fe11e71))
+* Added support for the new CSS ([8c2b86b](https://github.com/itssimple/destiny2-overlay/commit/8c2b86ba5c28aceea52b194c6697dadf8f1cdfbc))
+* More logging in the ApiClient to try and solve the initial lag ([cbbb424](https://github.com/itssimple/destiny2-overlay/commit/cbbb42406b4e3d544cbb405787ceae168529d5c5))
+
 ### [0.1.15](https://github.com/itssimple/destiny2-overlay/compare/v0.1.14...v0.1.15) (2021-10-07)
 
 ### Features
