@@ -37,7 +37,7 @@ gulp.task("styles-nano", function () {
 
 gulp.task("purge-unused-css", function () {
   return gulp
-    .src("src/scss/bootstrap.min.css")
+    .src("src/scss/*.css")
     .pipe(
       purgecss({
         content: ["src/windows/**/*.html", "src/scripts/**/*.js"],
