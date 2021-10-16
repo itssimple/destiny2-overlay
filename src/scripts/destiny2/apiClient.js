@@ -1,4 +1,5 @@
 function DestinyApiClient(d2ApiClient) {
+  log("D2API", "Initializing Destiny Api Client");
   const apiToken = "c32cd3cb4eb94a84acc468a1cf333dac";
 
   const pluginClient = d2ApiClient;
@@ -67,6 +68,7 @@ function DestinyApiClient(d2ApiClient) {
   this.trackedGoals = [];
 
   this.checkManifestVersion = async function () {
+    log("D2API", "Checking manifest version");
     return new Promise(async function (resolve, reject) {
       let manifest = await self.getManifest();
       let lastVersion = (await db.getItem("manifestVersion")) ?? "null";
@@ -89,23 +91,27 @@ function DestinyApiClient(d2ApiClient) {
         await self.loadDestinyContentData();
 
         resolve({ updatedManifest: true, version: self.lastVersion });
+        log("D2API", "Manifest updated");
         return;
       }
 
       await checkStoredDefinitions();
 
       resolve({ updatedManifest: false, version: self.lastVersion });
+      log("D2API", "Manifest version is up to date");
     });
   };
 
   this.getManifest = async function () {
     let lastManifestUpdate = await db.getItem("lastManifestUpdate");
+    log("D2API", "Checking if manifest is cached");
 
     if (
       lastManifestUpdate !== null &&
       Date.now() - lastManifestUpdate < 60000 * 60
     ) {
       if ((await db.getItem("manifest")) !== null) {
+        log("D2API", "Manifest is cached");
         return { Response: JSON.parse(await db.getItem("manifest")) };
       }
     }
@@ -122,6 +128,7 @@ function DestinyApiClient(d2ApiClient) {
           if (manifest.ErrorStatus == "Success") {
             db.setItem("lastManifestUpdate", Date.now());
             db.setItem("manifest", JSON.stringify(manifest.Response));
+            log("D2API", "Manifest updated");
             resolve(manifest);
           } else {
             reject(manifest);
@@ -140,6 +147,7 @@ function DestinyApiClient(d2ApiClient) {
   };
 
   async function loadDataFromStorage() {
+    log("D2API", "Loading data from storage");
     let _cachedManifest = await db.getItem("manifest");
     if (_cachedManifest !== null) {
       self.cachedManifest = JSON.parse(_cachedManifest);
@@ -168,6 +176,7 @@ function DestinyApiClient(d2ApiClient) {
       );
     }
 
+    log("D2API", "Data loaded from storage");
     eventEmitter.emit("destiny-data-loaded");
   }
 
@@ -243,12 +252,6 @@ function DestinyApiClient(d2ApiClient) {
       };
 
       xhr.send(null);
-    });
-  }
-
-  function convertObjectToArray(object) {
-    return Object.keys(object).map((key) => {
-      return object[key];
     });
   }
 
@@ -945,6 +948,8 @@ function DestinyApiClient(d2ApiClient) {
   loadDataFromStorage();
 
   this.goalApi = new Destiny2Goals();
+
+  log("D2API", "Destiny Api Client initialized");
 
   return this;
 }
