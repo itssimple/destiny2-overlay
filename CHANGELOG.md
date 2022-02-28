@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.17](https://github.com/itssimple/destiny2-overlay/compare/v0.1.16...v0.1.17) (2022-02-28)
+
+
+### Features
+
+* Added a rudimentary loading indicator. ([82aac9c](https://github.com/itssimple/destiny2-overlay/commit/82aac9c8b9b4aff06a81575f49f0ffe459dbc4b0))
+
 ### [0.1.16](https://github.com/itssimple/destiny2-overlay/compare/v0.1.15...v0.1.16) (2021-10-16)
 
 
