@@ -35,15 +35,38 @@ eventEmitter.addEventListener("refresh-window", function (window) {
 });
 
 function setLastPlayedCharacter(lastPlayed) {
-  return;
-  let lastPlayedClass = document.querySelector("#lastPlayedClass");
-  let lastPlayedTotalTime = document.querySelector("#lastPlayedTotalTime");
+  let tempGoalContainer = document.querySelector("#allGoals");
 
-  lastPlayedClass.innerText = `${lastPlayed.genderName} ${lastPlayed.raceName} ${lastPlayed.className}`;
-  lastPlayedTotalTime.innerText = `Played ${formatTimespan(
+  tempGoalContainer.innerHTML = "";
+
+  let lastPlayedCharacter = document.createElement("div");
+  lastPlayedCharacter.classList.add("hud");
+  lastPlayedCharacter.classList.add("translucent");
+  lastPlayedCharacter.innerText =
+    destinyApiClient.profile.profile.data.userInfo.displayName;
+
+  lastPlayedCharacter.style = `
+  background-image: url("https://www.bungie.net${lastPlayed.emblemBackgroundPath}");
+  background-repeat: no-repeat;
+  padding-left: 96px;
+  padding-top: 18px;
+  height: 96px;
+  font-size: 24px;
+  `;
+
+  tempGoalContainer.appendChild(lastPlayedCharacter);
+
+  let lastPlayedClass = document.createElement("div");
+  lastPlayedClass.classList.add("hud");
+  lastPlayedClass.classList.add("sub-header");
+  lastPlayedClass.innerHTML = `${lastPlayed.genderName} ${lastPlayed.raceName} ${lastPlayed.className}<br />Played ${formatTimespan(
     new Date(),
     new Date(Date.now() + lastPlayed.minutesPlayedTotal * 60 * 1000)
   )}`;
+
+  tempGoalContainer.appendChild(lastPlayedClass);
+
+  console.log(lastPlayed);
 }
 
 eventEmitter.addEventListener("destiny-data-loaded", async function () {
@@ -58,6 +81,8 @@ async function loadGoals(loadReason, namedObject) {
   ) {
     return;
   }
+
+  return;
 
   let depth = 0;
 
@@ -99,7 +124,7 @@ async function renderSubPresentationNode(presentationNode, namedObject, depth) {
     for (let childNode of presentationNode.children.presentationNodes) {
       let subNode =
         destinyApiClient.destinyDataDefinition
-          .DestinyPresentationNodeDefinition[childNode.presentationNodeHash];
+        .DestinyPresentationNodeDefinition[childNode.presentationNodeHash];
 
       let goal = document.createElement("div");
       goal.classList.add("hud");
@@ -293,31 +318,31 @@ async function loadSettings() {
   );
 
   document.getElementById("trackSeasonRank").checked = JSON.parse(
-    ((await db.getItem("d2-track-seasonrank")) ?? "true").toString()
-  )
-    ? "checked"
-    : "";
+      ((await db.getItem("d2-track-seasonrank")) ?? "true").toString()
+    ) ?
+    "checked" :
+    "";
 
   document.getElementById("trackMilestones").checked = JSON.parse(
-    ((await db.getItem("d2-track-milestones")) ?? "true").toString()
-  )
-    ? "checked"
-    : "";
+      ((await db.getItem("d2-track-milestones")) ?? "true").toString()
+    ) ?
+    "checked" :
+    "";
   document.getElementById("trackBounties").checked = JSON.parse(
-    ((await db.getItem("d2-track-bounties")) ?? "true").toString()
-  )
-    ? "checked"
-    : "";
+      ((await db.getItem("d2-track-bounties")) ?? "true").toString()
+    ) ?
+    "checked" :
+    "";
   document.getElementById("trackQuests").checked = JSON.parse(
-    ((await db.getItem("d2-track-quests")) ?? "true").toString()
-  )
-    ? "checked"
-    : "";
+      ((await db.getItem("d2-track-quests")) ?? "true").toString()
+    ) ?
+    "checked" :
+    "";
   document.getElementById("trackRecords").checked = JSON.parse(
-    ((await db.getItem("d2-track-records")) ?? "true").toString()
-  )
-    ? "checked"
-    : "";
+      ((await db.getItem("d2-track-records")) ?? "true").toString()
+    ) ?
+    "checked" :
+    "";
 }
 
 function downloadUpdate() {

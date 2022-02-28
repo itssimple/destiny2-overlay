@@ -87,6 +87,12 @@ function renderGoalItem(goal) {
 async function updateGoalList(goals) {
   await loadSettings();
 
+  let loadingIndicator = document.querySelector(".loading-indicator");
+
+  if (loadingIndicator) {
+    loadingIndicator.remove();
+  }
+
   var goalList = document.getElementById("goal-list");
 
   goalList.innerHTML = "";

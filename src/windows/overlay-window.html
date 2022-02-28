@@ -4,6 +4,7 @@
 	<title>Destiny 2 - Overlay window</title>
 	<link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet" />
 <link type="text/css" href="../css/overlay-styles.css" rel="stylesheet" />
+<link type="text/css" href="../css/loading.css" rel="stylesheet" />
 <link type="text/css" href="../../fonts/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../scripts/draggable-window.js"></script>
 <script type="text/javascript" src="../scripts/utils.js"></script>
@@ -19,6 +20,40 @@
     </nav>
 		<div class="container-fluid h-80" id="main-win-container">
 			<ul class="list-unstyled" id="goal-list">
+				<li class="loading-indicator">
+					<div class="container warlock">
+						<div class="circle c1"></div>
+						<div class="circle c2"></div>
+						<div class="circle c3"></div>
+						<div class="circle c4"></div>
+						<div class="shape_group">
+							<div class="shape s1"></div>
+							<div class="shape s2"></div>
+							<div class="shape s3"></div>
+							<div class="shape s4"></div>
+							<div class="shape s5"></div>
+							<div class="shape s6"></div>
+						</div>
+						<div class="line_group g1">
+							<div class="line l1"></div>
+							<div class="line l2"></div>
+							<div class="line l3"></div>
+							<div class="line l4"></div>
+						</div>
+						<div class="line_group g2">
+							<div class="line l1"></div>
+							<div class="line l2"></div>
+							<div class="line l3"></div>
+							<div class="line l4"></div>
+						</div>
+						<div class="line_group g3">
+							<div class="line l1"></div>
+							<div class="line l2"></div>
+							<div class="line l3"></div>
+							<div class="line l4"></div>
+						</div>
+					</div>
+				</li>
 			</ul>
 		</div>
 
@@ -34,5 +69,6 @@
       type="text/javascript"
       src="../scripts/overlayWindow.js"
     ></script>
+		<script type="text/javascript" src="../scripts/loading-indicator.js" ></script>
 	</body>
 </html>

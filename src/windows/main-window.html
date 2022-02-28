@@ -2,8 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Destiny 2 Goal Tracker - Main Window - Overwolf</title>
+    <title>Destiny 2 Goal Tracker - Main Window</title>
     <link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet" />
+    <link type="text/css" href="../css/loading.css" rel="stylesheet" />
     <link type="text/css" href="../css/main-window.css" rel="stylesheet" />
     <link type="text/css" href="../css/window-styles.css" rel="stylesheet" />
     <link type="text/css" href="../../fonts/style.css" rel="stylesheet" />
@@ -65,10 +66,43 @@
             <div class="col-12 pt-2">
               <div class="card text-white mb-3" id="main-card">
                 <div class="card-header fui sub-title">
-                  GOALS AVAILABLE FOR TRACKING
+                  LAST PLAYED CHARACTER
                 </div>
                 <div class="card-body destiny" id="allGoals" style="min-height: 527px; max-height: 527px; overflow: auto;">
-                  Loading Destiny 2 Data ...
+                  <div class="loading-indicator">
+                    <div class="container warlock">
+                      <div class="circle c1"></div>
+                      <div class="circle c2"></div>
+                      <div class="circle c3"></div>
+                      <div class="circle c4"></div>
+                      <div class="shape_group">
+                        <div class="shape s1"></div>
+                        <div class="shape s2"></div>
+                        <div class="shape s3"></div>
+                        <div class="shape s4"></div>
+                        <div class="shape s5"></div>
+                        <div class="shape s6"></div>
+                      </div>
+                      <div class="line_group g1">
+                        <div class="line l1"></div>
+                        <div class="line l2"></div>
+                        <div class="line l3"></div>
+                        <div class="line l4"></div>
+                      </div>
+                      <div class="line_group g2">
+                        <div class="line l1"></div>
+                        <div class="line l2"></div>
+                        <div class="line l3"></div>
+                        <div class="line l4"></div>
+                      </div>
+                      <div class="line_group g3">
+                        <div class="line l1"></div>
+                        <div class="line l2"></div>
+                        <div class="line l3"></div>
+                        <div class="line l4"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -159,6 +193,7 @@
     </div>
     <script type="text/javascript" src="../../scripts/jquery.min.js" ></script>
     <script type="text/javascript" src="../../scripts/bootstrap.min.js" ></script>
+    <script type="text/javascript" src="../scripts/loading-indicator.js" ></script>
     <!--<script src="https://content.overwolf.com/libs/ads/latest/owads.min.js" async onload="onOwAdReady()"></script>-->
   </body>
 </html>

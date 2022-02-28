@@ -1,6 +1,6 @@
 const gulp = require("gulp");
 const replace = require("gulp-replace");
-const sass = require("gulp-sass");
+const sass = require('gulp-sass')(require('sass'));
 const cleancss = require("gulp-clean-css");
 const purgecss = require("gulp-purgecss");
 

@@ -7,16 +7,15 @@
   "scripts": {
     "release": "yarn standard-version && yarn gulp deploy && git commit -am \"chore: version bump\" && git push --follow-tags origin master"
   },
-  "dependencies": {
+  "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-purgecss": "^4.0.3",
     "gulp-replace": "^1.1.2",
-    "gulp-sass": "^4.1.0",
+    "gulp-sass": "^5.1.0",
     "gulp-uglify": "^3.0.2",
+    "markdown-it": "^12.0.6",
+    "sass": "^1.49.9",
     "standard-version": "^9.3.0"
-  },
-  "devDependencies": {
-    "markdown-it": "^12.0.6"
   }
 }
