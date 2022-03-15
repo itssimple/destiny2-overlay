@@ -340,14 +340,11 @@ if (firstLaunch) {
     }
   );
 
-  window.eventEmitter.addEventListener(
-    'manifests-loaded',
-    async function () {
-      closeLoadingWindow();
-      localStorage.removeItem("mainWindow_opened");
-      openWindow(null, null);
-    }
-  );
+  window.eventEmitter.addEventListener("manifests-loaded", async function () {
+    closeLoadingWindow();
+    localStorage.removeItem("mainWindow_opened");
+    openWindow(null, null);
+  });
 
   function checkExtensionUpdate() {
     overwolf.extensions.checkForExtensionUpdate((updateState) => {
@@ -415,12 +412,17 @@ if (firstLaunch) {
 
             await destinyApiClient.checkManifestVersion();
 
-            let missingDefinitions = await destinyApiClient.checkStoredDefinitions(false);
+            let missingDefinitions =
+              await destinyApiClient.checkStoredDefinitions(false);
 
             let showLoadingWindow = true;
 
-            if(missingDefinitions.length > 0) {
-              log("DATABASE", "Missing definitions, downloading them", missingDefinitions);
+            if (missingDefinitions.length > 0) {
+              log(
+                "DATABASE",
+                "Missing definitions, downloading them",
+                missingDefinitions
+              );
               showLoadingWindow = true;
             }
 
@@ -438,7 +440,7 @@ if (firstLaunch) {
               locSearch.indexOf("source=tray") > -1 ||
               (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
             ) {
-              if(showLoadingWindow) {
+              if (showLoadingWindow) {
                 log("DATABASE", "Opening loading window");
                 openLoadingWindow();
               } else {
@@ -447,11 +449,12 @@ if (firstLaunch) {
               }
             } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
               log("GAME:LAUNCH", "Application was started by game");
-              overwolf.games.getRunningGameInfo(async function (data) {
+              if (showLoadingWindow) {
+                log("DATABASE", "Opening loading window");
+                openLoadingWindow();
+              }
+              overwolf.games.getRunningGameInfo(function (data) {
                 if (data) {
-                  if(showLoadingWindow) {
-                    await destinyApiClient.checkStoredDefinitions(true);
-                  }
                   gameLaunched(data);
                 }
               });
@@ -461,7 +464,7 @@ if (firstLaunch) {
                 locSearch.replace("?source=urlscheme&", "")
               );
 
-              if(showLoadingWindow) {
+              if (showLoadingWindow) {
                 log("DATABASE", "Opening loading window");
                 openLoadingWindow();
               }
