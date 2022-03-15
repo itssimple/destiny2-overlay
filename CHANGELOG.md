@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/itssimple/destiny2-overlay/compare/v1.1.0...v1.1.1) (2022-03-15)
+
+
+### Bug Fixes
+
+* Show loading window during game bootup (in case the app hasn't been started before) ([33904bf](https://github.com/itssimple/destiny2-overlay/commit/33904bf8a654871458a23d6ebea63253432e103e))
+
 ## [1.1.0](https://github.com/itssimple/destiny2-overlay/compare/v0.1.17...v1.1.0) (2022-03-15)
 
 
