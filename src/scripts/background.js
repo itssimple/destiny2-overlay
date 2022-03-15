@@ -6,6 +6,7 @@
 var firstLaunch = true;
 var mainWindowId = null;
 var overlayWindowId = null;
+var loadingWindowId = null;
 
 const destiny2ClassId = 21812;
 
@@ -144,6 +145,23 @@ if (firstLaunch) {
       await destinyApiClient.getTrackableData(true);
     }, 5000);
   });
+
+  function openLoadingWindow() {
+    overwolf.windows.obtainDeclaredWindow("loadingWindow", (result) => {
+      console.log(result);
+      if (!result.success) {
+        return;
+      }
+
+      loadingWindowId = result.window.id;
+      overwolf.windows.restore(result.window.id);
+      log("WINDOW", `Opening window. Reason: Missing manifest data`);
+    });
+  }
+
+  function closeLoadingWindow() {
+    overwolf.windows.close(loadingWindowId, function () {});
+  }
 
   function openOverlay() {
     if (overlayWindowId == null) {
@@ -322,6 +340,15 @@ if (firstLaunch) {
     }
   );
 
+  window.eventEmitter.addEventListener(
+    'manifests-loaded',
+    async function () {
+      closeLoadingWindow();
+      localStorage.removeItem("mainWindow_opened");
+      openWindow(null, null);
+    }
+  );
+
   function checkExtensionUpdate() {
     overwolf.extensions.checkForExtensionUpdate((updateState) => {
       if (updateState.success) {
@@ -380,56 +407,78 @@ if (firstLaunch) {
 
       overwolf.extensions.current.getExtraObject(
         "destiny2ApiClient",
-        (result) => {
+        async (result) => {
           if (result.status == "success") {
             window.d2ApiClient = result.object;
 
             window.destinyApiClient = new DestinyApiClient(d2ApiClient);
+
+            await destinyApiClient.checkManifestVersion();
+
+            let missingDefinitions = await destinyApiClient.checkStoredDefinitions(false);
+
+            let showLoadingWindow = true;
+
+            if(missingDefinitions.length > 0) {
+              log("DATABASE", "Missing definitions, downloading them", missingDefinitions);
+              showLoadingWindow = true;
+            }
+
+            let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
+
+            let locSearch = location.search;
+
+            if (
+              locSearch.indexOf("-from-desktop") > -1 ||
+              locSearch.indexOf("source=commandline") > -1 ||
+              locSearch.indexOf("source=dock") > -1 ||
+              locSearch.indexOf("source=storeapi") > -1 ||
+              locSearch.indexOf("source=odk") > -1 ||
+              locSearch.indexOf("source=after-install") > -1 ||
+              locSearch.indexOf("source=tray") > -1 ||
+              (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
+            ) {
+              if(showLoadingWindow) {
+                log("DATABASE", "Opening loading window");
+                openLoadingWindow();
+              } else {
+                localStorage.removeItem("mainWindow_opened");
+                openWindow(null, locSearch);
+              }
+            } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
+              log("GAME:LAUNCH", "Application was started by game");
+              overwolf.games.getRunningGameInfo(async function (data) {
+                if (data) {
+                  if(showLoadingWindow) {
+                    await destinyApiClient.checkStoredDefinitions(true);
+                  }
+                  gameLaunched(data);
+                }
+              });
+            } else if (locSearch.indexOf("source=urlscheme")) {
+              log("URL-LAUNCH", "Application was started by url", locSearch);
+              let urlSchemeStart = unescape(
+                locSearch.replace("?source=urlscheme&", "")
+              );
+
+              if(showLoadingWindow) {
+                log("DATABASE", "Opening loading window");
+                openLoadingWindow();
+              }
+
+              handleUrlLaunch(urlSchemeStart);
+            }
+
+            // Removes the source-value from location.search, so we don't trigger multiple times
+            history.replaceState(
+              {},
+              window.title,
+              location.href.replace(location.search, "")
+            );
+            log("DATABASE", "Database initialized");
           }
         }
       );
-
-      //openOverlay();
-
-      let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
-
-      let locSearch = location.search;
-
-      if (
-        locSearch.indexOf("-from-desktop") > -1 ||
-        locSearch.indexOf("source=commandline") > -1 ||
-        locSearch.indexOf("source=dock") > -1 ||
-        locSearch.indexOf("source=storeapi") > -1 ||
-        locSearch.indexOf("source=odk") > -1 ||
-        locSearch.indexOf("source=after-install") > -1 ||
-        locSearch.indexOf("source=tray") > -1 ||
-        (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
-      ) {
-        localStorage.removeItem("mainWindow_opened");
-        openWindow(null, locSearch);
-      } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
-        log("GAME:LAUNCH", "Application was started by game");
-        overwolf.games.getRunningGameInfo(function (data) {
-          if (data) {
-            gameLaunched(data);
-          }
-        });
-      } else if (locSearch.indexOf("source=urlscheme")) {
-        log("URL-LAUNCH", "Application was started by url", locSearch);
-        let urlSchemeStart = unescape(
-          locSearch.replace("?source=urlscheme&", "")
-        );
-
-        handleUrlLaunch(urlSchemeStart);
-      }
-
-      // Removes the source-value from location.search, so we don't trigger multiple times
-      history.replaceState(
-        {},
-        window.title,
-        location.href.replace(location.search, "")
-      );
-      log("DATABASE", "Database initialized");
     });
   }
 }

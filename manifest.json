@@ -39,6 +39,29 @@
         "background_optimization": false,
         "block_top_window_navigation": true
       },
+      "loadingWindow": {
+        "file": "resources/compiled/windows/loading-window.html",
+        "show_in_taskbar": true,
+        "is_background_page": false,
+        "grab_focus_on_desktop": true,
+        "desktop_only": true,
+        "native_window": true,
+        "disable_hardware_acceleration": true,
+        "disable_auto_dpi_sizing": true,
+        "resizable": false,
+        "min_size": {
+          "width": 450,
+          "height": 400
+        },
+        "size": {
+          "width": 450,
+          "height": 400
+        },
+        "max_size": {
+          "width": 450,
+          "height": 400
+        }
+      },
       "overlayWindow": {
         "file": "resources/compiled/windows/overlay-window.html",
         "show_in_taskbar": true,

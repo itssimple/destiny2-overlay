@@ -65,8 +65,6 @@ function setLastPlayedCharacter(lastPlayed) {
   )}`;
 
   tempGoalContainer.appendChild(lastPlayedClass);
-
-  console.log(lastPlayed);
 }
 
 eventEmitter.addEventListener("destiny-data-loaded", async function () {
@@ -287,6 +285,8 @@ async function renderRecordNodes(presentationNode, namedObject) {
 eventEmitter.addEventListener("destiny-not-authed", function () {
   document.querySelector("#authenticateWithBungie").style.display = "";
   document.querySelector("#logoutFromBungie").style.display = "none";
+
+  document.querySelector("#allGoals").innerHTML = "<h1>Authenticate with Bungie to see your latest played character</h1>";
 });
 
 eventEmitter.addEventListener(
@@ -494,15 +494,16 @@ function bindExitButtonEvent(window) {
     setTimeout(async function () {
       let hasAuthed = await destinyApiClient.isAuthenticated();
       if (hasAuthed) {
-        document.querySelector("#authenticateWithBungie").style.display =
-          "none";
+        document.querySelector("#authenticateWithBungie").style.display = "none";
         document.querySelector("#logoutFromBungie").style.display = "";
       } else {
         document.querySelector("#authenticateWithBungie").style.display = "";
         document.querySelector("#logoutFromBungie").style.display = "none";
+        document.querySelector("#allGoals").innerHTML = "<h1>Authenticate with Bungie to see your latest played character</h1>";
       }
 
-      await loadGoals("open-window");
+      let namedObject = await destinyApiClient.getNamedDataObject(false);
+      await loadGoals("window-opened", namedObject);
     }, 100);
   });
 
