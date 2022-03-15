@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/itssimple/destiny2-overlay/compare/v0.1.17...v1.1.0) (2022-03-15)
+
+
+### Features
+
+* Added loading window, which also handles missing manifest files. ([5fe424f](https://github.com/itssimple/destiny2-overlay/commit/5fe424f9ad522fcf801588c29f867d9cb17b7077))
+
 ### [0.1.17](https://github.com/itssimple/destiny2-overlay/compare/v0.1.16...v0.1.17) (2022-02-28)
 
 
