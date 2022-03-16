@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/itssimple/destiny2-overlay/compare/v1.1.1...v1.1.2) (2022-03-16)
+
+
+### Bug Fixes
+
+* Don't open the main window all the time, only if the user is not authenticated. ([dbcaae0](https://github.com/itssimple/destiny2-overlay/commit/dbcaae0f1795a649229450319550ccfce56b1dd8))
+
 ### [1.1.1](https://github.com/itssimple/destiny2-overlay/compare/v1.1.0...v1.1.1) (2022-03-15)
 
 
