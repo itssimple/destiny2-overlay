@@ -342,8 +342,11 @@ if (firstLaunch) {
 
   window.eventEmitter.addEventListener("manifests-loaded", async function () {
     closeLoadingWindow();
-    localStorage.removeItem("mainWindow_opened");
-    openWindow(null, null);
+
+    if (!(await destinyApiClient.isAuthenticated())) {
+      localStorage.removeItem("mainWindow_opened");
+      openWindow(null, null);
+    }
   });
 
   function checkExtensionUpdate() {
