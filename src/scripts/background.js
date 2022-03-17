@@ -8,6 +8,8 @@ var mainWindowId = null;
 var overlayWindowId = null;
 var loadingWindowId = null;
 
+var wasManuallyOpened = false;
+
 const destiny2ClassId = 21812;
 
 function openWindow(event, originEvent) {
@@ -173,7 +175,7 @@ if (firstLaunch) {
         let windowPosition = JSON.parse(
           await db.getItem(`${result.window.id}-position`)
         ) || {
-          left: 30,
+          left: parseInt(window.screen.availWidth - 250),
           top: parseInt(window.screen.availHeight / 4 - 50),
         };
 
@@ -343,7 +345,7 @@ if (firstLaunch) {
   window.eventEmitter.addEventListener("manifests-loaded", async function () {
     closeLoadingWindow();
 
-    if (!(await destinyApiClient.isAuthenticated())) {
+    if (!(await destinyApiClient.isAuthenticated()) || wasManuallyOpened) {
       localStorage.removeItem("mainWindow_opened");
       openWindow(null, null);
     }
@@ -443,12 +445,11 @@ if (firstLaunch) {
               locSearch.indexOf("source=tray") > -1 ||
               (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
             ) {
+              wasManuallyOpened = true;
+
               if (showLoadingWindow) {
                 log("DATABASE", "Opening loading window");
                 openLoadingWindow();
-              } else {
-                localStorage.removeItem("mainWindow_opened");
-                openWindow(null, locSearch);
               }
             } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
               log("GAME:LAUNCH", "Application was started by game");
