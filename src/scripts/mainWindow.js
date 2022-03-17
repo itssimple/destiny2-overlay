@@ -42,8 +42,7 @@ function setLastPlayedCharacter(lastPlayed) {
   let lastPlayedCharacter = document.createElement("div");
   lastPlayedCharacter.classList.add("hud");
   lastPlayedCharacter.classList.add("translucent");
-  lastPlayedCharacter.innerText =
-    destinyApiClient.profile.profile.data.userInfo.displayName;
+  lastPlayedCharacter.innerText = `${destinyApiClient.profile.profile.data.userInfo.bungieGlobalDisplayName}#${destinyApiClient.profile.profile.data.userInfo.bungieGlobalDisplayNameCode} (${lastPlayed.light})`;
 
   lastPlayedCharacter.style = `
   background-image: url("https://www.bungie.net${lastPlayed.emblemBackgroundPath}");
@@ -54,17 +53,19 @@ function setLastPlayedCharacter(lastPlayed) {
   font-size: 24px;
   `;
 
-  tempGoalContainer.appendChild(lastPlayedCharacter);
-
   let lastPlayedClass = document.createElement("div");
   lastPlayedClass.classList.add("hud");
   lastPlayedClass.classList.add("sub-header");
-  lastPlayedClass.innerHTML = `${lastPlayed.genderName} ${lastPlayed.raceName} ${lastPlayed.className}<br />Played ${formatTimespan(
+  lastPlayedClass.innerHTML = `${lastPlayed.genderName} ${
+    lastPlayed.raceName
+  } ${lastPlayed.className}, Played ${formatTimespan(
     new Date(),
     new Date(Date.now() + lastPlayed.minutesPlayedTotal * 60 * 1000)
   )}`;
 
-  tempGoalContainer.appendChild(lastPlayedClass);
+  lastPlayedCharacter.appendChild(lastPlayedClass);
+
+  tempGoalContainer.appendChild(lastPlayedCharacter);
 }
 
 eventEmitter.addEventListener("destiny-data-loaded", async function () {
@@ -122,7 +123,7 @@ async function renderSubPresentationNode(presentationNode, namedObject, depth) {
     for (let childNode of presentationNode.children.presentationNodes) {
       let subNode =
         destinyApiClient.destinyDataDefinition
-        .DestinyPresentationNodeDefinition[childNode.presentationNodeHash];
+          .DestinyPresentationNodeDefinition[childNode.presentationNodeHash];
 
       let goal = document.createElement("div");
       goal.classList.add("hud");
@@ -286,7 +287,8 @@ eventEmitter.addEventListener("destiny-not-authed", function () {
   document.querySelector("#authenticateWithBungie").style.display = "";
   document.querySelector("#logoutFromBungie").style.display = "none";
 
-  document.querySelector("#allGoals").innerHTML = "<h1>Authenticate with Bungie to see your latest played character</h1>";
+  document.querySelector("#allGoals").innerHTML =
+    "<h1>Authenticate with Bungie to see your latest played character</h1>";
 });
 
 eventEmitter.addEventListener(
@@ -318,31 +320,31 @@ async function loadSettings() {
   );
 
   document.getElementById("trackSeasonRank").checked = JSON.parse(
-      ((await db.getItem("d2-track-seasonrank")) ?? "true").toString()
-    ) ?
-    "checked" :
-    "";
+    ((await db.getItem("d2-track-seasonrank")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
 
   document.getElementById("trackMilestones").checked = JSON.parse(
-      ((await db.getItem("d2-track-milestones")) ?? "true").toString()
-    ) ?
-    "checked" :
-    "";
+    ((await db.getItem("d2-track-milestones")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
   document.getElementById("trackBounties").checked = JSON.parse(
-      ((await db.getItem("d2-track-bounties")) ?? "true").toString()
-    ) ?
-    "checked" :
-    "";
+    ((await db.getItem("d2-track-bounties")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
   document.getElementById("trackQuests").checked = JSON.parse(
-      ((await db.getItem("d2-track-quests")) ?? "true").toString()
-    ) ?
-    "checked" :
-    "";
+    ((await db.getItem("d2-track-quests")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
   document.getElementById("trackRecords").checked = JSON.parse(
-      ((await db.getItem("d2-track-records")) ?? "true").toString()
-    ) ?
-    "checked" :
-    "";
+    ((await db.getItem("d2-track-records")) ?? "true").toString()
+  )
+    ? "checked"
+    : "";
 }
 
 function downloadUpdate() {
@@ -494,12 +496,14 @@ function bindExitButtonEvent(window) {
     setTimeout(async function () {
       let hasAuthed = await destinyApiClient.isAuthenticated();
       if (hasAuthed) {
-        document.querySelector("#authenticateWithBungie").style.display = "none";
+        document.querySelector("#authenticateWithBungie").style.display =
+          "none";
         document.querySelector("#logoutFromBungie").style.display = "";
       } else {
         document.querySelector("#authenticateWithBungie").style.display = "";
         document.querySelector("#logoutFromBungie").style.display = "none";
-        document.querySelector("#allGoals").innerHTML = "<h1>Authenticate with Bungie to see your latest played character</h1>";
+        document.querySelector("#allGoals").innerHTML =
+          "<h1>Authenticate with Bungie to see your latest played character and other stats</h1>";
       }
 
       let namedObject = await destinyApiClient.getNamedDataObject(false);
