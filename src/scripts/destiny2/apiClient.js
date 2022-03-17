@@ -287,6 +287,10 @@ class DestinyApiClient {
       return xhr;
     }
 
+    /**
+     * Returns the authentication URL needed to authenticate with Bungie.net.
+     * @returns {string} Authentication URL that the user needs to visit to authenticated with Bungie.net.
+     */
     this.getAuthenticationUrl = function () {
       this.randomState = (Math.random() * 10000).toString(32);
       return `${authGatewayUrl}/authenticate/destiny2?state=${this.randomState}`;
