@@ -1,19 +1,17 @@
-class Destiny2Goals {
+export class Destiny2Goals {
   constructor() {
     /**
      * @description Used for the base URL of content, like images and such.
      */
     const destinyBaseUrl = "https://www.bungie.net";
 
-    this.getSeasonRankData = function (
-      namedObject,
-      seasonDefinition,
-      seasonPassDefinition
-    ) {
+    this.getSeasonRankData = function (namedObject, seasonDefinition, seasonPassDefinition) {
       let seasonPassData = namedObject.characterProgression.progressions[seasonDefinition.seasonPassProgressionHash];
-      let seasonPassProgressionData = namedObject.characterProgression.progressions[seasonPassDefinition.prestigeProgressionHash];
+      let seasonPassProgressionData =
+        namedObject.characterProgression.progressions[seasonPassDefinition.prestigeProgressionHash];
 
-      let seasonArtifactData = destinyApiClient.destinyDataDefinition.DestinyInventoryItemDefinition[seasonDefinition.artifactItemHash];
+      let seasonArtifactData =
+        destinyApiClient.destinyDataDefinition.DestinyInventoryItemDefinition[seasonDefinition.artifactItemHash];
 
       let seasonRank = seasonPassData.level;
       let nextLevelAt = seasonPassData.nextLevelAt;
@@ -44,9 +42,7 @@ class Destiny2Goals {
     this.getMilestoneData = function (namedObject) {
       let milestoneData = [];
 
-      let milestoneKeys = Object.keys(
-        namedObject.characterProgression.milestones
-      );
+      let milestoneKeys = Object.keys(namedObject.characterProgression.milestones);
 
       for (let milestoneKey of milestoneKeys) {
         let milestone = namedObject.characterProgression.milestones[milestoneKey];
@@ -72,8 +68,7 @@ class Destiny2Goals {
         if (milestone.availableQuests && milestone.availableQuests.length > 0) {
           for (let quest of milestone.availableQuests) {
             if (quest.status.started && !quest.status.completed) {
-              if (quest.status.stepObjectives &&
-                quest.status.stepObjectives.length > 0) {
+              if (quest.status.stepObjectives && quest.status.stepObjectives.length > 0) {
                 for (let step of quest.status.stepObjectives) {
                   if (!step.complete) {
                     if (typeof step.progress !== "undefined") {
@@ -85,17 +80,14 @@ class Destiny2Goals {
                     }
 
                     if (typeof step.objectiveInProgressValueStyle !== "undefined") {
-                      milestoneDataItem.inProgressValueStyle =
-                        step.objectiveInProgressValueStyle;
+                      milestoneDataItem.inProgressValueStyle = step.objectiveInProgressValueStyle;
                     }
 
                     if (typeof step.objectiveCompletedValueStyle !== "undefined") {
-                      milestoneDataItem.completedValueStyle =
-                        step.objectiveCompletedValueStyle;
+                      milestoneDataItem.completedValueStyle = step.objectiveCompletedValueStyle;
                     }
 
-                    if ((milestoneDataItem.icon ?? "").length == 0 &&
-                      typeof step.activityIcon !== "undefined") {
+                    if ((milestoneDataItem.icon ?? "").length == 0 && typeof step.activityIcon !== "undefined") {
                       milestoneDataItem.icon = step.activityIcon;
                     }
 
@@ -113,23 +105,19 @@ class Destiny2Goals {
               for (let challenge of activity.challenges) {
                 if (!challenge.objective.complete) {
                   if (typeof challenge.objective.progress !== "undefined") {
-                    milestoneDataItem.progressToNextLevel =
-                      challenge.objective.progress;
+                    milestoneDataItem.progressToNextLevel = challenge.objective.progress;
                   }
 
                   if (typeof challenge.objectiveInProgressValueStyle !== "undefined") {
-                    milestoneDataItem.inProgressValueStyle =
-                      step.objectiveInProgressValueStyle;
+                    milestoneDataItem.inProgressValueStyle = step.objectiveInProgressValueStyle;
                   }
 
                   if (typeof challenge.objectiveCompletedValueStyle !== "undefined") {
-                    milestoneDataItem.completedValueStyle =
-                      challenge.objectiveCompletedValueStyle;
+                    milestoneDataItem.completedValueStyle = challenge.objectiveCompletedValueStyle;
                   }
 
                   if (typeof challenge.objective.completionValue !== "undefined") {
-                    milestoneDataItem.nextLevelAt =
-                      challenge.objective.completionValue;
+                    milestoneDataItem.nextLevelAt = challenge.objective.completionValue;
                   }
 
                   break; //milestoneData.push(milestoneDataItem);
@@ -151,19 +139,15 @@ class Destiny2Goals {
     this.getBounties = function (namedObject) {
       let bountyData = [];
 
-      var bountyItems = namedObject.characterInventory.filter(
-        (item) => item.inventoryitemItemType === bountyItemType
-      );
+      var bountyItems = namedObject.characterInventory.filter((item) => item.inventoryitemItemType === bountyItemType);
 
       for (let bounty of bountyItems) {
-        let itemObjectives = namedObject.itemComponents.objectives.data[bounty.itemInstanceId]
-          .objectives;
+        let itemObjectives = namedObject.itemComponents.objectives.data[bounty.itemInstanceId].objectives;
 
         let incompleteTasks = itemObjectives.filter((obj) => !obj.complete);
 
         // If we don't have any tasks left to do, we'll ignore this bounty
-        if (incompleteTasks.length === 0)
-          continue;
+        if (incompleteTasks.length === 0) continue;
 
         for (let objective of incompleteTasks) {
           let bountyDataItem = {
@@ -190,13 +174,11 @@ class Destiny2Goals {
             bountyDataItem.nextLevelAt = objective.completionValue;
 
             if (typeof objective.objectiveInProgressValueStyle !== "undefined") {
-              bountyDataItem.inProgressValueStyle =
-                objective.objectiveInProgressValueStyle;
+              bountyDataItem.inProgressValueStyle = objective.objectiveInProgressValueStyle;
             }
 
             if (typeof objective.objectiveCompletedValueStyle !== "undefined") {
-              bountyDataItem.completedValueStyle =
-                objective.objectiveCompletedValueStyle;
+              bountyDataItem.completedValueStyle = objective.objectiveCompletedValueStyle;
             }
 
             if (typeof objective.progress !== "undefined") {
@@ -205,7 +187,7 @@ class Destiny2Goals {
 
             if (typeof objective.objectiveProgressDescription !== "undefined") {
               // ${bountyDataItem.description}<br />
-              bountyDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
+              bountyDataItem.description = `${objective.objectiveProgressDescription}`;
             }
 
             bountyData.push(bountyDataItem);
@@ -223,26 +205,20 @@ class Destiny2Goals {
       let questData = [];
 
       var questItems = namedObject.characterInventory.filter(
-        (item) => item.bucketHash === questBucketHash &&
-          [bountyItemType].filter((i) => i != item.inventoryitemItemType).length >
-          0
+        (item) =>
+          item.bucketHash === questBucketHash &&
+          [bountyItemType].filter((i) => i != item.inventoryitemItemType).length > 0
       );
 
-      let instancedQuestItems = questItems.filter(
-        (item) => typeof item.itemInstanceId !== "undefined"
-      );
+      let instancedQuestItems = questItems.filter((item) => typeof item.itemInstanceId !== "undefined");
 
-      let uninstancedQuestItems = questItems.filter(
-        (item) => typeof item.itemInstanceId === "undefined"
-      );
+      let uninstancedQuestItems = questItems.filter((item) => typeof item.itemInstanceId === "undefined");
 
       for (let instanceQuest of instancedQuestItems) {
         let itemObjectives = namedObject.itemComponents.objectives.data[instanceQuest.itemInstanceId];
 
         if (itemObjectives) {
-          const _objectives = itemObjectives.objectives.filter(
-            (objective) => objective.visible && !objective.complete
-          );
+          const _objectives = itemObjectives.objectives.filter((objective) => objective.visible && !objective.complete);
 
           for (let objective of _objectives) {
             let questDataItem = {
@@ -260,13 +236,11 @@ class Destiny2Goals {
               questDataItem.nextLevelAt = objective.completionValue;
 
               if (typeof objective.objectiveInProgressValueStyle !== "undefined") {
-                questDataItem.inProgressValueStyle =
-                  objective.objectiveInProgressValueStyle;
+                questDataItem.inProgressValueStyle = objective.objectiveInProgressValueStyle;
               }
 
               if (typeof objective.objectiveCompletedValueStyle !== "undefined") {
-                questDataItem.completedValueStyle =
-                  objective.objectiveCompletedValueStyle;
+                questDataItem.completedValueStyle = objective.objectiveCompletedValueStyle;
               }
 
               if (typeof objective.progress !== "undefined") {
@@ -275,7 +249,7 @@ class Destiny2Goals {
 
               if (typeof objective.objectiveProgressDescription !== "undefined") {
                 // ${questDataItem.description}<br />
-                questDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
+                questDataItem.description = `${objective.objectiveProgressDescription}`;
               }
 
               questData.push(questDataItem);
@@ -305,13 +279,11 @@ class Destiny2Goals {
             questDataItem.nextLevelAt = objective.completionValue;
 
             if (typeof objective.objectiveInProgressValueStyle !== "undefined") {
-              questDataItem.inProgressValueStyle =
-                objective.objectiveInProgressValueStyle;
+              questDataItem.inProgressValueStyle = objective.objectiveInProgressValueStyle;
             }
 
             if (typeof objective.objectiveCompletedValueStyle !== "undefined") {
-              questDataItem.completedValueStyle =
-                objective.objectiveCompletedValueStyle;
+              questDataItem.completedValueStyle = objective.objectiveCompletedValueStyle;
             }
 
             if (typeof objective.progress !== "undefined") {
@@ -320,7 +292,7 @@ class Destiny2Goals {
 
             if (typeof objective.objectiveProgressDescription !== "undefined") {
               // ${questDataItem.description}<br />
-              questDataItem.description = `<b>${objective.objectiveProgressDescription}</b>`;
+              questDataItem.description = `${objective.objectiveProgressDescription}`;
             }
 
             questData.push(questDataItem);
@@ -337,8 +309,7 @@ class Destiny2Goals {
       let characterRecordKeys = Object.keys(namedObject.characterRecords.records);
       for (let key of characterRecordKeys) {
         let characterRecord = namedObject.characterRecords.records[key];
-        if (typeof characterRecord.objectives === "undefined" ||
-          (characterRecord.recordName ?? "").length === 0)
+        if (typeof characterRecord.objectives === "undefined" || (characterRecord.recordName ?? "").length === 0)
           continue;
 
         let recordObjectives = characterRecord.objectives.filter(
@@ -352,7 +323,7 @@ class Destiny2Goals {
             order: 100,
             icon: characterRecord.recordIcon,
             // ${characterRecord.recordDescription}<br />
-            description: `<b>${objective.objectiveProgressDescription ?? ""}</b>`,
+            description: `${objective.objectiveProgressDescription ?? ""}`,
             progressToNextLevel: objective.progress,
             nextLevelAt: objective.completionValue,
             inProgressValueStyle: objective.objectiveInProgressValueStyle,

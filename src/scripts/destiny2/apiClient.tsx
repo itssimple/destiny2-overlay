@@ -1,5 +1,78 @@
-class DestinyApiClient {
-  constructor(d2ApiClient) {
+import { log } from "../log";
+import { Destiny2Goals } from "./goalItems";
+
+export class DestinyApiClient {
+  destinyDataDefinition: {};
+  randomState: string | null;
+  goalApi: Destiny2Goals;
+  isAuthenticated: () => Promise<boolean>;
+  getAuthenticationUrl: () => string;
+  lastVersion: string | null;
+  profile: any;
+  userMembership: any;
+  trackedGoals: any[];
+  cachedManifest: any;
+  checkManifestVersion: () => Promise<unknown>;
+  checkStoredDefinitions: (downloadMissingDefinitions?: boolean) => Promise<string[]>;
+  loadDestinyContentData: () => Promise<void>;
+  loadCommonSettings: () => Promise<unknown>;
+  getToken: (state: any, code: any) => Promise<unknown>;
+  refreshToken: () => Promise<unknown>;
+  getUserMemberships: () => Promise<unknown>;
+  getUserProfile: (membershipId: any) => Promise<unknown>;
+  getLastPlayedCharacter: (
+    forceRefresh?: boolean
+  ) => Promise<{
+    characterInfo: any;
+    characterProgression: any;
+    characterActivities: any;
+    characterUninstancedItemComponents: any;
+    characterInventory: any;
+    characterEquipment: any;
+    characterPlugSets: any;
+    characterCollectibles: any;
+    characterRecords: any;
+    profileProgression: any;
+    metrics: any;
+    itemComponents: any;
+    records: any;
+    profileInventory: any;
+    profileCurrency: any;
+    profilePlugSets: any;
+    profileCollectibles: any;
+    profile: any;
+  }>;
+  equipItems: (_lastPlayer: any) => Promise<unknown>;
+  lockItem: (membershipType: any, characterId: any, itemId: any, lockState: any) => Promise<unknown>;
+  getNamedDataObject: (
+    forceRefresh?: boolean
+  ) => Promise<{
+    characterInfo: any;
+    characterProgression: any;
+    characterActivities: any;
+    characterUninstancedItemComponents: any;
+    characterInventory: any;
+    characterEquipment: any;
+    characterPlugSets: any;
+    characterCollectibles: any;
+    characterRecords: any;
+    profileProgression: any;
+    metrics: any;
+    itemComponents: any;
+    records: any;
+    profileInventory: any;
+    profileCurrency: any;
+    profilePlugSets: any;
+    profileCollectibles: any;
+    profile: any;
+  }>;
+  getPresentationNodeFromHash: (hash: any) => any[];
+  mapHashesToDefinitionsInObject: (object: any) => any;
+  getTrackableData: (forceRefresh?: boolean) => Promise<any[]>;
+  getManifest: () => Promise<unknown>;
+  loadDataFromStorage: () => Promise<void>;
+
+  constructor(d2ApiClient: any) {
     log("D2API", "Initializing Destiny Api Client");
     const apiToken = "c32cd3cb4eb94a84acc468a1cf333dac";
 
@@ -105,10 +178,7 @@ class DestinyApiClient {
       let lastManifestUpdate = await db.getItem("lastManifestUpdate");
       log("D2API", "Checking if manifest is cached");
 
-      if (
-        lastManifestUpdate !== null &&
-        Date.now() - lastManifestUpdate < 60000 * 60
-      ) {
+      if (lastManifestUpdate !== null && Date.now() - lastManifestUpdate < 60000 * 60) {
         if ((await db.getItem("manifest")) !== null) {
           log("D2API", "Manifest is cached");
           return { Response: JSON.parse(await db.getItem("manifest")) };
@@ -116,10 +186,7 @@ class DestinyApiClient {
       }
 
       return new Promise(function (resolve, reject) {
-        let xhr = getXMLHttpRequestClient(
-          "GET",
-          `${destinyApiUrl}/Destiny2/Manifest/`
-        );
+        let xhr = getXMLHttpRequestClient("GET", `${destinyApiUrl}/Destiny2/Manifest/`);
 
         xhr.onload = function () {
           if (xhr.status === 200) {
@@ -170,18 +237,14 @@ class DestinyApiClient {
       }
 
       if ((await db.getItem("destiny-userMembership")) !== null) {
-        self.userMembership = JSON.parse(
-          await db.getItem("destiny-userMembership")
-        );
+        self.userMembership = JSON.parse(await db.getItem("destiny-userMembership"));
       }
 
       log("D2API", "Data loaded from storage");
       eventEmitter.emit("destiny-data-loaded");
     };
 
-    this.checkStoredDefinitions = async function (
-      downloadMissingDefinitions = true
-    ) {
+    this.checkStoredDefinitions = async function (downloadMissingDefinitions = true) {
       let missingDefinitions = [];
 
       for (let dataType of destinyDataTypes) {
@@ -209,13 +272,9 @@ class DestinyApiClient {
 
     this.loadCommonSettings = async function () {
       return new Promise(async (resolve, reject) => {
-        await pluginClient.GET(
-          `${destinyApiUrl}/Settings`,
-          await getUserToken(),
-          (response) => {
-            resolve(JSON.parse(response.content));
-          }
-        );
+        await pluginClient.GET(`${destinyApiUrl}/Settings`, await getUserToken(), (response) => {
+          resolve(JSON.parse(response.content));
+        });
       });
     };
 
@@ -236,10 +295,7 @@ class DestinyApiClient {
             let contentJson = JSON.parse(xhr.responseText);
 
             self.destinyDataDefinition[dataType] = contentJson;
-            db.setItem(
-              `destinyContent-${dataType}`,
-              JSON.stringify(contentJson)
-            );
+            db.setItem(`destinyContent-${dataType}`, JSON.stringify(contentJson));
 
             resolve(contentJson);
           } else {
@@ -248,19 +304,14 @@ class DestinyApiClient {
         };
 
         xhr.onprogress = function (event) {
-          console.log(
-            `Downloaded ${event.loaded} of ${event.total} bytes for: ${xhr.responseURL}`
-          );
+          console.log(`Downloaded ${event.loaded} of ${event.total} bytes for: ${xhr.responseURL}`);
         };
 
         xhr.onerror = function () {
           reject(xhr.statusText);
         };
 
-        eventEmitter.emit(
-          "loading-text",
-          `Loading ${dataType.replace("Destiny", "")}`
-        );
+        eventEmitter.emit("loading-text", `Loading ${dataType.replace("Destiny", "")}`);
         xhr.send(null);
       });
     }
@@ -270,16 +321,9 @@ class DestinyApiClient {
      */
     function getXMLHttpRequestClient(method, url, bearerToken = null) {
       var xhr = new XMLHttpRequest();
-
       xhr.open(method, url);
-
-      xhr.setRequestHeader(
-        "X-User-Agent",
-        "Destiny 2 Goal Tracker AppId/41664 (+d2goaltracker@itssimple.se)"
-      );
-
+      xhr.setRequestHeader("X-User-Agent", "Destiny 2 Goal Tracker AppId/41664 (+d2goaltracker@itssimple.se)");
       xhr.setRequestHeader("X-API-Key", apiToken);
-
       if (bearerToken !== null) {
         xhr.setRequestHeader("Authorization", "Bearer " + bearerToken);
       }
@@ -301,14 +345,8 @@ class DestinyApiClient {
         // This means we have our token, lets save it!
         db.setItem("destinyToken", tokenResponse.access_token);
         db.setItem("destinyRefreshToken", tokenResponse.refresh_token);
-        db.setItem(
-          "destinyExpires",
-          Date.now() + tokenResponse.expires_in * 1000
-        );
-        db.setItem(
-          "destinyRefreshTokenExpires",
-          Date.now() + tokenResponse.refresh_expires_in * 1000
-        );
+        db.setItem("destinyExpires", Date.now() + tokenResponse.expires_in * 1000);
+        db.setItem("destinyRefreshTokenExpires", Date.now() + tokenResponse.refresh_expires_in * 1000);
       }
     }
 
@@ -319,14 +357,8 @@ class DestinyApiClient {
       }
 
       return new Promise((resolve, reject) => {
-        let tokenRequest = getXMLHttpRequestClient(
-          "POST",
-          `${authGatewayUrl}/token/destiny2`
-        );
-        tokenRequest.setRequestHeader(
-          "Content-Type",
-          "application/json;charset=UTF-8"
-        );
+        let tokenRequest = getXMLHttpRequestClient("POST", `${authGatewayUrl}/token/destiny2`);
+        tokenRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
         tokenRequest.onload = function () {
           if (tokenRequest.status === 200) {
@@ -355,14 +387,8 @@ class DestinyApiClient {
       }
 
       return new Promise(async (resolve, reject) => {
-        let tokenRequest = getXMLHttpRequestClient(
-          "POST",
-          `${authGatewayUrl}/refresh/destiny2`
-        );
-        tokenRequest.setRequestHeader(
-          "Content-Type",
-          "application/json;charset=UTF-8"
-        );
+        let tokenRequest = getXMLHttpRequestClient("POST", `${authGatewayUrl}/refresh/destiny2`);
+        tokenRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
         tokenRequest.onload = function () {
           if (tokenRequest.status === 200) {
@@ -414,10 +440,7 @@ class DestinyApiClient {
             if (result.statusCode === 200) {
               let memberships = JSON.parse(result.content);
 
-              db.setItem(
-                "destiny-userMembership",
-                JSON.stringify(memberships.Response)
-              );
+              db.setItem("destiny-userMembership", JSON.stringify(memberships.Response));
 
               self.userMembership = memberships.Response;
 
@@ -497,9 +520,7 @@ class DestinyApiClient {
 
       return new Promise(async (resolve, reject) => {
         await pluginClient.GET(
-          `${destinyApiUrl}/Destiny2/3/Profile/${membershipId}/?components=${interestingComponents.join(
-            ","
-          )}`,
+          `${destinyApiUrl}/Destiny2/3/Profile/${membershipId}/?components=${interestingComponents.join(",")}`,
           await getUserToken(),
           (result) => {
             if (result.statusCode === 200) {
@@ -529,9 +550,7 @@ class DestinyApiClient {
       }
 
       if (_profile == null && self.userMembership !== null) {
-        _profile = await self.getUserProfile(
-          self.userMembership.destinyMemberships[0].membershipId
-        );
+        _profile = await self.getUserProfile(self.userMembership.destinyMemberships[0].membershipId);
       }
 
       let characters = [];
@@ -540,58 +559,33 @@ class DestinyApiClient {
         characters.push(_profile.characters.data[char]);
       }
 
-      let _last = characters.sort((a, b) =>
-        a.dateLastPlayed > b.dateLastPlayed ? -1 : 1
-      )[0];
+      let _last = characters.sort((a, b) => (a.dateLastPlayed > b.dateLastPlayed ? -1 : 1))[0];
 
       let lastPlayedCharacter = {
         characterInfo: _last,
-
         characterProgression: !!!_profile.characterProgressions.disabled
           ? _profile.characterProgressions.data[_last.characterId]
           : {},
-
         characterActivities: !!!_profile.characterActivities.disabled
           ? _profile.characterActivities.data[_last.characterId]
           : {},
-
         characterUninstancedItemComponents:
-          _profile.characterUninstancedItemComponents[_last.characterId]
-            .objectives.data,
-
-        characterInventory:
-          _profile.characterInventories.data[_last.characterId].items,
-
-        characterEquipment:
-          _profile.characterEquipment.data[_last.characterId].items,
-
+          _profile.characterUninstancedItemComponents[_last.characterId].objectives.data,
+        characterInventory: _profile.characterInventories.data[_last.characterId].items,
+        characterEquipment: _profile.characterEquipment.data[_last.characterId].items,
         characterPlugSets: !!!_profile.characterPlugSets.disabled
           ? _profile.characterPlugSets.data[_last.characterId].plugs
           : {},
-
-        characterCollectibles:
-          _profile.characterCollectibles.data[_last.characterId].collectibles,
-
+        characterCollectibles: _profile.characterCollectibles.data[_last.characterId].collectibles,
         characterRecords: _profile.characterRecords.data[_last.characterId],
-
         profileProgression: _profile.profileProgression.data,
-
         metrics: _profile.metrics.data.metrics,
-
         itemComponents: _profile.itemComponents,
-
         records: _profile.profileRecords.data,
-
         profileInventory: _profile.profileInventory.data.items,
-
         profileCurrency: _profile.profileCurrencies.data.items,
-
-        profilePlugSets: !!!_profile.profilePlugSets.disabled
-          ? _profile.profilePlugSets.data.plugs
-          : {},
-
+        profilePlugSets: !!!_profile.profilePlugSets.disabled ? _profile.profilePlugSets.data.plugs : {},
         profileCollectibles: _profile.profileCollectibles.data,
-
         profile: _profile.profile.data,
       };
 
@@ -619,12 +613,7 @@ class DestinyApiClient {
       });
     };
 
-    this.lockItem = async function (
-      membershipType,
-      characterId,
-      itemId,
-      lockState
-    ) {
+    this.lockItem = async function (membershipType, characterId, itemId, lockState) {
       return new Promise(async (resolve, reject) => {
         await pluginClient.POSTJson(
           `${destinyApiUrl}/Destiny2/Actions/Items/SetLockState/`,
@@ -675,21 +664,15 @@ class DestinyApiClient {
         namedDataObject.records.records[recordKey] = {
           ...namedDataObject.records.records[recordKey],
           recordHash: recordKey,
-          parentNodeHashes:
-            self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-              .parentNodeHashes,
+          parentNodeHashes: self.destinyDataDefinition.DestinyRecordDefinition[recordKey].parentNodeHashes,
         };
       }
 
-      for (let recordKey of Object.keys(
-        namedDataObject.characterRecords.records
-      )) {
+      for (let recordKey of Object.keys(namedDataObject.characterRecords.records)) {
         namedDataObject.characterRecords.records[recordKey] = {
           ...namedDataObject.characterRecords.records[recordKey],
           recordHash: recordKey,
-          parentNodeHashes:
-            self.destinyDataDefinition.DestinyRecordDefinition[recordKey]
-              .parentNodeHashes,
+          parentNodeHashes: self.destinyDataDefinition.DestinyRecordDefinition[recordKey].parentNodeHashes,
         };
       }
 
@@ -697,9 +680,7 @@ class DestinyApiClient {
 
       const cacheBreaker = await db.getItem("destiny2-use-cachebreaker", false);
       if (cacheBreaker) {
-        const lockableItems = _lastPlayer.characterInventory.filter(
-          (i) => i.lockable && i.inventoryitemItemType == 3
-        );
+        const lockableItems = _lastPlayer.characterInventory.filter((i) => i.lockable && i.inventoryitemItemType == 3);
 
         if (lockableItems.length > 0) {
           await self.lockItem(
@@ -719,8 +700,7 @@ class DestinyApiClient {
     this.getPresentationNodeFromHash = function (hash) {
       const presentationNameArray = [];
 
-      const presentationNode =
-        self.destinyDataDefinition.DestinyPresentationNodeDefinition[hash];
+      const presentationNode = self.destinyDataDefinition.DestinyPresentationNodeDefinition[hash];
       if (presentationNode) {
         presentationNameArray.unshift({
           name: presentationNode.displayProperties.name,
@@ -759,15 +739,10 @@ class DestinyApiClient {
           }
           _objectCopy[key] = _field;
         } else if (_type === "object" && _field !== null) {
-          _objectCopy[key] = self.mapHashesToDefinitionsInObject(
-            _objectCopy[key]
-          );
+          _objectCopy[key] = self.mapHashesToDefinitionsInObject(_objectCopy[key]);
         } else {
           if (key.indexOf("Hash") > -1 && !Array.isArray(_field)) {
-            let _hashType = key
-              .split("Hash")[0]
-              .replace("current", "")
-              .toLowerCase();
+            let _hashType = key.split("Hash")[0].replace("current", "").toLowerCase();
 
             switch (_hashType) {
               case "item":
@@ -777,60 +752,35 @@ class DestinyApiClient {
             }
 
             let dataType = destinyDataTypes.find(
-              (i) =>
-                i.toLowerCase() == `Destiny${_hashType}Definition`.toLowerCase()
+              (i) => i.toLowerCase() == `Destiny${_hashType}Definition`.toLowerCase()
             );
             let definitionData = self.destinyDataDefinition[dataType];
-            if (
-              definitionData &&
-              definitionData[_field] &&
-              definitionData[_field].displayProperties
-            ) {
+            if (definitionData && definitionData[_field] && definitionData[_field].displayProperties) {
               const dField = definitionData[_field];
-              if (
-                dField.displayProperties.name &&
-                dField.displayProperties.name.length > 0
-              ) {
+              if (dField.displayProperties.name && dField.displayProperties.name.length > 0) {
                 _objectCopy[`${_hashType}Name`] = dField.displayProperties.name;
-              } else if (
-                dField.setData &&
-                dField.setData.questLineName &&
-                dField.setData.questLineName.length > 0
-              ) {
+              } else if (dField.setData && dField.setData.questLineName && dField.setData.questLineName.length > 0) {
                 _objectCopy[`${_hashType}Name`] = dField.setData.questLineName;
               }
 
-              if (
-                dField.displayProperties.description &&
-                dField.displayProperties.description.length > 0
-              ) {
-                _objectCopy[`${_hashType}Description`] =
-                  dField.displayProperties.description;
+              if (dField.displayProperties.description && dField.displayProperties.description.length > 0) {
+                _objectCopy[`${_hashType}Description`] = dField.displayProperties.description;
               }
 
-              if (
-                dField.displayProperties.icon &&
-                dField.displayProperties.icon.length > 0
-              ) {
+              if (dField.displayProperties.icon && dField.displayProperties.icon.length > 0) {
                 _objectCopy[`${_hashType}Icon`] = dField.displayProperties.icon;
               }
 
-              if (
-                dField.progressDescription &&
-                dField.progressDescription.length > 0
-              ) {
-                _objectCopy[`${_hashType}ProgressDescription`] =
-                  dField.progressDescription;
+              if (dField.progressDescription && dField.progressDescription.length > 0) {
+                _objectCopy[`${_hashType}ProgressDescription`] = dField.progressDescription;
               }
 
               if (typeof dField.inProgressValueStyle !== "undefined") {
-                _objectCopy[`${_hashType}InProgressValueStyle`] =
-                  dField.inProgressValueStyle;
+                _objectCopy[`${_hashType}InProgressValueStyle`] = dField.inProgressValueStyle;
               }
 
               if (typeof dField.completedValueStyle !== "undefined") {
-                _objectCopy[`${_hashType}CompletedValueStyle`] =
-                  dField.completedValueStyle;
+                _objectCopy[`${_hashType}CompletedValueStyle`] = dField.completedValueStyle;
               }
 
               if (typeof dField.itemType !== "undefined") {
@@ -838,11 +788,9 @@ class DestinyApiClient {
               }
 
               if (typeof dField.parentNodeHashes !== "undefined") {
-                _objectCopy[`parentNodeHashes`] = dField.parentNodeHashes.map(
-                  (item) => {
-                    return self.getPresentationNodeFromHash(item);
-                  }
-                );
+                _objectCopy[`parentNodeHashes`] = dField.parentNodeHashes.map((item) => {
+                  return self.getPresentationNodeFromHash(item);
+                });
               }
             }
           }
@@ -861,14 +809,9 @@ class DestinyApiClient {
         return null;
       }
 
-      let seasonDefinition =
-        self.destinyDataDefinition.DestinySeasonDefinition[
-          namedObject.profile.currentSeasonHash
-        ];
+      let seasonDefinition = self.destinyDataDefinition.DestinySeasonDefinition[namedObject.profile.currentSeasonHash];
       let seasonPassDefinition =
-        self.destinyDataDefinition.DestinySeasonPassDefinition[
-          seasonDefinition.seasonPassHash
-        ];
+        self.destinyDataDefinition.DestinySeasonPassDefinition[seasonDefinition.seasonPassHash];
 
       let trackableDataItems = [];
 
@@ -894,10 +837,7 @@ class DestinyApiClient {
       }
 
       function sortTrackableItems(a, b) {
-        if (
-          typeof a.nextLevelAt !== "undefined" &&
-          typeof b.nextLevelAt !== "undefined"
-        ) {
+        if (typeof a.nextLevelAt !== "undefined" && typeof b.nextLevelAt !== "undefined") {
           let aProgress = (a.progressToNextLevel / a.nextLevelAt) * 100;
           let bProgress = (b.progressToNextLevel / b.nextLevelAt) * 100;
 
@@ -905,38 +845,22 @@ class DestinyApiClient {
         }
 
         if (typeof a.endDate !== "undefined") {
-          return typeof b.endDate === "undefined" || a.endDate < b.endDate
-            ? -1
-            : 1;
+          return typeof b.endDate === "undefined" || a.endDate < b.endDate ? -1 : 1;
         }
 
         return a.order < b.order ? 1 : -1;
       }
 
-      const trackedItems = trackableDataItems
-        .filter((i) => i.tracked)
-        .sort(sortTrackableItems);
+      const trackedItems = trackableDataItems.filter((i) => i.tracked).sort(sortTrackableItems);
 
-      const itemsWithExpiration = trackableDataItems
-        .filter((i) => i.endDate && !i.tracked)
-        .sort(sortTrackableItems);
+      const itemsWithExpiration = trackableDataItems.filter((i) => i.endDate && !i.tracked).sort(sortTrackableItems);
       const itemsWithoutExpiration = trackableDataItems
         .filter((i) => !i.endDate && !i.tracked)
         .sort(sortTrackableItems);
 
-      trackableDataItems = [
-        ...trackedItems,
-        ...itemsWithExpiration,
-        ...itemsWithoutExpiration,
-      ];
+      trackableDataItems = [...trackedItems, ...itemsWithExpiration, ...itemsWithoutExpiration];
 
-      trackableDataItems.unshift(
-        self.goalApi.getSeasonRankData(
-          namedObject,
-          seasonDefinition,
-          seasonPassDefinition
-        )
-      );
+      trackableDataItems.unshift(self.goalApi.getSeasonRankData(namedObject, seasonDefinition, seasonPassDefinition));
 
       self.trackedGoals = trackableDataItems;
       eventEmitter.emit("goal-list-update", trackableDataItems);

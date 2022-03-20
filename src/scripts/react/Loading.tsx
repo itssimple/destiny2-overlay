@@ -1,0 +1,72 @@
+/// <reference types="@overwolf/types" />
+
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom";
+import { LoadingIndicator } from "./components/loadingIndicator";
+
+import { DestinyApiClient } from "../destiny2/apiClient";
+import { EventEmitter } from "../eventEmitter";
+
+import "../../public/css/bootstrap.min.css";
+import "../../public/css/main-window.css";
+import "../../public/css/window-styles.css";
+
+function LoadingWindow() {
+  useEffect(() => {
+    const backgroundWindow = overwolf.windows.getMainWindow();
+
+    const destinyApiClient = (backgroundWindow as any)
+      .destinyApiClient as DestinyApiClient;
+
+    const eventEmitter = (backgroundWindow as any).eventEmitter as EventEmitter;
+
+    eventEmitter.addEventListener("loading-text", (data) => {
+      const loadingActivity = document.querySelector("#loading-activity");
+      loadingActivity.textContent = data;
+    });
+
+    const loadingActivity = document.querySelector("#loading-activity");
+    loadingActivity.textContent = "Checking manifest";
+
+    destinyApiClient.checkManifestVersion().then(async () => {
+      destinyApiClient
+        .checkStoredDefinitions(false)
+        .then(async (missingDefinitions) => {
+          const loadingActivity = document.querySelector("#loading-activity");
+          if (missingDefinitions.length > 0) {
+            loadingActivity.textContent = "Downloading definitions...";
+            await destinyApiClient.checkStoredDefinitions(true);
+          }
+
+          loadingActivity.textContent = "Loading data...";
+          destinyApiClient.loadDataFromStorage().then(() => {
+            loadingActivity.textContent = "Loading data... done";
+            setTimeout(() => {
+              loadingActivity.textContent = "Opening application...";
+              eventEmitter.emit("manifests-loaded");
+            }, 1000);
+          });
+        });
+    });
+  }, []);
+
+  return (
+    <>
+      <LoadingIndicator />
+      <div className="loading-text">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <h1>Loading</h1>
+              <h3 id="loading-activity">
+                Please wait while we load the application
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.render(<LoadingWindow />, document.getElementById("root"));

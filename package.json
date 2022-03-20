@@ -8,14 +8,29 @@
     "release": "yarn standard-version && yarn gulp deploy && git commit -am \"chore: version bump\" && git push --follow-tags origin master"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@overwolf/types": "^3.17.0",
+    "@types/react": "^17.0.41",
+    "@types/react-dom": "^17.0.14",
     "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
+    "gulp-esbuild": "^0.10.2",
     "gulp-purgecss": "^4.0.3",
     "gulp-replace": "^1.1.2",
     "gulp-sass": "^5.1.0",
+    "gulp-typescript-babel": "^1.0.0",
     "gulp-uglify": "^3.0.2",
     "markdown-it": "^12.0.6",
+    "rimraf": "^3.0.2",
     "sass": "^1.49.9",
-    "standard-version": "^9.3.0"
+    "snowpack": "^3.8.8",
+    "standard-version": "^9.3.0",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }

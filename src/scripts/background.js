@@ -1,7 +1,7 @@
-/// <reference path="log.js" />
-/// <reference path="indexedDB.js" />
-/// <reference path="eventEmitter.js" />
-/// <reference path="destiny2/apiClient.js" />
+import { log } from "./log.js";
+import { EventEmitter } from "./eventEmitter.js";
+import { Destiny2Database } from "./indexedDB.js";
+import { DestinyApiClient } from "./destiny2/apiClient.js";
 
 var firstLaunch = true;
 var mainWindowId = null;
@@ -17,11 +17,7 @@ function openWindow(event, originEvent) {
     log("WINDOW", "Got launch event: ", event);
   }
 
-  if (
-    event &&
-    (event.origin == "overwolfstartlaunchevent" ||
-      event.origin == "gamelaunchevent")
-  ) {
+  if (event && (event.origin == "overwolfstartlaunchevent" || event.origin == "gamelaunchevent")) {
     return;
   }
 
@@ -96,12 +92,7 @@ function gameLaunched(game) {
 }
 
 function gameInfoUpdated(game) {
-  if (
-    game &&
-    game.gameInfo &&
-    !game.gameInfo.isRunning &&
-    game.runningChanged
-  ) {
+  if (game && game.gameInfo && !game.gameInfo.isRunning && game.runningChanged) {
     log("GAME:UPDATE", game);
     eventEmitter.emit("game-exited", game);
   }
@@ -150,7 +141,6 @@ if (firstLaunch) {
 
   function openLoadingWindow() {
     overwolf.windows.obtainDeclaredWindow("loadingWindow", (result) => {
-      console.log(result);
       if (!result.success) {
         return;
       }
@@ -172,21 +162,14 @@ if (firstLaunch) {
           return;
         }
 
-        let windowPosition = JSON.parse(
-          await db.getItem(`${result.window.id}-position`)
-        ) || {
+        let windowPosition = JSON.parse(await db.getItem(`${result.window.id}-position`)) || {
           left: parseInt(window.screen.availWidth - 250),
           top: parseInt(window.screen.availHeight / 4 - 50),
         };
 
         overlayWindowId = result.window.id;
         overwolf.windows.restore(overlayWindowId);
-        overwolf.windows.changePosition(
-          overlayWindowId,
-          windowPosition.left,
-          windowPosition.top,
-          () => {}
-        );
+        overwolf.windows.changePosition(overlayWindowId, windowPosition.left, windowPosition.top, () => {});
 
         let overlayWidth = 250;
 
@@ -223,22 +206,13 @@ if (firstLaunch) {
     log("EVENT:GAME-EXITED", gameInfo);
 
     if (!mainWindowId) {
-      window.eventEmitter.emit(
-        "shutdown",
-        "Main window not open or hidden, closing application"
-      );
+      window.eventEmitter.emit("shutdown", "Main window not open or hidden, closing application");
       return;
     }
 
     overwolf.windows.getWindowState(mainWindowId, function (state) {
-      if (
-        state.success &&
-        (state.window_state_ex == "closed" || state.window_state_ex == "hidden")
-      ) {
-        window.eventEmitter.emit(
-          "shutdown",
-          "Main window not open or hidden, closing application"
-        );
+      if (state.success && (state.window_state_ex == "closed" || state.window_state_ex == "hidden")) {
+        window.eventEmitter.emit("shutdown", "Main window not open or hidden, closing application");
       }
     });
   });
@@ -255,13 +229,10 @@ if (firstLaunch) {
       // Oh no, we failed to update, lets check why
 
       overwolf.windows.getWindowState(mainWindowId, function (state) {
-        if (
-          state.success &&
-          state.window_state_ex != "closed" &&
-          state.window_state_ex != "hidden"
-        ) {
+        if (state.success && state.window_state_ex != "closed" && state.window_state_ex != "hidden") {
           window.eventEmitter.emit("main-window-notification", {
             class: "error",
+            title: "Error",
             message: updateExtensionResult.info,
           });
         }
@@ -273,9 +244,7 @@ if (firstLaunch) {
     overwolf.windows.getWindowState(mainWindowId, function (state) {
       localStorage.setItem(
         "mainWindow_opened",
-        state.success &&
-          state.window_state_ex != "closed" &&
-          state.window_state_ex != "hidden"
+        state.success && state.window_state_ex != "closed" && state.window_state_ex != "hidden"
       );
       overwolf.extensions.relaunch();
     });
@@ -285,16 +254,9 @@ if (firstLaunch) {
     log("UPDATE-CHECK", "New version available of the app", version);
   });
 
-  window.eventEmitter.addEventListener(
-    "update-pending-restart",
-    function (version) {
-      log(
-        "UPDATE-CHECK",
-        "Waiting for user to restart app so we can apply the new version",
-        version
-      );
-    }
-  );
+  window.eventEmitter.addEventListener("update-pending-restart", function (version) {
+    log("UPDATE-CHECK", "Waiting for user to restart app so we can apply the new version", version);
+  });
 
   window.eventEmitter.addEventListener("shutdown", function (reason) {
     log("EXIT", "Supposed to exit:", reason);
@@ -329,18 +291,15 @@ if (firstLaunch) {
     );
   });
 
-  window.eventEmitter.addEventListener(
-    "destiny-data-loaded",
-    async function () {
-      if (await destinyApiClient.isAuthenticated()) {
-        await destinyApiClient.checkManifestVersion();
-        await destinyApiClient.getUserMemberships();
-        await destinyApiClient.getTrackableData(true);
-      } else {
-        window.eventEmitter.emit("destiny-not-authed");
-      }
+  window.eventEmitter.addEventListener("destiny-data-loaded", async function () {
+    if (await destinyApiClient.isAuthenticated()) {
+      await destinyApiClient.checkManifestVersion();
+      await destinyApiClient.getUserMemberships();
+      await destinyApiClient.getTrackableData(true);
+    } else {
+      window.eventEmitter.emit("destiny-not-authed");
     }
-  );
+  });
 
   window.eventEmitter.addEventListener("manifests-loaded", async function () {
     closeLoadingWindow();
@@ -348,6 +307,7 @@ if (firstLaunch) {
     if (!(await destinyApiClient.isAuthenticated()) || wasManuallyOpened) {
       localStorage.removeItem("mainWindow_opened");
       openWindow(null, null);
+      //openOverlay();
     }
   });
 
@@ -356,28 +316,14 @@ if (firstLaunch) {
       if (updateState.success) {
         switch (updateState.state) {
           case "UpdateAvailable": // An update to the app is available
-            log(
-              "UPDATE-CHECK",
-              "New version available!",
-              updateState.updateVersion
-            );
+            log("UPDATE-CHECK", "New version available!", updateState.updateVersion);
 
-            window.eventEmitter.emit(
-              "update-available",
-              updateState.updateVersion
-            );
+            window.eventEmitter.emit("update-available", updateState.updateVersion);
             break;
           case "PendingRestart": // We have updated the app in the background and now just wait until we can relaunch the app
-            log(
-              "UPDATE-CHECK",
-              "Waiting for moment to restart app to get new update",
-              updateState.updateVersion
-            );
+            log("UPDATE-CHECK", "Waiting for moment to restart app to get new update", updateState.updateVersion);
 
-            window.eventEmitter.emit(
-              "update-pending-restart",
-              updateState.updateVersion
-            );
+            window.eventEmitter.emit("update-pending-restart", updateState.updateVersion);
             break;
           case "UpToDate": // Do nothing, the app is up to date
             break;
@@ -407,85 +353,71 @@ if (firstLaunch) {
     db.initializeDatabase().then(() => {
       log("ApiClient-Plugin", "Initializing plugin");
 
-      overwolf.extensions.current.getExtraObject(
-        "destiny2ApiClient",
-        async (result) => {
-          if (result.status == "success") {
-            window.d2ApiClient = result.object;
+      overwolf.extensions.current.getExtraObject("destiny2ApiClient", async (result) => {
+        if (result.status == "success") {
+          window.d2ApiClient = result.object;
 
-            window.destinyApiClient = new DestinyApiClient(d2ApiClient);
+          window.destinyApiClient = new DestinyApiClient(d2ApiClient);
 
-            await destinyApiClient.checkManifestVersion();
+          await destinyApiClient.checkManifestVersion();
 
-            let missingDefinitions =
-              await destinyApiClient.checkStoredDefinitions(false);
+          let missingDefinitions = await destinyApiClient.checkStoredDefinitions(false);
 
-            let showLoadingWindow = true;
+          let showLoadingWindow = true;
 
-            if (missingDefinitions.length > 0) {
-              log(
-                "DATABASE",
-                "Missing definitions, downloading them",
-                missingDefinitions
-              );
-              showLoadingWindow = true;
-            }
-
-            let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
-
-            let locSearch = location.search;
-
-            if (
-              locSearch.indexOf("-from-desktop") > -1 ||
-              locSearch.indexOf("source=commandline") > -1 ||
-              locSearch.indexOf("source=dock") > -1 ||
-              locSearch.indexOf("source=storeapi") > -1 ||
-              locSearch.indexOf("source=odk") > -1 ||
-              locSearch.indexOf("source=after-install") > -1 ||
-              locSearch.indexOf("source=tray") > -1 ||
-              (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
-            ) {
-              wasManuallyOpened = true;
-
-              if (showLoadingWindow) {
-                log("DATABASE", "Opening loading window");
-                openLoadingWindow();
-              }
-            } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
-              log("GAME:LAUNCH", "Application was started by game");
-              if (showLoadingWindow) {
-                log("DATABASE", "Opening loading window");
-                openLoadingWindow();
-              }
-              overwolf.games.getRunningGameInfo(function (data) {
-                if (data) {
-                  gameLaunched(data);
-                }
-              });
-            } else if (locSearch.indexOf("source=urlscheme")) {
-              log("URL-LAUNCH", "Application was started by url", locSearch);
-              let urlSchemeStart = unescape(
-                locSearch.replace("?source=urlscheme&", "")
-              );
-
-              if (showLoadingWindow) {
-                log("DATABASE", "Opening loading window");
-                openLoadingWindow();
-              }
-
-              handleUrlLaunch(urlSchemeStart);
-            }
-
-            // Removes the source-value from location.search, so we don't trigger multiple times
-            history.replaceState(
-              {},
-              window.title,
-              location.href.replace(location.search, "")
-            );
-            log("DATABASE", "Database initialized");
+          if (missingDefinitions.length > 0) {
+            log("DATABASE", "Missing definitions, downloading them", missingDefinitions);
+            showLoadingWindow = true;
           }
+
+          let wasPreviouslyOpened = localStorage.getItem("mainWindow_opened");
+
+          let locSearch = location.search;
+
+          if (
+            locSearch.indexOf("-from-desktop") > -1 ||
+            locSearch.indexOf("source=commandline") > -1 ||
+            locSearch.indexOf("source=dock") > -1 ||
+            locSearch.indexOf("source=storeapi") > -1 ||
+            locSearch.indexOf("source=odk") > -1 ||
+            locSearch.indexOf("source=after-install") > -1 ||
+            locSearch.indexOf("source=tray") > -1 ||
+            (wasPreviouslyOpened != null && wasPreviouslyOpened == "true")
+          ) {
+            wasManuallyOpened = true;
+
+            if (showLoadingWindow) {
+              log("DATABASE", "Opening loading window");
+              openLoadingWindow();
+            }
+          } else if (locSearch.indexOf("source=gamelaunchevent") > -1) {
+            log("GAME:LAUNCH", "Application was started by game");
+            if (showLoadingWindow) {
+              log("DATABASE", "Opening loading window");
+              openLoadingWindow();
+            }
+            overwolf.games.getRunningGameInfo(function (data) {
+              if (data) {
+                gameLaunched(data);
+              }
+            });
+          } else if (locSearch.indexOf("source=urlscheme")) {
+            log("URL-LAUNCH", "Application was started by url", locSearch);
+            let urlSchemeStart = unescape(locSearch.replace("?source=urlscheme&", ""));
+
+            if (showLoadingWindow) {
+              log("DATABASE", "Opening loading window");
+              openLoadingWindow();
+            }
+
+            handleUrlLaunch(urlSchemeStart);
+          }
+
+          // Removes the source-value from location.search, so we don't trigger multiple times
+          history.replaceState({}, window.title, location.href.replace(location.search, ""));
+          log("DATABASE", "Database initialized");
         }
-      );
+      });
     });
   }
 }

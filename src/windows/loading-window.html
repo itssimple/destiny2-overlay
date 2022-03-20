@@ -3,67 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <title>Destiny 2 Goal Tracker - Loading</title>
-    <link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet" />
-    <link type="text/css" href="../css/loading.css" rel="stylesheet" />
-    <link type="text/css" href="../css/main-window.css" rel="stylesheet" />
-    <link type="text/css" href="../css/window-styles.css" rel="stylesheet" />
     <link type="text/css" href="../../fonts/style.css" rel="stylesheet" />
-    <script type="text/javascript" src="../scripts/draggable-window.js" ></script>
-    <script type="text/javascript" src="../scripts/utils.js"></script>
-    <script type="text/javascript" src="../scripts/log.js"></script>
-    <script type="text/javascript" src="../scripts/date.js"></script>
   </head>
   <body>
     <nav class="navbar bg-dark navbar-dark" id="titleBar">
       <span class="navbar-brand text-white text-bold" id="titleBarName">DESTINY 2 OVERLAY</span>
     </nav>
 		<div class="container-fluid h-100">
-      <div class="loading-indicator">
-        <div class="container warlock">
-          <div class="circle c1"></div>
-          <div class="circle c2"></div>
-          <div class="circle c3"></div>
-          <div class="circle c4"></div>
-          <div class="shape_group">
-            <div class="shape s1"></div>
-            <div class="shape s2"></div>
-            <div class="shape s3"></div>
-            <div class="shape s4"></div>
-            <div class="shape s5"></div>
-            <div class="shape s6"></div>
-          </div>
-          <div class="line_group g1">
-            <div class="line l1"></div>
-            <div class="line l2"></div>
-            <div class="line l3"></div>
-            <div class="line l4"></div>
-          </div>
-          <div class="line_group g2">
-            <div class="line l1"></div>
-            <div class="line l2"></div>
-            <div class="line l3"></div>
-            <div class="line l4"></div>
-          </div>
-          <div class="line_group g3">
-            <div class="line l1"></div>
-            <div class="line l2"></div>
-            <div class="line l3"></div>
-            <div class="line l4"></div>
-          </div>
-        </div>
-      </div>
-      <div class="loading-text">
-        <div class="container">
-          <div class="row">
-            <div class="col-12">
-              <h1>Loading</h1>
-              <h3 id="loading-activity">Please wait while we load the application</h3>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="root"></div>
 		</div>
-    <script type="text/javascript" src="../scripts/loading-indicator.js" ></script>
-    <script type="text/javascript" src="../scripts/loadingWindow.js" ></script>
+    <script type="module" src="../scripts/react/Loading.js" ></script>
 	</body>
 </html>

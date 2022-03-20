@@ -1,4 +1,5 @@
-class Destiny2Database {
+import { log } from "./log.js";
+export class Destiny2Database {
   constructor() {
     this.DBInstance = null;
 

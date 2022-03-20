@@ -1,4 +1,6 @@
-class EventEmitter {
+import { log } from "./log.js";
+
+export class EventEmitter {
   constructor() {
     this.eventListeners = [];
 
@@ -18,7 +20,7 @@ class EventEmitter {
      * @param {any} arguments
      */
     this.emit = async function (eventName, ...params) {
-      log('EVENT:EMITTING', eventName, ...params);
+      log("EVENT:EMITTING", eventName, ...params);
       return new Promise((resolve, reject) => {
         this.eventListeners
           .filter((ev) => ev.eventName == eventName)

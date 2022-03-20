@@ -1,4 +1,4 @@
-const SIGNIFICANT_MOUSE_MOVE_THRESHOLD = 1;
+export const SIGNIFICANT_MOUSE_MOVE_THRESHOLD = 1;
 
 /**
  *
@@ -6,7 +6,7 @@ const SIGNIFICANT_MOUSE_MOVE_THRESHOLD = 1;
  * @param {HTMLElement} dragElement The element that should be draggable
  * @param {String} windowName The name of the window, for saving position
  */
-class DraggableWindow {
+export class DraggableWindow {
   constructor(window, dragElement, windowName) {
     this.currentWindow = window;
     this.initialMousePosition = 0;
@@ -35,6 +35,7 @@ class DraggableWindow {
         overwolf.windows.dragMove(this.currentWindow.id, (result) => {
           overwolf.windows.getCurrentWindow(async (_currentWindow) => {
             if (_currentWindow.window) {
+              const db = overwolf.windows.getMainWindow().db;
               await db.setItem(
                 `${_currentWindow.window.id}-position`,
                 JSON.stringify({

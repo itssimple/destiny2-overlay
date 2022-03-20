@@ -76,7 +76,7 @@ function formatDate(date) {
  * @param {Boolean} latestSession
  * @returns {String}
  */
-function formatTimespan(startDate, endDate, latestSession) {
+function formatTimespan(startDate, endDate, latestSession = false) {
   if (!latestSession && !endDate) return `Unknown, no end time`;
   return outputTimesObjectFromDifference(getTimeDifference(startDate, endDate));
 }

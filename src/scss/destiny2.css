@@ -30,11 +30,7 @@ body {
   margin-bottom: unset;
 }
 
-.destiny
-  .checkbox
-  label:hover
-  input[type="checkbox"]:not(:disabled)
-  ~ span::before {
+.destiny .checkbox label:hover input[type="checkbox"]:not(:disabled) ~ span::before {
   background-color: #388348;
 }
 
