@@ -40,9 +40,10 @@ export function Dashboard() {
     let lastPlayedClass = document.createElement("div");
     lastPlayedClass.classList.add("hud");
     lastPlayedClass.classList.add("sub-header");
-    lastPlayedClass.innerHTML = `${lastPlayed.genderName} ${lastPlayed.raceName} ${
-      lastPlayed.className
-    }, Played ${formatTimespan(new Date(), new Date(Date.now() + lastPlayed.minutesPlayedTotal * 60 * 1000))}`;
+    lastPlayedClass.innerHTML = `${lastPlayed.raceName} ${lastPlayed.className}, Played ${formatTimespan(
+      new Date(),
+      new Date(Date.now() + lastPlayed.minutesPlayedTotal * 60 * 1000)
+    )}`;
 
     lastPlayedCharacter.appendChild(lastPlayedClass);
 
