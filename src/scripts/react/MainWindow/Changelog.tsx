@@ -4,7 +4,7 @@ export function Changelog() {
   const [changelog, setChangelog] = useState("changelog");
 
   useEffect(() => {
-    fetch("../../../public/changelog.html").then(async (response) => setChangelog(await response.text()));
+    fetch("../public/changelog.html").then(async (response) => setChangelog(await response.text()));
   }, []);
   return (
     <div className="tab-pane fade" id="changelog" role="tabpanel" aria-labelledby="changelog-tab">
