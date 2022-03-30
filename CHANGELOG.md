@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/itssimple/destiny2-overlay/compare/v1.1.2...v1.2.0) (2022-03-30)
+
+
+### Features
+
+* Added ability to suppress/enable logging of arguments for eventEmitter ([f8e7044](https://github.com/itssimple/destiny2-overlay/commit/f8e70446d4ac9388e8216f36ca858137e379be15))
+* Added lightlevel, and bungie code ([e938500](https://github.com/itssimple/destiny2-overlay/commit/e938500a8e8a01dcb148917fbd89106362c59f00))
+* Added support to detect if the app is offline, and then exit it. ([7eebfc3](https://github.com/itssimple/destiny2-overlay/commit/7eebfc3934db76ccb266cf41237a236b6e9aa0d3))
+
+
+### Bug Fixes
+
+* Clear the interval when we're done ([9febb39](https://github.com/itssimple/destiny2-overlay/commit/9febb39977972b48547e1dd43e83a0e0cdaba6e3))
+* If the app was triggered manually (and the user is authenticated), we should open the main window anyway. ([75da965](https://github.com/itssimple/destiny2-overlay/commit/75da965affc09295ccb29d32b438e1486f3df2ed))
+* Minimize PNG size for QA-fix ([b1eef55](https://github.com/itssimple/destiny2-overlay/commit/b1eef551169e0ca2f4a186fcf5fa98c8c21f974c))
+
+
+### Refactoring
+
+* Added extra safeguards against null-references ([f310106](https://github.com/itssimple/destiny2-overlay/commit/f31010698fecf028be7f9f5ee280cf381e4c94b7))
+* Remaking most things into TypeScript and ReactJS. Because why not? ([7e544c6](https://github.com/itssimple/destiny2-overlay/commit/7e544c67e04661f852d956e2608d7b6e563fe5f0))
+
 ### [1.1.2](https://github.com/itssimple/destiny2-overlay/compare/v1.1.1...v1.1.2) (2022-03-16)
 
 
