@@ -26,9 +26,11 @@ function Overlay() {
       });
     });
 
-    setInterval(async function () {
+    let intervalTimer = setInterval(async function () {
       await destinyApiClient.getTrackableData(true);
     }, 15 * 1000);
+
+    return () => clearInterval(intervalTimer);
   }, []);
 
   return (
