@@ -15,9 +15,6 @@ function LoadingWindow() {
   useEffect(() => {
     const backgroundWindow = overwolf.windows.getMainWindow();
 
-    const destinyApiClient = (backgroundWindow as any)
-      .destinyApiClient as DestinyApiClient;
-
     const eventEmitter = (backgroundWindow as any).eventEmitter as EventEmitter;
 
     eventEmitter.addEventListener("loading-text", (data) => {
@@ -25,13 +22,20 @@ function LoadingWindow() {
       loadingActivity.textContent = data;
     });
 
-    const loadingActivity = document.querySelector("#loading-activity");
-    loadingActivity.textContent = "Checking manifest";
+    // check if browser is online
+    if (!navigator.onLine) {
+      eventEmitter.emit("loading-text", "No internet connection, exiting...");
+      setTimeout(function () {
+        eventEmitter.emit("shutdown", "No internet connection available.");
+      }, 5000);
+    } else {
+      const destinyApiClient = (backgroundWindow as any).destinyApiClient as DestinyApiClient;
 
-    destinyApiClient.checkManifestVersion().then(async () => {
-      destinyApiClient
-        .checkStoredDefinitions(false)
-        .then(async (missingDefinitions) => {
+      const loadingActivity = document.querySelector("#loading-activity");
+      loadingActivity.textContent = "Checking manifest";
+
+      destinyApiClient.checkManifestVersion().then(async () => {
+        destinyApiClient.checkStoredDefinitions(false).then(async (missingDefinitions) => {
           const loadingActivity = document.querySelector("#loading-activity");
           if (missingDefinitions.length > 0) {
             loadingActivity.textContent = "Downloading definitions...";
@@ -47,7 +51,8 @@ function LoadingWindow() {
             }, 1000);
           });
         });
-    });
+      });
+    }
   }, []);
 
   return (
@@ -58,9 +63,7 @@ function LoadingWindow() {
           <div className="row">
             <div className="col-12">
               <h1>Loading</h1>
-              <h3 id="loading-activity">
-                Please wait while we load the application
-              </h3>
+              <h3 id="loading-activity">Please wait while we load the application</h3>
             </div>
           </div>
         </div>
