@@ -20,9 +20,7 @@ export class DestinyApiClient {
   refreshToken: () => Promise<unknown>;
   getUserMemberships: () => Promise<unknown>;
   getUserProfile: (membershipId: any) => Promise<unknown>;
-  getLastPlayedCharacter: (
-    forceRefresh?: boolean
-  ) => Promise<{
+  getLastPlayedCharacter: (forceRefresh?: boolean) => Promise<{
     characterInfo: any;
     characterProgression: any;
     characterActivities: any;
@@ -44,9 +42,7 @@ export class DestinyApiClient {
   }>;
   equipItems: (_lastPlayer: any) => Promise<unknown>;
   lockItem: (membershipType: any, characterId: any, itemId: any, lockState: any) => Promise<unknown>;
-  getNamedDataObject: (
-    forceRefresh?: boolean
-  ) => Promise<{
+  getNamedDataObject: (forceRefresh?: boolean) => Promise<{
     characterInfo: any;
     characterProgression: any;
     characterActivities: any;
@@ -549,7 +545,13 @@ export class DestinyApiClient {
         return null;
       }
 
-      if (_profile == null && self.userMembership !== null) {
+      if (
+        _profile == null &&
+        self.userMembership !== null &&
+        self.userMembership.destinyMemberships !== null &&
+        self.userMembership.destinyMemberships.length > 0 &&
+        self.userMembership.destinyMemberships[0].membershipId !== null
+      ) {
         _profile = await self.getUserProfile(self.userMembership.destinyMemberships[0].membershipId);
       }
 
