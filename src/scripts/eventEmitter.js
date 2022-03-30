@@ -4,6 +4,8 @@ export class EventEmitter {
   constructor() {
     this.eventListeners = [];
 
+    this.logArguments = false;
+
     /**
      * Listen to an event sent from this event emitter
      * @param {String} eventName The event that you want to listen to
@@ -20,7 +22,11 @@ export class EventEmitter {
      * @param {any} arguments
      */
     this.emit = async function (eventName, ...params) {
-      log("EVENT:EMITTING", eventName, ...params);
+      if (this.logArguments) {
+        log("EVENT:EMITTING", eventName, ...params);
+      } else {
+        log("EVENT:EMITTING", eventName);
+      }
       return new Promise((resolve, reject) => {
         this.eventListeners
           .filter((ev) => ev.eventName == eventName)
