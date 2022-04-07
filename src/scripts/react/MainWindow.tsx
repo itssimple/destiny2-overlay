@@ -15,13 +15,14 @@ import { DestinyApiClient } from "../destiny2/apiClient";
 import { Settings } from "./MainWindow/Settings";
 import { Changelog } from "./MainWindow/Changelog";
 import { Titlebar } from "./MainWindow/Titlebar.jsx";
+import { useOnlineIndicator } from "./components/useOnlineIndicator";
 
 const backgroundWindow = overwolf.windows.getMainWindow();
 const destinyApiClient = (backgroundWindow as any).destinyApiClient as DestinyApiClient;
 const eventEmitter = (backgroundWindow as any).eventEmitter as EventEmitter;
 
 function MainWindow() {
-  useEffect(() => {
+  function loadDashData() {
     setTimeout(async function () {
       let hasAuthed = await destinyApiClient.isAuthenticated();
       if (hasAuthed) {
@@ -34,6 +35,17 @@ function MainWindow() {
     eventEmitter.addEventListener("destiny-data-loaded", async function () {
       await loadGoals("destiny-data-loaded", await destinyApiClient.getNamedDataObject(false));
     });
+  }
+  useEffect(() => {
+    loadDashData();
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("online", loadDashData);
+
+    return () => {
+      window.removeEventListener("online", loadDashData);
+    };
   }, []);
 
   async function loadGoals(loadReason, namedObject) {
@@ -196,15 +208,44 @@ function MainWindow() {
     goalContainer.appendChild(recordContainer);
   }
 
+  const isOnline = useOnlineIndicator();
+
   return (
     <>
       <Titlebar />
       <NavigationTabs />
       <div className="container-fluid h-80" id="main-win-container">
         <div className="tab-content" id="main-tabcontent">
-          <Dashboard />
-          <Settings />
-          <Changelog />
+          {isOnline ? (
+            <>
+              <Dashboard />
+              <Settings />
+              <Changelog />
+            </>
+          ) : (
+            <div
+              className="tab-pane"
+              id="no-internet"
+              role="tabpanel"
+              aria-labelledby="no-internet-tab"
+              style={{
+                display: "unset",
+              }}
+            >
+              <div className="row h-100">
+                <div className="col-12 pt-2">
+                  <div className="card text-white mb-3">
+                    <div className="card-header fui sub-title">INTERNET REQUIRED</div>
+                    <div className="card-body">
+                      To be able to use this application, you need an internet connection.
+                      <br />
+                      Please reconnect to the internet again.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
