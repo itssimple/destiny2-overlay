@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/itssimple/destiny2-overlay/compare/v1.2.1...v1.3.0) (2022-04-07)
+
+
+### Features
+
+* Added hotkey to toggle overlay (Default Shift+F10) ([73722f8](https://github.com/itssimple/destiny2-overlay/commit/73722f8b2fbca81cc5f0392624288f210df5e449))
+* Character dashboard (WIP) ([c479b9d](https://github.com/itssimple/destiny2-overlay/commit/c479b9d246fb07e5315b481d3af8051bf9c6a08e))
+
 ### [1.2.1](https://github.com/itssimple/destiny2-overlay/compare/v1.2.0...v1.2.1) (2022-04-07)
 
 
