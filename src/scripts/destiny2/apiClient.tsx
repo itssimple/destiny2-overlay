@@ -67,6 +67,7 @@ export class DestinyApiClient {
   getTrackableData: (forceRefresh?: boolean) => Promise<any[]>;
   getManifest: () => Promise<unknown>;
   loadDataFromStorage: () => Promise<void>;
+  loadCharacterHistory: (membershipId: string, characterId: string) => Promise<void>;
 
   constructor(d2ApiClient: any) {
     log("D2API", "Initializing Destiny Api Client");
@@ -80,6 +81,8 @@ export class DestinyApiClient {
     const destinyBaseUrl = "https://www.bungie.net";
 
     const authGatewayUrl = "https://o2g.itssimple.se";
+
+    const maxActivitiesPerFetch = 250;
 
     /**
      * @description The API endpoint for the Destiny 2 API.
@@ -881,6 +884,45 @@ export class DestinyApiClient {
         eventEmitter.emit("destiny2-is-authenticated", false);
         return false;
       }
+    };
+
+    this.loadCharacterHistory = async function (membershipId, characterId) {
+      log("CHARACTER-HISTORY", "Loading character history");
+      eventEmitter.emit("character-history-loading");
+
+      return new Promise<void>(async (resolve, reject) => {
+        let savedAmount = maxActivitiesPerFetch;
+        let page = 0;
+
+        while (savedAmount > 0) {
+          let historyActivityUrl = `https://www.bungie.net/Platform/Destiny2/-1/Account/${membershipId}/Character/${characterId}/Stats/Activities?count=${maxActivitiesPerFetch}&page=${page}`;
+          savedAmount = 0;
+          log("CHARACTER-HISTORY", `Loading page ${page} (${historyActivityUrl})`);
+          var history = await pluginClient.GET(historyActivityUrl, await getUserToken());
+
+          let data = JSON.parse(history.Result.content);
+          if (data.Response.activities) {
+            log("CHARACTER-HISTORY", `Got ${data.Response.activities.length} activities`);
+            for (let activity of data.Response.activities) {
+              if ((await db.getStorageItem("playerActivity", activity.activityDetails.instanceId)) === null) {
+                await db.setStorageItem("playerActivity", activity.activityDetails.instanceId, {
+                  characterId: characterId,
+                  activity: activity,
+                });
+                savedAmount++;
+              }
+            }
+
+            log("CHARACTER-HISTORY", `Saved ${savedAmount} activities`);
+          }
+
+          page++;
+        }
+
+        eventEmitter.emit("character-history-loaded");
+
+        resolve();
+      });
     };
 
     var self = this;
