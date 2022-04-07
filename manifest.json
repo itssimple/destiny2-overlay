@@ -4,7 +4,7 @@
   "meta": {
     "name": "Destiny 2 - Goal tracker",
     "description": "Allows you to always see your tracked goals and their progress (slightly delay in increments, as we don't want to spam the API)",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "author": "NoLifeKing85",
     "minimum-overwolf-version": "0.170.0",
     "icon": "resources/images/logo.png",
@@ -24,19 +24,12 @@
   "data": {
     "game_targeting": {
       "type": "dedicated",
-      "game_ids": [
-        21812
-      ]
+      "game_ids": [21812]
     },
     "externally_connectable": {
-      "matches": [
-        "https://www.bungie.net",
-        "https://o2g.itssimple.se"
-      ]
+      "matches": ["https://www.bungie.net", "https://o2g.itssimple.se"]
     },
-    "protocol_override_domains": {
-      "googlesyndication": "http"
-    },
+    "protocol_override_domains": { "googlesyndication": "http" },
     "start_window": "background",
     "windows": {
       "background": {
@@ -105,17 +98,13 @@
       {
         "event": "GameLaunch",
         "event_data": {
-          "game_ids": [
-            21812
-          ]
+          "game_ids": [21812]
         },
         "tracked": true,
         "include_launchers": false
       }
     ],
-    "game_events": [
-      21812
-    ],
+    "game_events": [21812],
     "disable_dt": false,
     "developer": {
       "enable_auto_refresh": true,
@@ -131,6 +120,5 @@
         "class": "Destiny2.GoalTracker.Client.ApiClient"
       }
     }
-  },
-  "version": "1.2.1"
+  }
 }
