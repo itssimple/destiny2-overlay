@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/itssimple/destiny2-overlay/compare/v1.2.0...v1.2.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* Fix for loading changelog from the proper path ([132b688](https://github.com/itssimple/destiny2-overlay/commit/132b6884b7df589b3b2ec00ce8f755048f14e020))
+* Network connectivity check in main window ([7c9928d](https://github.com/itssimple/destiny2-overlay/commit/7c9928dce5a5e719acc915cabeb01cf802152213))
+* Remove gender from last played character to fit into the emblem better. ([ea09954](https://github.com/itssimple/destiny2-overlay/commit/ea09954589b7b71ebb133168a4d263b905ea13ad))
+
 ## [1.2.0](https://github.com/itssimple/destiny2-overlay/compare/v1.1.2...v1.2.0) (2022-03-30)
 
 
