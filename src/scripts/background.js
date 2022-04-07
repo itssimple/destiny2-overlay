@@ -127,6 +127,16 @@ if (firstLaunch) {
   overwolf.games.onGameLaunched.addListener(gameLaunched);
   overwolf.games.onGameInfoUpdated.addListener(gameInfoUpdated);
 
+  overwolf.settings.hotkeys.onPressed.addListener((event) => {
+    if (event && event.name) {
+      switch (event.name) {
+        case "toggle_Destiny2_Overlay":
+          toggleOverlay();
+          break;
+      }
+    }
+  });
+
   window.eventEmitter.addEventListener("game-launched", function (gameInfo) {
     log("EVENT:GAME-LAUNCHED", gameInfo);
 
@@ -153,6 +163,23 @@ if (firstLaunch) {
 
   function closeLoadingWindow() {
     overwolf.windows.close(loadingWindowId, function () {});
+  }
+
+  function toggleOverlay() {
+    if (overlayWindowId) {
+      overwolf.windows.getWindowState(overlayWindowId, (result) => {
+        switch (result.window_state_ex) {
+          case "normal":
+            overwolf.windows.hide(overlayWindowId, function () {});
+            break;
+          default:
+            overwolf.windows.restore(overlayWindowId, function () {});
+            break;
+        }
+      });
+    } else {
+      openOverlay();
+    }
   }
 
   function openOverlay() {
@@ -341,6 +368,17 @@ if (firstLaunch) {
       gameLaunched(data);
     }
   });
+
+  setInterval(async function () {
+    if (destinyApiClient.profile) {
+      let lastPlayed = await destinyApiClient.getLastPlayedCharacter();
+
+      await destinyApiClient.loadCharacterHistory(
+        lastPlayed.characterInfo.membershipId,
+        lastPlayed.characterInfo.characterId
+      );
+    }
+  }, 300 * 1000);
 
   setInterval(function () {
     checkExtensionUpdate();

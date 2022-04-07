@@ -13,14 +13,7 @@
     "splash_image": "resources/images/splash.png",
     "launcher_icon": "resources/images/gtt-logo.ico"
   },
-  "permissions": [
-    "GameInfo",
-    "Extensions",
-    "FileSystem",
-    "Hotkeys",
-    "Web",
-    "Streaming"
-  ],
+  "permissions": ["GameInfo", "Extensions", "FileSystem", "Hotkeys", "Web", "Streaming"],
   "data": {
     "game_targeting": {
       "type": "dedicated",
@@ -118,6 +111,14 @@
       "destiny2ApiClient": {
         "file": "plugin/Destiny2.GoalTracker.Client.dll",
         "class": "Destiny2.GoalTracker.Client.ApiClient"
+      }
+    },
+    "hotkeys": {
+      "toggle_Destiny2_Overlay": {
+        "title": "Toggle Destiny 2 Overlay",
+        "action-type": "custom",
+        "default": "Shift+F10",
+        "passthrough": true
       }
     }
   }
