@@ -909,10 +909,10 @@ export class DestinyApiClient {
                   characterId: characterId,
                   activity: activity,
                 });
-                savedAmount++;
               }
+              savedAmount++;
             }
-
+            eventEmitter.emit("character-history-partial-loaded");
             log("CHARACTER-HISTORY", `Saved ${savedAmount} activities`);
           }
 
