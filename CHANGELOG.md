@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/itssimple/destiny2-overlay/compare/v1.3.0...v1.3.1) (2022-04-08)
+
+
+### Bug Fixes
+
+* Try to load activities all the time. Add event for partially loaded activities (to update dashboard live as it updates) ([5270fb4](https://github.com/itssimple/destiny2-overlay/commit/5270fb47c292959ecc9bd556fd8a7a9b329927b7))
+* Update GUI as we load activities. ([cfbeb42](https://github.com/itssimple/destiny2-overlay/commit/cfbeb4273cb3c00f1c8668838943d6923d2611d1))
+
 ## [1.3.0](https://github.com/itssimple/destiny2-overlay/compare/v1.2.1...v1.3.0) (2022-04-07)
 
 
