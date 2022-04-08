@@ -16,16 +16,21 @@ export function Dashboard() {
       setLastPlayedCharacter(lastPlayedCharacter);
     });
 
-    loadCharacterHistory();
-  }, []);
+    eventEmitter.addEventListener("character-history-loading", async (characterData) => {
+      let character = await destinyApiClient.getLastPlayedCharacter();
+      setCharacterHistory(character.characterInfo);
+    });
 
-  async function loadCharacterHistory() {
-    let character = await destinyApiClient.getLastPlayedCharacter();
-    let characterHistory = await destinyApiClient.loadCharacterHistory(
-      character.characterInfo.membershipId,
-      character.characterInfo.characterId
-    );
-  }
+    eventEmitter.addEventListener("character-history-partial-loaded", async (characterData) => {
+      let character = await destinyApiClient.getLastPlayedCharacter();
+      setCharacterHistory(character.characterInfo);
+    });
+
+    eventEmitter.addEventListener("character-history-loaded", async (characterData) => {
+      let character = await destinyApiClient.getLastPlayedCharacter();
+      setCharacterHistory(character.characterInfo);
+    });
+  }, []);
 
   async function setLastPlayedCharacter(lastPlayed) {
     let tempGoalContainer = document.querySelector("#allGoals");
@@ -60,10 +65,15 @@ export function Dashboard() {
     lastPlayedCharacter.appendChild(lastPlayedClass);
     tempGoalContainer.appendChild(lastPlayedCharacter);
 
-    await setCharacterHistory(lastPlayed, tempGoalContainer);
+    await setCharacterHistory(lastPlayed);
   }
 
-  async function setCharacterHistory(lastPlayed, tempGoalContainer) {
+  async function setCharacterHistory(lastPlayed) {
+    let tempGoalContainer = document.querySelector("#allGoals");
+
+    let dashboardContainer = document.createElement("div");
+    dashboardContainer.classList.add("dashboard-container");
+
     let activityData = await db.getStorageItems(
       "playerActivity",
       (item) => item.value.characterId == lastPlayed.characterId
@@ -71,6 +81,20 @@ export function Dashboard() {
     let totalAssists = 0,
       totalKills = 0,
       totalDeaths = 0;
+
+    if (activityData.length == 0) {
+      let noData = document.createElement("div");
+      noData.classList.add("hud");
+      noData.classList.add("translucent");
+      noData.innerText = "No data available, data will be fetched in the background.";
+      dashboardContainer.appendChild(noData);
+
+      let oldContainer = tempGoalContainer.querySelector(".dashboard-container");
+      oldContainer?.remove();
+
+      tempGoalContainer.appendChild(dashboardContainer);
+      return;
+    }
 
     for (let activity of activityData) {
       totalAssists += activity.value.activity.values.assists.basic.value;
@@ -81,16 +105,16 @@ export function Dashboard() {
     let playerStats = document.createElement("div");
     playerStats.classList.add("header");
     playerStats.classList.add("general");
-    playerStats.innerText = "Character statistics";
+    playerStats.innerText = `Character statistics (${activityData.length} activities)`;
 
-    tempGoalContainer.appendChild(playerStats);
+    dashboardContainer.appendChild(playerStats);
 
     let assists = document.createElement("div");
     assists.classList.add("fui");
     assists.classList.add("sub-title");
     assists.innerText = "Assists";
 
-    tempGoalContainer.appendChild(assists);
+    dashboardContainer.appendChild(assists);
 
     let assistsValue = document.createElement("div");
     assistsValue.classList.add("fui");
@@ -98,14 +122,14 @@ export function Dashboard() {
     assistsValue.classList.add("numbers");
     assistsValue.innerText = totalAssists.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
-    tempGoalContainer.appendChild(assistsValue);
+    dashboardContainer.appendChild(assistsValue);
 
     let kills = document.createElement("div");
     kills.classList.add("fui");
     kills.classList.add("sub-title");
     kills.innerText = "Kills";
 
-    tempGoalContainer.appendChild(kills);
+    dashboardContainer.appendChild(kills);
 
     let killsValue = document.createElement("div");
     killsValue.classList.add("fui");
@@ -113,14 +137,14 @@ export function Dashboard() {
     killsValue.classList.add("numbers");
     killsValue.innerText = totalKills.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
-    tempGoalContainer.appendChild(killsValue);
+    dashboardContainer.appendChild(killsValue);
 
     let deaths = document.createElement("div");
     deaths.classList.add("fui");
     deaths.classList.add("sub-title");
     deaths.innerText = "Deaths";
 
-    tempGoalContainer.appendChild(deaths);
+    dashboardContainer.appendChild(deaths);
 
     let deathsValue = document.createElement("div");
     deathsValue.classList.add("fui");
@@ -128,7 +152,12 @@ export function Dashboard() {
     deathsValue.classList.add("numbers");
     deathsValue.innerText = totalDeaths.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
-    tempGoalContainer.appendChild(deathsValue);
+    dashboardContainer.appendChild(deathsValue);
+
+    let oldContainer = tempGoalContainer.querySelector(".dashboard-container");
+    oldContainer?.remove();
+
+    tempGoalContainer.appendChild(dashboardContainer);
   }
 
   return (

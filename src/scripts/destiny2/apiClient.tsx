@@ -888,7 +888,10 @@ export class DestinyApiClient {
 
     this.loadCharacterHistory = async function (membershipId, characterId) {
       log("CHARACTER-HISTORY", "Loading character history");
-      eventEmitter.emit("character-history-loading");
+      eventEmitter.emit("character-history-loading", {
+        membershipId,
+        characterId,
+      });
 
       return new Promise<void>(async (resolve, reject) => {
         let savedAmount = maxActivitiesPerFetch;
@@ -912,14 +915,20 @@ export class DestinyApiClient {
               }
               savedAmount++;
             }
-            eventEmitter.emit("character-history-partial-loaded");
+            eventEmitter.emit("character-history-partial-loaded", {
+              membershipId,
+              characterId,
+            });
             log("CHARACTER-HISTORY", `Saved ${savedAmount} activities`);
           }
 
           page++;
         }
 
-        eventEmitter.emit("character-history-loaded");
+        eventEmitter.emit("character-history-loaded", {
+          membershipId,
+          characterId,
+        });
 
         resolve();
       });
