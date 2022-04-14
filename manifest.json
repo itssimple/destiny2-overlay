@@ -39,6 +39,7 @@
         "desktop_only": false,
         "transparent": true,
         "resizable": false,
+        "disable_auto_dpi_sizing": true,
         "min_size": {
           "width": 450,
           "height": 400
@@ -61,7 +62,8 @@
         "in_game_only": false,
         "is_background_page": false,
         "background_optimization": false,
-        "restrict_to_game_bounds": false
+        "restrict_to_game_bounds": false,
+        "disable_auto_dpi_sizing": true
       },
       "mainWindow": {
         "file": "resources/compiled/windows/main-window.html",
@@ -72,6 +74,7 @@
         "transparent": true,
         "resizable": false,
         "keep_window_location": true,
+        "disable_auto_dpi_sizing": true,
         "min_size": {
           "width": 1366,
           "height": 750
