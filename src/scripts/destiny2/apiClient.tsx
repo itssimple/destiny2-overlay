@@ -714,10 +714,12 @@ export class DestinyApiClient {
           hash: hash,
         });
 
-        for (let _hash of presentationNode.parentNodeHashes) {
-          const subItems = self.getPresentationNodeFromHash(_hash);
-          for (let item of subItems) {
-            presentationNameArray.push(item);
+        if (presentationNode.parentNodeHashes) {
+          for (let _hash of presentationNode.parentNodeHashes) {
+            const subItems = self.getPresentationNodeFromHash(_hash);
+            for (let item of subItems) {
+              presentationNameArray.push(item);
+            }
           }
         }
       }
