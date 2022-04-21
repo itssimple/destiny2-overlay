@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.3](https://github.com/itssimple/destiny2-overlay/compare/v1.3.2...v1.3.3) (2022-04-21)
+
+
+### Bug Fixes
+
+* Check for missing parentNodeHashes (it shouldn't try to check missing properties) 🤪 ([6ec4c30](https://github.com/itssimple/destiny2-overlay/commit/6ec4c30d434d222c1f2127d9b1f3b607db697964))
+
 ### [1.3.2](https://github.com/itssimple/destiny2-overlay/compare/v1.3.1...v1.3.2) (2022-04-14)
 
 
