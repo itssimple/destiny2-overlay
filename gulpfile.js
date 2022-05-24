@@ -84,7 +84,7 @@ gulp.task("default", function () {
       "purge-unused-css",
       "fix-windows",
       "build-ts",
-      "minify-scripts",
+      //"minify-scripts",
       "fix-version",
       "build-archive"
     )
@@ -98,7 +98,7 @@ gulp.task("default", function () {
       "purge-unused-css",
       "fix-windows",
       "build-ts",
-      "minify-scripts",
+      //"minify-scripts",
       "fix-version",
       "build-archive"
     )
@@ -112,7 +112,7 @@ gulp.task("default", function () {
       "purge-unused-css",
       "fix-windows",
       "build-ts",
-      "minify-scripts",
+      //"minify-scripts",
       "fix-version",
       "build-archive"
     )
@@ -126,7 +126,7 @@ gulp.task("default", function () {
       "purge-unused-css",
       "fix-windows",
       "build-ts",
-      "minify-scripts",
+      //"minify-scripts",
       "fix-version",
       "build-archive"
     )
@@ -142,7 +142,7 @@ gulp.task("default", function () {
       "purge-unused-css",
       "fix-windows",
       "build-ts",
-      "minify-scripts",
+      //"minify-scripts",
       "fix-version",
       "build-archive"
     )
@@ -156,7 +156,7 @@ gulp.task("default", function () {
       "purge-unused-css",
       "fix-windows",
       "build-ts",
-      "minify-scripts",
+      //"minify-scripts",
       "fix-version",
       "build-archive"
     )
@@ -171,7 +171,7 @@ gulp.task(
     "purge-unused-css",
     "fix-windows",
     "build-ts",
-    "minify-scripts",
+    //"minify-scripts",
     "fix-version",
     "build-archive"
   )

@@ -67,6 +67,9 @@ export class Destiny2Goals {
 
         if (milestone.availableQuests && milestone.availableQuests.length > 0) {
           for (let quest of milestone.availableQuests) {
+            if (quest.tracked) {
+              milestoneDataItem.tracked = true;
+            }
             if (quest.status.started && !quest.status.completed) {
               if (quest.status.stepObjectives && quest.status.stepObjectives.length > 0) {
                 for (let step of quest.status.stepObjectives) {
@@ -158,7 +161,8 @@ export class Destiny2Goals {
             type: "bounty",
             inProgressValueStyle: 0,
             completedValueStyle: 0,
-            tracked: bounty.state == 2,
+            tracked: (bounty.state & 2) == 2,
+            state: bounty.state,
           };
 
           if (typeof bounty.expirationDate !== "undefined") {
@@ -229,7 +233,8 @@ export class Destiny2Goals {
               type: "quest",
               inProgressValueStyle: 0,
               completedValueStyle: 0,
-              tracked: instanceQuest.state == 2,
+              tracked: (instanceQuest.state & 2) == 2,
+              state: instanceQuest.state,
             };
 
             if (typeof objective.completionValue !== "undefined") {
@@ -272,7 +277,8 @@ export class Destiny2Goals {
             type: "quest",
             inProgressValueStyle: 0,
             completedValueStyle: 0,
-            tracked: uninstancedQuest.state == 2,
+            tracked: (uninstancedQuest.state & 2) == 2,
+            state: uninstancedQuest.state,
           };
 
           if (typeof objective.completionValue !== "undefined") {
@@ -328,6 +334,7 @@ export class Destiny2Goals {
             nextLevelAt: objective.completionValue,
             inProgressValueStyle: objective.objectiveInProgressValueStyle,
             completedValueStyle: objective.objectiveCompletedValueStyle,
+            state: characterRecord.state,
           };
 
           characterRecords.push(characterRecordData);

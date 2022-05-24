@@ -43,6 +43,12 @@ export function Settings() {
         await db.setItem("d2-track-records", checked);
         eventEmitter.emit("tracked-items-changed");
       });
+
+      document.getElementById("debugMode").addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+        await db.setItem("d2-debugmode", checked);
+        eventEmitter.emit("debug-changed", checked);
+      });
     });
   });
 
@@ -72,6 +78,12 @@ export function Settings() {
       : "";
     document.getElementById("trackRecords").checked = JSON.parse(
       ((await db.getItem("d2-track-records")) ?? "true").toString()
+    )
+      ? "checked"
+      : "";
+
+    document.getElementById("debugMode").checked = JSON.parse(
+      ((await db.getItem("d2-debugmode")) ?? "false").toString()
     )
       ? "checked"
       : "";
@@ -150,6 +162,12 @@ export function Settings() {
                     <code className="selectable-text">%localappdata%\Overwolf\Log</code> and zip up the folder so we can
                     get you back to achieving your goals.
                   </p>
+                  <div className="form-check">
+                    <input type="checkbox" className="form-check-input" id="debugMode" />
+                    <label htmlFor="debugMode" className="form-check-label">
+                      Enable debug mode
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>

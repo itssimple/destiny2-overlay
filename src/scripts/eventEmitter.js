@@ -4,8 +4,6 @@ export class EventEmitter {
   constructor() {
     this.eventListeners = [];
 
-    this.logArguments = false;
-
     /**
      * Listen to an event sent from this event emitter
      * @param {String} eventName The event that you want to listen to
@@ -22,7 +20,8 @@ export class EventEmitter {
      * @param {any} arguments
      */
     this.emit = async function (eventName, ...params) {
-      if (this.logArguments) {
+      let logArguments = JSON.parse((await db.getItem("d2-debugmode")) ?? "false");
+      if (logArguments) {
         log("EVENT:EMITTING", eventName, ...params);
       } else {
         log("EVENT:EMITTING", eventName);

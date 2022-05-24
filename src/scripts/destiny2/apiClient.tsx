@@ -904,24 +904,28 @@ export class DestinyApiClient {
           savedAmount = 0;
           log("CHARACTER-HISTORY", `Loading page ${page} (${historyActivityUrl})`);
           var history = await pluginClient.GET(historyActivityUrl, await getUserToken());
-
-          let data = JSON.parse(history.Result.content);
-          if (data.Response.activities) {
-            log("CHARACTER-HISTORY", `Got ${data.Response.activities.length} activities`);
-            for (let activity of data.Response.activities) {
-              if ((await db.getStorageItem("playerActivity", activity.activityDetails.instanceId)) === null) {
-                await db.setStorageItem("playerActivity", activity.activityDetails.instanceId, {
-                  characterId: characterId,
-                  activity: activity,
-                });
+          try {
+            let data = JSON.parse(history.Result.content);
+            if (data.Response.activities) {
+              log("CHARACTER-HISTORY", `Got ${data.Response.activities.length} activities`);
+              for (let activity of data.Response.activities) {
+                if ((await db.getStorageItem("playerActivity", activity.activityDetails.instanceId)) === null) {
+                  await db.setStorageItem("playerActivity", activity.activityDetails.instanceId, {
+                    characterId: characterId,
+                    activity: activity,
+                  });
+                }
+                savedAmount++;
               }
-              savedAmount++;
+              eventEmitter.emit("character-history-partial-loaded", {
+                membershipId,
+                characterId,
+              });
+              log("CHARACTER-HISTORY", `Saved ${savedAmount} activities`);
             }
-            eventEmitter.emit("character-history-partial-loaded", {
-              membershipId,
-              characterId,
-            });
-            log("CHARACTER-HISTORY", `Saved ${savedAmount} activities`);
+          } catch (e) {
+            log("CHARACTER-HISTORY", "Failed to load character history", e, history);
+            reject(history.Result.content);
           }
 
           page++;
