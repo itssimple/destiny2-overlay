@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/itssimple/destiny2-overlay/compare/v1.3.3...v1.4.0) (2022-05-24)
+
+
+### Features
+
+* Added debug mode, to increase log verbosity ([75bd341](https://github.com/itssimple/destiny2-overlay/commit/75bd3413bd6d152f92d5f2961fa36290f9e7591f))
+
 ### [1.3.3](https://github.com/itssimple/destiny2-overlay/compare/v1.3.2...v1.3.3) (2022-04-21)
 
 
