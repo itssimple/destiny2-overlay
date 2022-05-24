@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/itssimple/destiny2-overlay/compare/v1.4.0...v1.5.0) (2022-05-24)
+
+
+### Features
+
+* Added NewRelic browser monitoring, to hopefully catch some bugs ([84ee2d6](https://github.com/itssimple/destiny2-overlay/commit/84ee2d6bf363836d8c366b1334e3bc5be73f72a2))
+
 ## [1.4.0](https://github.com/itssimple/destiny2-overlay/compare/v1.3.3...v1.4.0) (2022-05-24)
 
 
