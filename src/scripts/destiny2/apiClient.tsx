@@ -19,7 +19,7 @@ export class DestinyApiClient {
   getToken: (state: any, code: any) => Promise<unknown>;
   refreshToken: () => Promise<unknown>;
   getUserMemberships: () => Promise<unknown>;
-  getUserProfile: (membershipId: any) => Promise<unknown>;
+  getUserProfile: (membershipId: any, membershipType: any) => Promise<unknown>;
   getLastPlayedCharacter: (forceRefresh?: boolean) => Promise<{
     characterInfo: any;
     characterProgression: any;
@@ -490,7 +490,7 @@ export class DestinyApiClient {
       StringVariables: 1200,
     };
 
-    this.getUserProfile = async function (membershipId) {
+    this.getUserProfile = async function (membershipId, membershipType) {
       let interestingComponents = [
         profileComponents.Profiles,
         profileComponents.ProfileInventories,
@@ -519,7 +519,9 @@ export class DestinyApiClient {
 
       return new Promise(async (resolve, reject) => {
         await pluginClient.GET(
-          `${destinyApiUrl}/Destiny2/3/Profile/${membershipId}/?components=${interestingComponents.join(",")}`,
+          `${destinyApiUrl}/Destiny2/${membershipType}/Profile/${membershipId}/?components=${interestingComponents.join(
+            ","
+          )}`,
           await getUserToken(),
           (result) => {
             if (result.statusCode === 200) {
@@ -555,7 +557,10 @@ export class DestinyApiClient {
         self.userMembership.destinyMemberships.length > 0 &&
         self.userMembership.destinyMemberships[0].membershipId !== null
       ) {
-        _profile = await self.getUserProfile(self.userMembership.destinyMemberships[0].membershipId);
+        _profile = await self.getUserProfile(
+          self.userMembership.destinyMemberships[0].membershipId,
+          self.userMembership.destinyMemberships[0].membershipType
+        );
       }
 
       let characters = [];
