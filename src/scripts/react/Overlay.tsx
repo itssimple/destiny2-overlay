@@ -6,14 +6,13 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 
-Sentry.init({
-  dsn: "https://cd1d4d46d6b14f3ea41d6ede28ad95a7@sentry.nolifeking85.tv/2",
-  integrations: [new BrowserTracing()],
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
+overwolf.extensions.current.getManifest(function (app) {
+  Sentry.init({
+    dsn: "https://cd1d4d46d6b14f3ea41d6ede28ad95a7@sentry.nolifeking85.tv/2",
+    integrations: [new BrowserTracing()],
+    tracesSampleRate: 1.0,
+    release: app.meta.version,
+  });
 });
 
 import { Titlebar } from "./Overlay/Titlebar";
