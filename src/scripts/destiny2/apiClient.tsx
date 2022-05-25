@@ -554,13 +554,13 @@ export class DestinyApiClient {
         _profile == null &&
         self.userMembership !== null &&
         self.userMembership.destinyMemberships !== null &&
-        self.userMembership.destinyMemberships.length > 0 &&
-        self.userMembership.destinyMemberships[0].membershipId !== null
+        self.userMembership.destinyMemberships.length > 0
       ) {
-        _profile = await self.getUserProfile(
-          self.userMembership.destinyMemberships[0].membershipId,
-          self.userMembership.destinyMemberships[0].membershipType
+        var primaryMembership = self.userMembership.destinyMemberships.find(
+          (m) => m.membershipId == self.userMembership.primaryMembershipId
         );
+
+        _profile = await self.getUserProfile(primaryMembership.membershipId, primaryMembership.membershipType);
       }
 
       let characters = [];
