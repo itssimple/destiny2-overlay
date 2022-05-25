@@ -20,7 +20,12 @@
       "game_ids": [21812]
     },
     "externally_connectable": {
-      "matches": ["https://www.bungie.net", "https://o2g.itssimple.se", "https://bam.eu01.nr-data.net"]
+      "matches": [
+        "https://www.bungie.net",
+        "https://o2g.itssimple.se",
+        "https://bam.eu01.nr-data.net",
+        "https://sentry.nolifeking85.tv"
+      ]
     },
     "protocol_override_domains": { "googlesyndication": "http" },
     "start_window": "background",

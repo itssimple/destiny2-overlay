@@ -30,7 +30,12 @@ export class EventEmitter {
         this.eventListeners
           .filter((ev) => ev.eventName == eventName)
           .forEach(async (l) => {
-            await l.handler(...params);
+            try {
+              await l.handler(...params);
+            } catch (e) {
+              log("EVENT:ERROR", e);
+              reject(e);
+            }
           });
 
         resolve(true);

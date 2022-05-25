@@ -2,6 +2,20 @@
 
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
+
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
+
+Sentry.init({
+  dsn: "https://cd1d4d46d6b14f3ea41d6ede28ad95a7@sentry.nolifeking85.tv/2",
+  integrations: [new BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
 import { LoadingIndicator } from "./components/loadingIndicator";
 
 import { DestinyApiClient } from "../destiny2/apiClient";
@@ -43,13 +57,21 @@ function LoadingWindow() {
           }
 
           loadingActivity.textContent = "Loading data...";
-          destinyApiClient.loadDataFromStorage().then(() => {
-            loadingActivity.textContent = "Loading data... done";
-            setTimeout(() => {
-              loadingActivity.textContent = "Opening application...";
-              eventEmitter.emit("manifests-loaded");
-            }, 1000);
-          });
+          destinyApiClient
+            .loadDataFromStorage()
+            .then(() => {
+              loadingActivity.textContent = "Loading data... done";
+              setTimeout(() => {
+                loadingActivity.textContent = "Opening application...";
+                eventEmitter.emit("manifests-loaded");
+              }, 1000);
+            })
+            .catch((error) => {
+              loadingActivity.textContent = "Loading data... failed. Try again later";
+              setTimeout(() => {
+                eventEmitter.emit("shutdown", error);
+              }, 5000);
+            });
         });
       });
     }
