@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/itssimple/destiny2-overlay/compare/v1.5.0...v1.6.0) (2022-05-25)
+
+
+### Features
+
+* Replace NewRelic with self-hosted Sentry instead. ([1b94d2b](https://github.com/itssimple/destiny2-overlay/commit/1b94d2b05e99a3afbc6af71215635a87d2318263))
+
 ## [1.5.0](https://github.com/itssimple/destiny2-overlay/compare/v1.4.0...v1.5.0) (2022-05-24)
 
 
