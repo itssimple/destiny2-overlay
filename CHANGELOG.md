@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/itssimple/destiny2-overlay/compare/v1.6.0...v1.6.1) (2022-05-25)
+
+
+### Bug Fixes
+
+* Change order on how we load things, to make sure that the database is loaded before anything else continues. ([7d091f4](https://github.com/itssimple/destiny2-overlay/commit/7d091f4f4381f2df2593d622ad29d3e60619c45e))
+* Use actual membershipType instead of always steam ([f1555ef](https://github.com/itssimple/destiny2-overlay/commit/f1555ef27395adee27dcfed018ce58f551e3cd54))
+
 ## [1.6.0](https://github.com/itssimple/destiny2-overlay/compare/v1.5.0...v1.6.0) (2022-05-25)
 
 
