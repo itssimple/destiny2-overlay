@@ -904,7 +904,15 @@ export class DestinyApiClient {
 
       return new Promise<void>(async (resolve, reject) => {
         let savedAmount = maxActivitiesPerFetch;
-        let page = 0;
+        let localCharacterHistory = await db.getStorageItems(
+          "playerActivity",
+          (item) => item.value.characterId == characterId
+        );
+        let page = Math.floor(localCharacterHistory.length / 250);
+        log(
+          "CHARACTER-HISTORY",
+          `Loaded local character history, found ${localCharacterHistory.length} items, skipping to page ${page}`
+        );
 
         while (savedAmount > 0) {
           let historyActivityUrl = `https://www.bungie.net/Platform/Destiny2/-1/Account/${membershipId}/Character/${characterId}/Stats/Activities?count=${maxActivitiesPerFetch}&page=${page}`;
