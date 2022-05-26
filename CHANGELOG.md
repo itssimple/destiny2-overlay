@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/itssimple/destiny2-overlay/compare/v1.6.1...v1.6.2) (2022-05-26)
+
+
+### Bug Fixes
+
+* Refresh token when loading character history in case it was expired. ([652593d](https://github.com/itssimple/destiny2-overlay/commit/652593d8b6aa8ad48cefc85006502c4ddb5d2285))
+* Use the primaryMembershipId to find which user to load ([2800042](https://github.com/itssimple/destiny2-overlay/commit/2800042d12bed2d982fcff308962f410cb32fabd))
+
 ### [1.6.1](https://github.com/itssimple/destiny2-overlay/compare/v1.6.0...v1.6.1) (2022-05-25)
 
 
