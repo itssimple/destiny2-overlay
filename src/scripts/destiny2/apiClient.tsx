@@ -894,6 +894,8 @@ export class DestinyApiClient {
     };
 
     this.loadCharacterHistory = async function (membershipId, characterId) {
+      await refreshTokenIfExpired();
+
       log("CHARACTER-HISTORY", "Loading character history");
       eventEmitter.emit("character-history-loading", {
         membershipId,
