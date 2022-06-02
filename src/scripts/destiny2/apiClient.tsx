@@ -9,7 +9,7 @@ export class DestinyApiClient {
   getAuthenticationUrl: () => string;
   lastVersion: string | null;
   profile: any;
-  userMembership: any;
+  linkedProfiles: any;
   trackedGoals: any[];
   cachedManifest: any;
   checkManifestVersion: () => Promise<unknown>;
@@ -18,7 +18,7 @@ export class DestinyApiClient {
   loadCommonSettings: () => Promise<unknown>;
   getToken: (state: any, code: any) => Promise<unknown>;
   refreshToken: () => Promise<unknown>;
-  getUserMemberships: () => Promise<unknown>;
+  getLinkedProfiles: () => Promise<unknown>;
   getUserProfile: (membershipId: any, membershipType: any) => Promise<unknown>;
   getLastPlayedCharacter: (forceRefresh?: boolean) => Promise<{
     characterInfo: any;
@@ -136,7 +136,7 @@ export class DestinyApiClient {
     this.randomState = null;
 
     this.profile = null;
-    this.userMembership = null;
+    this.linkedProfiles = null;
 
     this.trackedGoals = [];
 
@@ -235,8 +235,8 @@ export class DestinyApiClient {
         self.profile = JSON.parse(await db.getItem("destiny-profile"));
       }
 
-      if ((await db.getItem("destiny-userMembership")) !== null) {
-        self.userMembership = JSON.parse(await db.getItem("destiny-userMembership"));
+      if ((await db.getItem("destiny-linkedProfiles")) !== null) {
+        self.linkedProfiles = JSON.parse(await db.getItem("destiny-linkedProfiles"));
       }
 
       log("D2API", "Data loaded from storage");
@@ -346,6 +346,7 @@ export class DestinyApiClient {
         db.setItem("destinyRefreshToken", tokenResponse.refresh_token);
         db.setItem("destinyExpires", Date.now() + tokenResponse.expires_in * 1000);
         db.setItem("destinyRefreshTokenExpires", Date.now() + tokenResponse.refresh_expires_in * 1000);
+        db.setItem("destinyBungieMembershipId", tokenResponse.membership_id);
       }
     }
 
@@ -428,22 +429,24 @@ export class DestinyApiClient {
       return await db.getItem("destinyToken");
     }
 
-    this.getUserMemberships = async function () {
+    this.getLinkedProfiles = async function () {
       await refreshTokenIfExpired();
 
       return new Promise(async (resolve, reject) => {
+        var bnetMemberId = await db.getItem("destinyBungieMembershipId");
+
         await pluginClient.GET(
-          `${destinyApiUrl}/User/GetMembershipsForCurrentUser/`,
+          `${destinyApiUrl}/Destiny2/-1/Profile/${bnetMemberId}/LinkedProfiles/`,
           await getUserToken(),
           (result) => {
             if (result.statusCode === 200) {
-              let memberships = JSON.parse(result.content);
+              let profiles = JSON.parse(result.content);
 
-              db.setItem("destiny-userMembership", JSON.stringify(memberships.Response));
+              db.setItem("destiny-linkedProfiles", JSON.stringify(profiles.Response));
 
-              self.userMembership = memberships.Response;
+              self.linkedProfiles = profiles.Response;
 
-              resolve(memberships.Response);
+              resolve(profiles.Response);
             } else {
               reject(result);
             }
@@ -546,19 +549,17 @@ export class DestinyApiClient {
         _profile = null;
       }
 
-      if (self.userMembership === null) {
+      if (self.linkedProfiles === null) {
         return null;
       }
 
       if (
         _profile == null &&
-        self.userMembership !== null &&
-        self.userMembership.destinyMemberships !== null &&
-        self.userMembership.destinyMemberships.length > 0
+        self.linkedProfiles !== null &&
+        self.linkedProfiles.profiles !== null &&
+        self.linkedProfiles.profiles.length > 0
       ) {
-        var primaryMembership = self.userMembership.destinyMemberships.find(
-          (m) => m.membershipId == self.userMembership.primaryMembershipId
-        );
+        var primaryMembership = self.linkedProfiles.profiles[0];
 
         _profile = await self.getUserProfile(primaryMembership.membershipId, primaryMembership.membershipType);
       }

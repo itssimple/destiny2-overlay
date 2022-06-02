@@ -78,7 +78,7 @@ async function handleUrlLaunch(urlSchemeStart) {
         } else {
           log("BUNGIEAUTH", "Successful");
           await destinyApiClient.checkManifestVersion();
-          await destinyApiClient.getUserMemberships();
+          await destinyApiClient.getLinkedProfiles();
           await destinyApiClient.getTrackableData(true);
 
           eventEmitter.emit("auth-successful");
@@ -412,7 +412,7 @@ if (firstLaunch) {
   window.eventEmitter.addEventListener("destiny-data-loaded", async function () {
     if (await destinyApiClient.isAuthenticated()) {
       await destinyApiClient.checkManifestVersion();
-      await destinyApiClient.getUserMemberships();
+      await destinyApiClient.getLinkedProfiles();
       await destinyApiClient.getTrackableData(true);
     } else {
       window.eventEmitter.emit("destiny-not-authed");
