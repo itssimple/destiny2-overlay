@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.3](https://github.com/itssimple/destiny2-overlay/compare/v1.6.2...v1.6.3) (2022-06-02)
+
+
+### Bug Fixes
+
+* Change out so that we use LinkedProfiles to grab the correct membership from the start ([92dea18](https://github.com/itssimple/destiny2-overlay/commit/92dea18feeaf706c8d737c482e69aa14eba7af71))
+
+
+### Refactoring
+
+* Only load the last few pages of the character history. ([253130f](https://github.com/itssimple/destiny2-overlay/commit/253130fb1595f8b9188e918f82fddc35d83762a3))
+
 ### [1.6.2](https://github.com/itssimple/destiny2-overlay/compare/v1.6.1...v1.6.2) (2022-05-26)
 
 
