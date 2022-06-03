@@ -270,6 +270,8 @@ export class DestinyApiClient {
     };
 
     this.loadCommonSettings = async function () {
+      await refreshTokenIfExpired();
+
       return new Promise(async (resolve, reject) => {
         await pluginClient.GET(`${destinyApiUrl}/Settings`, await getUserToken(), (response) => {
           resolve(JSON.parse(response.content));
@@ -383,6 +385,7 @@ export class DestinyApiClient {
     this.refreshToken = async function () {
       const refreshToken = await db.getItem("destinyRefreshToken");
       if (refreshToken === null) {
+        eventEmitter.emit("destiny2-auth-refresh-failed");
         return null;
       }
 
@@ -448,6 +451,7 @@ export class DestinyApiClient {
 
               resolve(profiles.Response);
             } else {
+              self.refreshToken();
               reject(result);
             }
           }
@@ -535,6 +539,7 @@ export class DestinyApiClient {
 
               resolve(profile.Response);
             } else {
+              self.refreshToken();
               reject(result);
             }
           }
@@ -543,6 +548,8 @@ export class DestinyApiClient {
     };
 
     this.getLastPlayedCharacter = async function (forceRefresh = false) {
+      await refreshTokenIfExpired();
+
       let _profile = self.profile;
 
       if (forceRefresh) {
@@ -604,6 +611,8 @@ export class DestinyApiClient {
     };
 
     this.equipItems = async function (_lastPlayer) {
+      await refreshTokenIfExpired();
+
       return new Promise(async (resolve, reject) => {
         await pluginClient.POSTJson(
           `${destinyApiUrl}/Destiny2/Actions/Items/EquipItems/`,
@@ -617,6 +626,7 @@ export class DestinyApiClient {
             if (result.statusCode === 200) {
               resolve(result.content);
             } else {
+              self.refreshToken();
               reject(result);
             }
           }
@@ -625,6 +635,8 @@ export class DestinyApiClient {
     };
 
     this.lockItem = async function (membershipType, characterId, itemId, lockState) {
+      await refreshTokenIfExpired();
+
       return new Promise(async (resolve, reject) => {
         await pluginClient.POSTJson(
           `${destinyApiUrl}/Destiny2/Actions/Items/SetLockState/`,
@@ -639,6 +651,7 @@ export class DestinyApiClient {
             if (result.statusCode === 200) {
               resolve(result.content);
             } else {
+              self.refreshToken();
               reject(result);
             }
           }
@@ -916,6 +929,7 @@ export class DestinyApiClient {
         );
 
         while (savedAmount > 0) {
+          await refreshTokenIfExpired();
           let historyActivityUrl = `https://www.bungie.net/Platform/Destiny2/-1/Account/${membershipId}/Character/${characterId}/Stats/Activities?count=${maxActivitiesPerFetch}&page=${page}`;
           savedAmount = 0;
           log("CHARACTER-HISTORY", `Loading page ${page} (${historyActivityUrl})`);
@@ -941,6 +955,7 @@ export class DestinyApiClient {
             }
           } catch (e) {
             log("CHARACTER-HISTORY", "Failed to load character history", e, history);
+            self.refreshToken();
             reject(history.Result.content);
           }
 
