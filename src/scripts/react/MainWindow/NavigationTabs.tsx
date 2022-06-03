@@ -48,6 +48,12 @@ export function NavigationTabs() {
     await db.removeItem("destinyExpires");
     await db.removeItem("destinyRefreshToken");
     await db.removeItem("destinyRefreshTokenExpires");
+    await db.removeItem("destinyBungieMembershipId");
+
+    await db.removeItem("destiny-profile");
+    await db.removeItem("destiny-linkedProfiles");
+
+    eventEmitter.emit("destiny-logout");
 
     eventEmitter.emit("destiny-not-authed");
   }
