@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.4](https://github.com/itssimple/destiny2-overlay/compare/v1.6.3...v1.6.4) (2022-06-03)
+
+
+### Bug Fixes
+
+* A lot more refreshToken whenever it fails. ([c36fd89](https://github.com/itssimple/destiny2-overlay/commit/c36fd89e765a38227d2b5ef0f734fa684d750772))
+* Hopefully get rid of the pesky transaction errors ([dc6efaf](https://github.com/itssimple/destiny2-overlay/commit/dc6efafe6989720f9904a54560e0c86b97f28379))
+* Remove all stored profile data when you sign out ([a80894a](https://github.com/itssimple/destiny2-overlay/commit/a80894a3f7be3752741f5f4a17abdeb6f9465a8d))
+
 ### [1.6.3](https://github.com/itssimple/destiny2-overlay/compare/v1.6.2...v1.6.3) (2022-06-02)
 
 
