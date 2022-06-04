@@ -560,12 +560,16 @@ export class DestinyApiClient {
         return null;
       }
 
+      await self.getLinkedProfiles();
+
       if (
         self.linkedProfiles !== null &&
         self.linkedProfiles.profiles !== null &&
         self.linkedProfiles.profiles.length > 0
       ) {
-        var primaryMembership = self.linkedProfiles.profiles.sort((a, b) => a.dateLastPlayed > b.dateLastPlayed)[0];
+        var primaryMembership = self.linkedProfiles.profiles.sort((a, b) =>
+          a.dateLastPlayed > b.dateLastPlayed ? -1 : 1
+        )[0];
 
         _profile = await self.getUserProfile(primaryMembership.membershipId, primaryMembership.membershipType);
       }
@@ -595,6 +599,7 @@ export class DestinyApiClient {
           : {},
         characterCollectibles: _profile.characterCollectibles.data[_last.characterId].collectibles,
         characterRecords: _profile.characterRecords.data[_last.characterId],
+        characterStringVariables: _profile.characterStringVariables.data[_last.characterId],
         profileProgression: _profile.profileProgression.data,
         metrics: _profile.metrics.data.metrics,
         itemComponents: _profile.itemComponents,
@@ -604,6 +609,7 @@ export class DestinyApiClient {
         profilePlugSets: !!!_profile.profilePlugSets.disabled ? _profile.profilePlugSets.data.plugs : {},
         profileCollectibles: _profile.profileCollectibles.data,
         profile: _profile.profile.data,
+        profileStringVariables: _profile.profileStringVariables.data,
       };
 
       return lastPlayedCharacter;
