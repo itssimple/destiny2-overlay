@@ -75,6 +75,7 @@ body {
 .list-group-item {
   background-color: #32383e33;
   padding: 0.5rem;
+  text-shadow: -1px -1px 5px #000, 1px 1px 5px #000;
 }
 
 .media-object {
@@ -89,6 +90,8 @@ body {
   text-transform: uppercase;
   font-weight: bold;*/
   margin-bottom: 2px;
+
+  text-shadow: -1px -1px 5px #000, 1px 1px 5px #000;
 }
 
 @media (max-width: 250px) {
