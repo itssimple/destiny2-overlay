@@ -39,6 +39,29 @@ export class Destiny2Goals {
       return seasonRankDataItem;
     };
 
+    this.replaceStringVariables = function (string, profileVariables) {
+      if (string.indexOf("{var:") === -1) return string;
+      var matchRegex = /{var:(\d+)}/g;
+
+      var allMatches = string.match(matchRegex);
+
+      let newString = string;
+
+      if (allMatches) {
+        for (var i = 0; i < allMatches.length; i++) {
+          var match = allMatches[i];
+          var matchIndex = match.match(/\d+/)[0];
+          var matchString = profileVariables[matchIndex];
+
+          if (matchString) {
+            newString = newString.replace(match, matchString);
+          }
+        }
+      }
+
+      return newString;
+    };
+
     this.getMilestoneData = function (namedObject) {
       let milestoneData = [];
 
@@ -48,8 +71,14 @@ export class Destiny2Goals {
         let milestone = namedObject.characterProgression.milestones[milestoneKey];
 
         let milestoneDataItem = {
-          name: milestone.milestoneName,
-          description: milestone.milestoneDescription,
+          name: this.replaceStringVariables(
+            milestone.milestoneName,
+            namedObject.profileStringVariables.integerValuesByHash
+          ),
+          description: this.replaceStringVariables(
+            milestone.milestoneDescription,
+            namedObject.profileStringVariables.integerValuesByHash
+          ),
           order: milestone.order,
           icon: milestone.milestoneIcon,
           type: "milestone",
@@ -154,8 +183,14 @@ export class Destiny2Goals {
 
         for (let objective of incompleteTasks) {
           let bountyDataItem = {
-            name: bounty.inventoryitemName,
-            description: bounty.inventoryitemDescription,
+            name: this.replaceStringVariables(
+              bounty.inventoryitemName,
+              namedObject.profileStringVariables.integerValuesByHash
+            ),
+            description: this.replaceStringVariables(
+              bounty.inventoryitemDescription,
+              namedObject.profileStringVariables.integerValuesByHash
+            ),
             order: 500,
             icon: bounty.inventoryitemIcon,
             type: "bounty",
@@ -191,7 +226,10 @@ export class Destiny2Goals {
 
             if (typeof objective.objectiveProgressDescription !== "undefined") {
               // ${bountyDataItem.description}<br />
-              bountyDataItem.description = `${objective.objectiveProgressDescription}`;
+              bountyDataItem.description = this.replaceStringVariables(
+                objective.objectiveProgressDescription,
+                namedObject.profileStringVariables.integerValuesByHash
+              );
             }
 
             bountyData.push(bountyDataItem);
@@ -226,8 +264,14 @@ export class Destiny2Goals {
 
           for (let objective of _objectives) {
             let questDataItem = {
-              name: instanceQuest.inventoryitemName,
-              description: instanceQuest.inventoryitemDescription,
+              name: this.replaceStringVariables(
+                instanceQuest.inventoryitemName,
+                namedObject.profileStringVariables.integerValuesByHash
+              ),
+              description: this.replaceStringVariables(
+                instanceQuest.inventoryitemDescription,
+                namedObject.profileStringVariables.integerValuesByHash
+              ),
               order: 1000,
               icon: instanceQuest.inventoryitemIcon,
               type: "quest",
@@ -254,7 +298,10 @@ export class Destiny2Goals {
 
               if (typeof objective.objectiveProgressDescription !== "undefined") {
                 // ${questDataItem.description}<br />
-                questDataItem.description = `${objective.objectiveProgressDescription}`;
+                questDataItem.description = this.replaceStringVariables(
+                  objective.objectiveProgressDescription,
+                  namedObject.profileStringVariables.integerValuesByHash
+                );
               }
 
               questData.push(questDataItem);
@@ -270,8 +317,14 @@ export class Destiny2Goals {
 
         for (let objective of questObjectives) {
           let questDataItem = {
-            name: uninstancedQuest.inventoryitemName,
-            description: uninstancedQuest.inventoryitemDescription,
+            name: this.replaceStringVariables(
+              uninstancedQuest.inventoryitemName,
+              namedObject.profileStringVariables.integerValuesByHash
+            ),
+            description: this.replaceStringVariables(
+              uninstancedQuest.inventoryitemDescription,
+              namedObject.profileStringVariables.integerValuesByHash
+            ),
             order: 10000,
             icon: uninstancedQuest.inventoryitemIcon,
             type: "quest",
@@ -298,7 +351,10 @@ export class Destiny2Goals {
 
             if (typeof objective.objectiveProgressDescription !== "undefined") {
               // ${questDataItem.description}<br />
-              questDataItem.description = `${objective.objectiveProgressDescription}`;
+              questDataItem.description = this.replaceStringVariables(
+                objective.objectiveProgressDescription,
+                namedObject.profileStringVariables.integerValuesByHash
+              );
             }
 
             questData.push(questDataItem);
