@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/itssimple/destiny2-overlay/compare/v1.6.4...v1.7.0) (2022-06-04)
+
+
+### Features
+
+* Cross platform support, and always show the latest played character ([4a64a83](https://github.com/itssimple/destiny2-overlay/commit/4a64a83212dfa4ae65e28295e1af1f64ccbd215e))
+* Now you can play on any platform, and it'll show you the last played character at all times ([be26f77](https://github.com/itssimple/destiny2-overlay/commit/be26f77bb9d9b76d0412ee57a0244fa703019caf))
+
+
+### Bug Fixes
+
+* Added support for string variables ([6257d02](https://github.com/itssimple/destiny2-overlay/commit/6257d02de83a4b9c57724be4ba48e7788fdc87a7))
+
+
+### Styling
+
+* Made text more readable by giving some text shadow to the items in the overlay. ([bf7ec80](https://github.com/itssimple/destiny2-overlay/commit/bf7ec806548277272c00bed78d694dd6829383e5))
+
 ### [1.6.4](https://github.com/itssimple/destiny2-overlay/compare/v1.6.3...v1.6.4) (2022-06-03)
 
 
