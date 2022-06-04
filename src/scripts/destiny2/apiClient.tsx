@@ -561,12 +561,11 @@ export class DestinyApiClient {
       }
 
       if (
-        _profile == null &&
         self.linkedProfiles !== null &&
         self.linkedProfiles.profiles !== null &&
         self.linkedProfiles.profiles.length > 0
       ) {
-        var primaryMembership = self.linkedProfiles.profiles[0];
+        var primaryMembership = self.linkedProfiles.profiles.sort((a, b) => a.dateLastPlayed > b.dateLastPlayed)[0];
 
         _profile = await self.getUserProfile(primaryMembership.membershipId, primaryMembership.membershipType);
       }
@@ -956,7 +955,7 @@ export class DestinyApiClient {
           } catch (e) {
             log("CHARACTER-HISTORY", "Failed to load character history", e, history);
             self.refreshToken();
-            reject(history.Result.content);
+            reject(history);
           }
 
           page++;

@@ -443,11 +443,12 @@ async function initializeDatabase() {
       window.historyChecker = setInterval(async function () {
         if (destinyApiClient.profile) {
           let lastPlayed = await destinyApiClient.getLastPlayedCharacter();
-
-          await destinyApiClient.loadCharacterHistory(
-            lastPlayed.characterInfo.membershipId,
-            lastPlayed.characterInfo.characterId
-          );
+          try {
+            await destinyApiClient.loadCharacterHistory(
+              lastPlayed.characterInfo.membershipId,
+              lastPlayed.characterInfo.characterId
+            );
+          } catch (e) {}
         }
       }, 300 * 1000);
 
