@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/itssimple/destiny2-overlay/compare/v1.7.0...v1.8.0) (2022-06-05)
+
+
+### Features
+
+* Make the Cache-breaker public 😱 ([5491b0f](https://github.com/itssimple/destiny2-overlay/commit/5491b0f0f5f5d0ae7b08011cc5aeda660483ce42))
+
+
+### Bug Fixes
+
+* Don't try to replace strings that doesn't exist (undefined) ([6482711](https://github.com/itssimple/destiny2-overlay/commit/64827118ac8a75d18dd8fa5ce6b2b706c9d02184))
+
 ## [1.7.0](https://github.com/itssimple/destiny2-overlay/compare/v1.6.4...v1.7.0) (2022-06-04)
 
 
