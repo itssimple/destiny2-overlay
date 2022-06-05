@@ -49,6 +49,11 @@ export function Settings() {
         await db.setItem("d2-debugmode", checked);
         eventEmitter.emit("debug-changed", checked);
       });
+
+      document.getElementById("cacheBreaker").addEventListener("change", async function (event) {
+        let checked = event.target.checked;
+        await db.setItem("destiny2-use-cachebreaker", checked);
+      });
     });
   });
 
@@ -84,6 +89,12 @@ export function Settings() {
 
     document.getElementById("debugMode").checked = JSON.parse(
       ((await db.getItem("d2-debugmode")) ?? "false").toString()
+    )
+      ? "checked"
+      : "";
+
+    document.getElementById("cacheBreaker").checked = JSON.parse(
+      ((await db.getItem("destiny2-use-cachebreaker")) ?? "false").toString()
     )
       ? "checked"
       : "";
@@ -166,6 +177,12 @@ export function Settings() {
                     <input type="checkbox" className="form-check-input" id="debugMode" />
                     <label htmlFor="debugMode" className="form-check-label">
                       Enable debug mode
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input type="checkbox" className="form-check-input" id="cacheBreaker" />
+                    <label htmlFor="cacheBreaker" className="form-check-label">
+                      Cache breaker (Get faster API updates, but get your API log spammed)
                     </label>
                   </div>
                 </div>
