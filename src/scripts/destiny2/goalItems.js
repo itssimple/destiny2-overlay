@@ -40,7 +40,7 @@ export class Destiny2Goals {
     };
 
     this.replaceStringVariables = function (string, profileVariables) {
-      if (string.indexOf("{var:") === -1) return string;
+      if (!string || string.indexOf("{var:") === -1) return string;
       var matchRegex = /{var:(\d+)}/g;
 
       var allMatches = string.match(matchRegex);
