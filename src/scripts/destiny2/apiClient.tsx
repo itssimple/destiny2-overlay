@@ -1,6 +1,31 @@
-import { log } from "../log";
-import { Destiny2Goals } from "./goalItems";
+declare var db: Destiny2Database;
+declare var eventEmitter: EventEmitter;
 
+import { EventEmitter } from "../eventEmitter";
+import { Destiny2Database } from "../indexedDB";
+import { log } from "../log";
+import { Destiny2Goals, GoalDataItem } from "./goalItems";
+
+export type DestinyNamedObject = {
+  characterInfo: any;
+  characterProgression: any;
+  characterActivities: any;
+  characterUninstancedItemComponents: any;
+  characterInventory: any;
+  characterEquipment: any;
+  characterPlugSets: any;
+  characterCollectibles: any;
+  characterRecords: any;
+  profileProgression: any;
+  metrics: any;
+  itemComponents: any;
+  records: any;
+  profileInventory: any;
+  profileCurrency: any;
+  profilePlugSets: any;
+  profileCollectibles: any;
+  profile: any;
+};
 export class DestinyApiClient {
   destinyDataDefinition: {};
   randomState: string | null;
@@ -10,7 +35,7 @@ export class DestinyApiClient {
   lastVersion: string | null;
   profile: any;
   linkedProfiles: any;
-  trackedGoals: any[];
+  trackedGoals: GoalDataItem[];
   cachedManifest: any;
   checkManifestVersion: () => Promise<unknown>;
   checkStoredDefinitions: (downloadMissingDefinitions?: boolean) => Promise<string[]>;
@@ -19,7 +44,7 @@ export class DestinyApiClient {
   getToken: (state: any, code: any) => Promise<unknown>;
   refreshToken: () => Promise<unknown>;
   getLinkedProfiles: () => Promise<unknown>;
-  getUserProfile: (membershipId: any, membershipType: any) => Promise<unknown>;
+  getUserProfile: (membershipId: string, membershipType: any) => Promise<unknown>;
   getLastPlayedCharacter: (forceRefresh?: boolean) => Promise<{
     characterInfo: any;
     characterProgression: any;
@@ -42,26 +67,7 @@ export class DestinyApiClient {
   }>;
   equipItems: (_lastPlayer: any) => Promise<unknown>;
   lockItem: (membershipType: any, characterId: any, itemId: any, lockState: any) => Promise<unknown>;
-  getNamedDataObject: (forceRefresh?: boolean) => Promise<{
-    characterInfo: any;
-    characterProgression: any;
-    characterActivities: any;
-    characterUninstancedItemComponents: any;
-    characterInventory: any;
-    characterEquipment: any;
-    characterPlugSets: any;
-    characterCollectibles: any;
-    characterRecords: any;
-    profileProgression: any;
-    metrics: any;
-    itemComponents: any;
-    records: any;
-    profileInventory: any;
-    profileCurrency: any;
-    profilePlugSets: any;
-    profileCollectibles: any;
-    profile: any;
-  }>;
+  getNamedDataObject: (forceRefresh?: boolean) => Promise<DestinyNamedObject>;
   getPresentationNodeFromHash: (hash: any) => any[];
   mapHashesToDefinitionsInObject: (object: any) => any;
   getTrackableData: (forceRefresh?: boolean) => Promise<any[]>;
@@ -244,7 +250,7 @@ export class DestinyApiClient {
     };
 
     this.checkStoredDefinitions = async function (downloadMissingDefinitions = true) {
-      let missingDefinitions = [];
+      let missingDefinitions: string[] = [];
 
       for (let dataType of destinyDataTypes) {
         if ((await db.getItem(`destinyContent-${dataType}`)) === null) {
@@ -497,7 +503,7 @@ export class DestinyApiClient {
       StringVariables: 1200,
     };
 
-    this.getUserProfile = async function (membershipId, membershipType) {
+    this.getUserProfile = async function (membershipId: string, membershipType) {
       let interestingComponents = [
         profileComponents.Profiles,
         profileComponents.ProfileInventories,
@@ -664,7 +670,7 @@ export class DestinyApiClient {
       });
     };
 
-    this.getNamedDataObject = async function (forceRefresh = false) {
+    this.getNamedDataObject = async function (forceRefresh = false): Promise<DestinyNamedObject> {
       let _lastPlayer = await self.getLastPlayedCharacter(forceRefresh);
 
       if (_lastPlayer == null) {
@@ -833,7 +839,7 @@ export class DestinyApiClient {
       return _objectCopy;
     };
 
-    this.getTrackableData = async function (forceRefresh = false) {
+    this.getTrackableData = async function (forceRefresh = false): Promise<GoalDataItem[]> {
       let namedObject = await self.getNamedDataObject(forceRefresh);
 
       if (namedObject == null) {
@@ -844,7 +850,7 @@ export class DestinyApiClient {
       let seasonPassDefinition =
         self.destinyDataDefinition.DestinySeasonPassDefinition[seasonDefinition.seasonPassHash];
 
-      let trackableDataItems = [];
+      let trackableDataItems: GoalDataItem[] = [];
 
       let milestoneData = self.goalApi.getMilestoneData(namedObject);
       for (let milestone of milestoneData) {

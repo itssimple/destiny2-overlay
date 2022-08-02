@@ -6,8 +6,8 @@ export function Titlebar() {
 
   const getHotKeyInfo = () => {
     overwolf.settings.hotkeys.get((hotkeys) => {
-      if (hotkeys.success && hotkeys.games["21812"]) {
-        setHotKey(hotkeys.games["21812"][0].binding);
+      if (hotkeys.success && hotkeys.games!["21812"]) {
+        setHotKey(hotkeys.games!["21812"][0].binding);
       }
     });
   };

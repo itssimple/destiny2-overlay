@@ -1,11 +1,75 @@
+import { DestinyApiClient } from "./apiClient";
+
+declare var destinyApiClient: DestinyApiClient;
+
+export type GoalType = "seasonrank" | "milestone" | "bounty" | "quest" | "characterRecord";
+
+export type GoalDataItem = {
+  name: string;
+  description: string;
+  icon: string;
+  nextLevelAt?: number;
+  progressToNextLevel?: number;
+  type: GoalType;
+  order: number;
+  inProgressValueStyle: number;
+  completedValueStyle: number;
+  tracked?: boolean | undefined | null;
+  startDate?: string | undefined | null;
+  endDate?: string | undefined | null;
+};
+
+export type SeasonRankData = GoalDataItem & {};
+
+export type MilestoneDataItem = GoalDataItem & {};
+
+export type BountyDataItem = GoalDataItem & {
+  state?: ItemState;
+};
+
+export type QuestDataItem = GoalDataItem & {
+  state?: ItemState;
+};
+
+export type CharacterRecordDataItem = GoalDataItem & {
+  state?: RecordState;
+};
+
+export enum ItemState {
+  None = 0,
+  Locked = 1,
+  Tracked = 2,
+  Masterwork = 4,
+  Crafted = 8,
+  HighlightedObjective = 16,
+}
+
+export enum RecordState {
+  None = 0,
+  RecordRedeemed = 1,
+  RewardUnavailable = 2,
+  ObjectiveNotCompleted = 4,
+  Obscured = 8,
+  Invisible = 16,
+  EntitlementUnowned = 32,
+  CanEquipTitle = 64,
+}
+
 export class Destiny2Goals {
+  getSeasonRankData: (namedObject: any, seasonDefinition: any, seasonPassDefinition: any) => SeasonRankData;
+  replaceStringVariables: (string: string, profileVariables: string[]) => string;
+  getMilestoneData: (namedObject: any) => MilestoneDataItem[];
+  getBounties: (namedObject: any) => BountyDataItem[];
+  getQuests: (namedObject: any) => QuestDataItem[];
+  getCharacterRecords: (namedObject: any) => CharacterRecordDataItem[];
+
   constructor() {
     /**
      * @description Used for the base URL of content, like images and such.
      */
     const destinyBaseUrl = "https://www.bungie.net";
 
-    this.getSeasonRankData = function (namedObject, seasonDefinition, seasonPassDefinition) {
+    this.getSeasonRankData = function (namedObject, seasonDefinition, seasonPassDefinition): SeasonRankData {
       let seasonPassData = namedObject.characterProgression.progressions[seasonDefinition.seasonPassProgressionHash];
       let seasonPassProgressionData =
         namedObject.characterProgression.progressions[seasonPassDefinition.prestigeProgressionHash];
@@ -23,7 +87,7 @@ export class Destiny2Goals {
         progressToNextLevel += seasonPassProgressionData.progressToNextLevel;
       }
 
-      let seasonRankDataItem = {
+      let seasonRankDataItem: SeasonRankData = {
         name: `Season Rank ${seasonRank}`,
         description: seasonDefinition.displayProperties.name,
         icon: `${seasonArtifactData.displayProperties.icon}`,
@@ -39,7 +103,7 @@ export class Destiny2Goals {
       return seasonRankDataItem;
     };
 
-    this.replaceStringVariables = function (string, profileVariables) {
+    this.replaceStringVariables = function (string, profileVariables): string {
       if (!string || string.indexOf("{var:") === -1) return string;
       var matchRegex = /{var:(\d+)}/g;
 
@@ -50,11 +114,14 @@ export class Destiny2Goals {
       if (allMatches) {
         for (var i = 0; i < allMatches.length; i++) {
           var match = allMatches[i];
-          var matchIndex = match.match(/\d+/)[0];
-          var matchString = profileVariables[matchIndex];
+          var _match = match.match(/\d+/);
+          if (_match) {
+            var matchIndex = _match[0];
+            var matchString = profileVariables[matchIndex];
 
-          if (matchString) {
-            newString = newString.replace(match, matchString);
+            if (matchString) {
+              newString = newString.replace(match, matchString);
+            }
           }
         }
       }
@@ -62,15 +129,15 @@ export class Destiny2Goals {
       return newString;
     };
 
-    this.getMilestoneData = function (namedObject) {
-      let milestoneData = [];
+    this.getMilestoneData = function (namedObject): MilestoneDataItem[] {
+      let milestoneData: MilestoneDataItem[] = [];
 
       let milestoneKeys = Object.keys(namedObject.characterProgression.milestones);
 
       for (let milestoneKey of milestoneKeys) {
         let milestone = namedObject.characterProgression.milestones[milestoneKey];
 
-        let milestoneDataItem = {
+        let milestoneDataItem: MilestoneDataItem = {
           name: this.replaceStringVariables(
             milestone.milestoneName,
             namedObject.profileStringVariables.integerValuesByHash
@@ -123,7 +190,7 @@ export class Destiny2Goals {
                       milestoneDataItem.icon = step.activityIcon;
                     }
 
-                    break; //milestoneData.push(milestoneDataItem);
+                    break;
                   }
                 }
               }
@@ -141,7 +208,7 @@ export class Destiny2Goals {
                   }
 
                   if (typeof challenge.objectiveInProgressValueStyle !== "undefined") {
-                    milestoneDataItem.inProgressValueStyle = step.objectiveInProgressValueStyle;
+                    milestoneDataItem.inProgressValueStyle = challenge.objectiveInProgressValueStyle;
                   }
 
                   if (typeof challenge.objectiveCompletedValueStyle !== "undefined") {
@@ -152,7 +219,7 @@ export class Destiny2Goals {
                     milestoneDataItem.nextLevelAt = challenge.objective.completionValue;
                   }
 
-                  break; //milestoneData.push(milestoneDataItem);
+                  break;
                 }
               }
             }
@@ -168,8 +235,8 @@ export class Destiny2Goals {
 
     const bountyItemType = 26;
 
-    this.getBounties = function (namedObject) {
-      let bountyData = [];
+    this.getBounties = function (namedObject): BountyDataItem[] {
+      let bountyData: BountyDataItem[] = [];
 
       var bountyItems = namedObject.characterInventory.filter((item) => item.inventoryitemItemType === bountyItemType);
 
@@ -182,7 +249,7 @@ export class Destiny2Goals {
         if (incompleteTasks.length === 0) continue;
 
         for (let objective of incompleteTasks) {
-          let bountyDataItem = {
+          let bountyDataItem: BountyDataItem = {
             name: this.replaceStringVariables(
               bounty.inventoryitemName,
               namedObject.profileStringVariables.integerValuesByHash
@@ -196,7 +263,7 @@ export class Destiny2Goals {
             type: "bounty",
             inProgressValueStyle: 0,
             completedValueStyle: 0,
-            tracked: (bounty.state & 2) == 2,
+            tracked: (bounty.state & ItemState.Tracked) == ItemState.Tracked,
             state: bounty.state,
           };
 
@@ -204,7 +271,7 @@ export class Destiny2Goals {
             bountyDataItem.endDate = bounty.expirationDate;
 
             // If the bounty is expired, we'll ignore it
-            if (new Date(bounty.expirationDate) < Date.now()) {
+            if (new Date(bounty.expirationDate).getTime() < new Date().getTime()) {
               continue;
             }
           }
@@ -240,11 +307,10 @@ export class Destiny2Goals {
       return bountyData;
     };
 
-    const questItemType = 12;
     const questBucketHash = 1345459588;
 
-    this.getQuests = function (namedObject) {
-      let questData = [];
+    this.getQuests = function (namedObject): QuestDataItem[] {
+      let questData: QuestDataItem[] = [];
 
       var questItems = namedObject.characterInventory.filter(
         (item) =>
@@ -263,7 +329,7 @@ export class Destiny2Goals {
           const _objectives = itemObjectives.objectives.filter((objective) => objective.visible && !objective.complete);
 
           for (let objective of _objectives) {
-            let questDataItem = {
+            let questDataItem: QuestDataItem = {
               name: this.replaceStringVariables(
                 instanceQuest.inventoryitemName,
                 namedObject.profileStringVariables.integerValuesByHash
@@ -277,7 +343,7 @@ export class Destiny2Goals {
               type: "quest",
               inProgressValueStyle: 0,
               completedValueStyle: 0,
-              tracked: (instanceQuest.state & 2) == 2,
+              tracked: (instanceQuest.state & ItemState.Tracked) == ItemState.Tracked,
               state: instanceQuest.state,
             };
 
@@ -316,7 +382,7 @@ export class Destiny2Goals {
         ).filter((objective) => objective.visible && !objective.complete);
 
         for (let objective of questObjectives) {
-          let questDataItem = {
+          let questDataItem: QuestDataItem = {
             name: this.replaceStringVariables(
               uninstancedQuest.inventoryitemName,
               namedObject.profileStringVariables.integerValuesByHash
@@ -330,7 +396,7 @@ export class Destiny2Goals {
             type: "quest",
             inProgressValueStyle: 0,
             completedValueStyle: 0,
-            tracked: (uninstancedQuest.state & 2) == 2,
+            tracked: (uninstancedQuest.state & ItemState.Tracked) == ItemState.Tracked,
             state: uninstancedQuest.state,
           };
 
@@ -365,8 +431,8 @@ export class Destiny2Goals {
       return questData;
     };
 
-    this.getCharacterRecords = function (namedObject) {
-      let characterRecords = [];
+    this.getCharacterRecords = function (namedObject): CharacterRecordDataItem[] {
+      let characterRecords: CharacterRecordDataItem[] = [];
 
       let characterRecordKeys = Object.keys(namedObject.characterRecords.records);
       for (let key of characterRecordKeys) {
@@ -379,7 +445,7 @@ export class Destiny2Goals {
         );
 
         for (let objective of recordObjectives) {
-          let characterRecordData = {
+          let characterRecordData: CharacterRecordDataItem = {
             name: characterRecord.recordName,
             type: "characterRecord",
             order: 100,

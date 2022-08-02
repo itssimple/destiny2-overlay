@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { GoalDataItem } from "../../destiny2/goalItems";
 import { EventEmitter } from "../../eventEmitter";
 import { Destiny2Database } from "../../indexedDB";
 import { LoadingIndicator } from "../components/loadingIndicator";
@@ -19,10 +20,10 @@ var trackingItems = {
   seasonRank: true,
 };
 
-var cachedGoals = [];
+var cachedGoals: GoalDataItem[] = [];
 
 export function GoalList() {
-  const [visibleGoals, setVisibleGoals] = useState([]);
+  const [visibleGoals, setVisibleGoals] = useState<GoalDataItem[]>([]);
 
   useEffect(() => {
     eventEmitter.addEventListener("goal-list-update", updateGoalList);
@@ -55,7 +56,7 @@ export function GoalList() {
   }, []);
 
   function renderProgress(goal) {
-    let progress = null;
+    let progress: any = null;
 
     if (goal.inProgressValueStyle === 0) {
       if (goal.nextLevelAt === 1) {
@@ -125,10 +126,10 @@ export function GoalList() {
     );
   }
 
-  async function updateGoalList(goals) {
+  async function updateGoalList(goals: GoalDataItem[]) {
     let goalsVisible = 0;
 
-    let _visibleGoals = [];
+    let _visibleGoals: GoalDataItem[] = [];
 
     for (let goal of goals) {
       if (visibleItems > 0 && goalsVisible >= visibleItems) {

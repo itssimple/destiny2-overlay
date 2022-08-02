@@ -32,7 +32,7 @@ function LoadingWindow() {
 
     eventEmitter.addEventListener("loading-text", (data) => {
       const loadingActivity = document.querySelector("#loading-activity");
-      loadingActivity.textContent = data;
+      loadingActivity!.textContent = data;
     });
 
     // check if browser is online
@@ -45,28 +45,28 @@ function LoadingWindow() {
       const destinyApiClient = (backgroundWindow as any).destinyApiClient as DestinyApiClient;
 
       const loadingActivity = document.querySelector("#loading-activity");
-      loadingActivity.textContent = "Checking manifest";
+      loadingActivity!.textContent = "Checking manifest";
 
       destinyApiClient.checkManifestVersion().then(async () => {
         destinyApiClient.checkStoredDefinitions(false).then(async (missingDefinitions) => {
           const loadingActivity = document.querySelector("#loading-activity");
           if (missingDefinitions.length > 0) {
-            loadingActivity.textContent = "Downloading definitions...";
+            loadingActivity!.textContent = "Downloading definitions...";
             await destinyApiClient.checkStoredDefinitions(true);
           }
 
-          loadingActivity.textContent = "Loading data...";
+          loadingActivity!.textContent = "Loading data...";
           destinyApiClient
             .loadDataFromStorage()
             .then(() => {
-              loadingActivity.textContent = "Loading data... done";
+              loadingActivity!.textContent = "Loading data... done";
               setTimeout(() => {
-                loadingActivity.textContent = "Opening application...";
+                loadingActivity!.textContent = "Opening application...";
                 eventEmitter.emit("manifests-loaded");
               }, 1000);
             })
             .catch((error) => {
-              loadingActivity.textContent = "Loading data... failed. Try again later";
+              loadingActivity!.textContent = "Loading data... failed. Try again later";
               setTimeout(() => {
                 eventEmitter.emit("shutdown", error);
               }, 5000);

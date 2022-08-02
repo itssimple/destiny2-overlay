@@ -20,7 +20,7 @@ export function NavigationTabs() {
       } else {
         document.querySelector("#authenticateWithBungie").style.display = "";
         document.querySelector("#logoutFromBungie").style.display = "none";
-        document.querySelector("#allGoals").innerHTML =
+        document.querySelector("#allGoals")!.innerHTML =
           "<h1>Authenticate with Bungie to see your latest played character and other stats</h1>";
       }
     });
@@ -34,7 +34,7 @@ export function NavigationTabs() {
       document.querySelector("#authenticateWithBungie").style.display = "";
       document.querySelector("#logoutFromBungie").style.display = "none";
 
-      document.querySelector("#allGoals").innerHTML =
+      document.querySelector("#allGoals")!.innerHTML =
         "<h1>Authenticate with Bungie to see your latest played character</h1>";
     });
   }, []);

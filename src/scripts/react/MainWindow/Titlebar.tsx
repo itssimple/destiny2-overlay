@@ -13,19 +13,19 @@ export function Titlebar() {
 
       overwolf.extensions.current.getManifest(function (app) {
         windowTitle = `${windowTitle} - v${app.meta.version}`;
-        document.getElementById("titleBarName").innerHTML = windowTitle;
+        document.getElementById("titleBarName")!.innerHTML = windowTitle;
       });
 
       eventEmitter.addEventListener("update-available", function (version) {
         document.getElementById(
           "titleBarName"
-        ).innerHTML = `${windowTitle} - <span class="update-available" onclick="downloadUpdate(); return false;" title="An update (${version}) is available for this application, click here to update to the new version">Update available!</span>`;
+        )!.innerHTML = `${windowTitle} - <span class="update-available" onclick="downloadUpdate(); return false;" title="An update (${version}) is available for this application, click here to update to the new version">Update available!</span>`;
       });
 
       eventEmitter.addEventListener("update-pending-restart", function (version) {
         document.getElementById(
           "titleBarName"
-        ).innerHTML = `${windowTitle} - <span class="update-pending-restart" onclick="relaunchTheApp(); return false;" title="We need to restart the application to apply the new version, click here to restart">Pending restart!</span>`;
+        )!.innerHTML = `${windowTitle} - <span class="update-pending-restart" onclick="relaunchTheApp(); return false;" title="We need to restart the application to apply the new version, click here to restart">Pending restart!</span>`;
       });
     });
   }, []);
