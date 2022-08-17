@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/itssimple/destiny2-overlay/compare/v1.8.0...v1.8.1) (2022-08-17)
+
+
+### Refactoring
+
+* Doing some small refactoring ([ad522e6](https://github.com/itssimple/destiny2-overlay/commit/ad522e6a211a7e4b1fad970fb489d8433858518f))
+
 ## [1.8.0](https://github.com/itssimple/destiny2-overlay/compare/v1.7.0...v1.8.0) (2022-06-05)
 
 
