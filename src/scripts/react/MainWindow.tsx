@@ -3,33 +3,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
-import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
-
-var machineId: string | undefined | null = null;
-
-overwolf.extensions.current.getManifest(function (app) {
-  Sentry.init({
-    dsn: "https://cd1d4d46d6b14f3ea41d6ede28ad95a7@sentry.nolifeking85.tv/2",
-    integrations: [new BrowserTracing()],
-    tracesSampleRate: 1.0,
-    release: app.meta.version,
-  });
-
-  overwolf.profile.getCurrentUser((userResult) => {
-    if (userResult.success) {
-      Sentry.setUser({
-        id: `${userResult.machineId}-OW-${userResult.username}`,
-      });
-    } else {
-      Sentry.setUser({
-        id: `${userResult.machineId}-OWUUID-${userResult.userId}`,
-      });
-    }
-    machineId = userResult.machineId;
-  });
-});
-
 import "../../public/css/bootstrap.min.css";
 import "../../public/css/main-window.css";
 import "../../public/css/window-styles.css";

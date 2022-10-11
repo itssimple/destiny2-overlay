@@ -1,32 +1,3 @@
-import * as Sentry from "@sentry/browser";
-import { BrowserTracing } from "@sentry/tracing";
-
-var machineId = null;
-
-overwolf.extensions.current.getManifest(function (app) {
-  window._appVersion = app.meta.version;
-
-  Sentry.init({
-    dsn: "https://cd1d4d46d6b14f3ea41d6ede28ad95a7@sentry.nolifeking85.tv/2",
-    integrations: [new BrowserTracing()],
-    tracesSampleRate: 1.0,
-    release: app.meta.version,
-  });
-
-  overwolf.profile.getCurrentUser((userResult) => {
-    if (userResult.success) {
-      Sentry.setUser({
-        id: `${userResult.machineId}-OW-${userResult.username}`,
-      });
-    } else {
-      Sentry.setUser({
-        id: `${userResult.machineId}-OWUUID-${userResult.userId}`,
-      });
-    }
-    machineId = userResult.machineId;
-  });
-});
-
 import { log } from "./log.js";
 import { EventEmitter } from "./eventEmitter.js";
 import { Destiny2Database } from "./indexedDB.js";
@@ -407,15 +378,7 @@ async function initializeDatabase() {
       window.eventEmitter.addEventListener("destiny-data-loaded", async function () {
         if (await destinyApiClient.isAuthenticated()) {
           await destinyApiClient.checkManifestVersion();
-          var profiles = await destinyApiClient.getLinkedProfiles();
           await destinyApiClient.getTrackableData(true);
-
-          var bnetMemberId = await db.getItem("destinyBungieMembershipId");
-
-          Sentry.setUser({
-            id: `${window.machineId}-Bungie-${bnetMemberId}`,
-            username: `${profiles.bnetMembership.supplementalDisplayName}`,
-          });
         } else {
           window.eventEmitter.emit("destiny-not-authed");
         }
