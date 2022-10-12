@@ -71,7 +71,7 @@ export class DestinyApiClient {
   getPresentationNodeFromHash: (hash: any) => any[];
   mapHashesToDefinitionsInObject: (object: any) => any;
   getTrackableData: (forceRefresh?: boolean) => Promise<any[]>;
-  getManifest: () => Promise<unknown>;
+  getManifest: () => Promise<{ Response: any } | null>;
   loadDataFromStorage: () => Promise<void>;
   loadCharacterHistory: (membershipId: string, characterId: string) => Promise<void>;
 
@@ -150,6 +150,12 @@ export class DestinyApiClient {
       log("D2API", "Checking manifest version");
       return new Promise(async function (resolve, reject) {
         let manifest = await self.getManifest();
+
+        if (manifest == null) {
+          log("D2API", "Failed to fetch API");
+          return null;
+        }
+
         let lastVersion = (await db.getItem("manifestVersion")) ?? "null";
         if (manifest.Response.version !== lastVersion) {
           /* Currently cached data is older than 60 minutes, so we clear it. */
@@ -179,7 +185,9 @@ export class DestinyApiClient {
       });
     };
 
-    this.getManifest = async function () {
+    this.getManifest = async function (): Promise<{
+      Response: any;
+    } | null> {
       let lastManifestUpdate = await db.getItem("lastManifestUpdate");
       log("D2API", "Checking if manifest is cached");
 
@@ -190,31 +198,29 @@ export class DestinyApiClient {
         }
       }
 
-      return new Promise(function (resolve, reject) {
-        let xhr = getXMLHttpRequestClient("GET", `${destinyApiUrl}/Destiny2/Manifest/`);
+      let manifestRequest = await callUrl("GET", `${destinyApiUrl}/Destiny2/Manifest/`);
 
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            let manifest = JSON.parse(xhr.responseText);
-            if (manifest.ErrorStatus == "Success") {
-              db.setItem("lastManifestUpdate", Date.now());
-              db.setItem("manifest", JSON.stringify(manifest.Response));
-              log("D2API", "Manifest updated");
-              resolve(manifest);
-            } else {
-              reject(manifest);
-            }
-          } else {
-            reject(xhr.statusText);
-          }
-        };
+      if (manifestRequest.status === 200) {
+        let manifest = await manifestRequest.json();
+        if (manifest.ErrorStatus == "Success") {
+          db.setItem("lastManifestUpdate", Date.now());
+          db.setItem("manifest", JSON.stringify(manifest.Response));
+          log("D2API", "Manifest updated");
 
-        xhr.onerror = function () {
-          reject(xhr.statusText);
-        };
+          return { Response: manifest.Response };
+        } else {
+          log("D2API", "Manifesterror");
+          log("D2API", manifest.Response);
 
-        xhr.send(null);
-      });
+          return null;
+        }
+      } else {
+        let responseText = await manifestRequest.text();
+        log("D2API", "Error when fetching Manifest");
+        log("D2API", responseText);
+
+        return null;
+      }
     };
 
     this.loadDataFromStorage = async function () {
@@ -291,51 +297,47 @@ export class DestinyApiClient {
     async function loadDestinyContentDataType(dataType) {
       let manifest = self.cachedManifest;
 
-      return new Promise(async function (resolve, reject) {
-        let xhr = getXMLHttpRequestClient(
-          "GET",
-          `${destinyBaseUrl}${manifest.jsonWorldComponentContentPaths.en[dataType]}`
-        );
+      eventEmitter.emit("loading-text", `Loading ${dataType.replace("Destiny", "")}`);
 
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            let contentJson = JSON.parse(xhr.responseText);
+      const contentTypeDownload = await callUrl(
+        "GET",
+        `${destinyBaseUrl}${manifest.jsonWorldComponentContentPaths.en[dataType]}`
+      );
 
-            self.destinyDataDefinition[dataType] = contentJson;
-            db.setItem(`destinyContent-${dataType}`, JSON.stringify(contentJson));
-
-            resolve(contentJson);
-          } else {
-            reject(xhr.statusText);
-          }
-        };
-
-        xhr.onprogress = function (event) {
-          console.log(`Downloaded ${event.loaded} of ${event.total} bytes for: ${xhr.responseURL}`);
-        };
-
-        xhr.onerror = function () {
-          reject(xhr.statusText);
-        };
-
-        eventEmitter.emit("loading-text", `Loading ${dataType.replace("Destiny", "")}`);
-        xhr.send(null);
-      });
-    }
-
-    /**
-     * @description Gets a primed XHR client, with the correct headers.
-     */
-    function getXMLHttpRequestClient(method, url, bearerToken = null) {
-      var xhr = new XMLHttpRequest();
-      xhr.open(method, url);
-      xhr.setRequestHeader("X-User-Agent", "Destiny 2 Goal Tracker AppId/41664 (+d2goaltracker@itssimple.se)");
-      xhr.setRequestHeader("X-API-Key", apiToken);
-      if (bearerToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + bearerToken);
+      if (!contentTypeDownload.ok) {
+        log("Manifest download error", await contentTypeDownload.text());
+        return;
       }
 
-      return xhr;
+      const contentTypeJson = await contentTypeDownload.json();
+
+      self.destinyDataDefinition[dataType] = contentTypeJson;
+      db.setItem(`destinyContent-${dataType}`, JSON.stringify(contentTypeJson));
+    }
+
+    async function callUrl(
+      method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+      url: string,
+      body: any | null = null,
+      extraHeaders: any | null = null
+    ) {
+      let headers = {
+        "X-User-Agent": "Destiny 2 Goal Tracker AppId/41664 (+d2goaltracker@itssimple.se)",
+        "X-API-Key": apiToken,
+      };
+
+      if (extraHeaders !== null) {
+        headers = {
+          ...headers,
+          ...extraHeaders,
+        };
+      }
+
+      return await fetch(url, {
+        method: method,
+        headers: headers,
+        body: body,
+      });
     }
 
     /**
@@ -364,28 +366,18 @@ export class DestinyApiClient {
         return null;
       }
 
-      return new Promise((resolve, reject) => {
-        let tokenRequest = getXMLHttpRequestClient("POST", `${authGatewayUrl}/token/destiny2`);
-        tokenRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-        tokenRequest.onload = function () {
-          if (tokenRequest.status === 200) {
-            let tokenResponse = JSON.parse(tokenRequest.responseText);
-
-            handleTokenResponse(tokenResponse);
-            resolve(tokenResponse);
-            return;
-          }
-
-          reject(tokenRequest.responseText);
-        };
-
-        tokenRequest.onerror = function () {
-          reject(tokenRequest.statusText);
-        };
-
-        tokenRequest.send(JSON.stringify({ code: code }));
+      let tokenRequest = await callUrl("POST", `${authGatewayUrl}/token/destiny2`, JSON.stringify({ code: code }), {
+        "Content-Type": "application/json",
       });
+
+      if (tokenRequest.status === 200) {
+        let tokenResponse = await tokenRequest.json();
+
+        handleTokenResponse(tokenResponse);
+        return tokenResponse;
+      } else {
+        log("D2-Token", tokenRequest.text());
+      }
     };
 
     this.refreshToken = async function () {
@@ -395,35 +387,26 @@ export class DestinyApiClient {
         return null;
       }
 
-      return new Promise(async (resolve, reject) => {
-        let tokenRequest = getXMLHttpRequestClient("POST", `${authGatewayUrl}/refresh/destiny2`);
-        tokenRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      let tokenRequest = await callUrl(
+        "POST",
+        `${authGatewayUrl}/refresh/destiny2`,
+        JSON.stringify({
+          refresh_token: refreshToken,
+        }),
+        {
+          "Content-Type": "application/json;charset=UTF-8",
+        }
+      );
 
-        tokenRequest.onload = function () {
-          if (tokenRequest.status === 200) {
-            let tokenResponse = JSON.parse(tokenRequest.responseText);
+      if (tokenRequest.status === 200) {
+        let tokenResponse = await tokenRequest.json();
 
-            handleTokenResponse(tokenResponse);
-            resolve(tokenResponse);
-            eventEmitter.emit("destiny2-auth-refreshed");
-            return;
-          }
-
-          reject(tokenRequest.responseText);
-          eventEmitter.emit("destiny2-auth-refresh-failed");
-        };
-
-        tokenRequest.onerror = function () {
-          reject(tokenRequest.responseText);
-          eventEmitter.emit("destiny2-auth-refresh-failed");
-        };
-
-        tokenRequest.send(
-          JSON.stringify({
-            refresh_token: refreshToken,
-          })
-        );
-      });
+        handleTokenResponse(tokenResponse);
+        eventEmitter.emit("destiny2-auth-refreshed");
+        return;
+      } else {
+        eventEmitter.emit("destiny2-auth-refresh-failed");
+      }
     };
 
     async function refreshTokenIfExpired() {
