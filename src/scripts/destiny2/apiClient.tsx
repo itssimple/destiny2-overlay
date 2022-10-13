@@ -146,6 +146,31 @@ export class DestinyApiClient {
 
     this.trackedGoals = [];
 
+    async function callUrl(
+      method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+      url: string,
+      body: any | null = null,
+      extraHeaders: any | null = null
+    ) {
+      let headers = {
+        "X-User-Agent": "Destiny 2 Goal Tracker AppId/41664 (+d2goaltracker@itssimple.se)",
+        "X-API-Key": apiToken,
+      };
+
+      if (extraHeaders !== null) {
+        headers = {
+          ...headers,
+          ...extraHeaders,
+        };
+      }
+
+      return await fetch(url, {
+        method: method,
+        headers: headers,
+        body: body,
+      });
+    }
+
     this.checkManifestVersion = async function () {
       log("D2API", "Checking manifest version");
       return new Promise(async function (resolve, reject) {
@@ -198,10 +223,10 @@ export class DestinyApiClient {
         }
       }
 
-      let manifestRequest = await callUrl("GET", `${destinyApiUrl}/Destiny2/Manifest/`);
+      let manifestRequest = await pluginClient.GET(`${destinyApiUrl}/Destiny2/Manifest/`);
 
-      if (manifestRequest.status === 200) {
-        let manifest = await manifestRequest.json();
+      if (manifestRequest.Result.statusCode === 200) {
+        let manifest = JSON.parse(manifestRequest.Result.content);
         if (manifest.ErrorStatus == "Success") {
           db.setItem("lastManifestUpdate", Date.now());
           db.setItem("manifest", JSON.stringify(manifest.Response));
@@ -215,7 +240,7 @@ export class DestinyApiClient {
           return null;
         }
       } else {
-        let responseText = await manifestRequest.text();
+        let responseText = manifestRequest.Result.content;
         log("D2API", "Error when fetching Manifest");
         log("D2API", responseText);
 
@@ -299,45 +324,19 @@ export class DestinyApiClient {
 
       eventEmitter.emit("loading-text", `Loading ${dataType.replace("Destiny", "")}`);
 
-      const contentTypeDownload = await callUrl(
-        "GET",
+      const contentTypeDownload = await pluginClient.GET(
         `${destinyBaseUrl}${manifest.jsonWorldComponentContentPaths.en[dataType]}`
       );
 
-      if (!contentTypeDownload.ok) {
-        log("Manifest download error", await contentTypeDownload.text());
+      if (contentTypeDownload.Result.statusCode !== 200) {
+        log("Manifest download error", contentTypeDownload.Result.content);
         return;
       }
 
-      const contentTypeJson = await contentTypeDownload.json();
+      const contentTypeJson = JSON.parse(contentTypeDownload.Result.content);
 
       self.destinyDataDefinition[dataType] = contentTypeJson;
       db.setItem(`destinyContent-${dataType}`, JSON.stringify(contentTypeJson));
-    }
-
-    async function callUrl(
-      method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-      url: string,
-      body: any | null = null,
-      extraHeaders: any | null = null
-    ) {
-      let headers = {
-        "X-User-Agent": "Destiny 2 Goal Tracker AppId/41664 (+d2goaltracker@itssimple.se)",
-        "X-API-Key": apiToken,
-      };
-
-      if (extraHeaders !== null) {
-        headers = {
-          ...headers,
-          ...extraHeaders,
-        };
-      }
-
-      return await fetch(url, {
-        method: method,
-        headers: headers,
-        body: body,
-      });
     }
 
     /**
@@ -366,12 +365,13 @@ export class DestinyApiClient {
         return null;
       }
 
-      let tokenRequest = await callUrl("POST", `${authGatewayUrl}/token/destiny2`, JSON.stringify({ code: code }), {
-        "Content-Type": "application/json",
-      });
+      let tokenRequest = await pluginClient.POSTJson(
+        `${authGatewayUrl}/token/destiny2`,
+        JSON.stringify({ code: code })
+      );
 
-      if (tokenRequest.status === 200) {
-        let tokenResponse = await tokenRequest.json();
+      if (tokenRequest.Result.statusCode === 200) {
+        let tokenResponse = JSON.parse(tokenRequest.Result.content);
 
         handleTokenResponse(tokenResponse);
         return tokenResponse;
@@ -387,19 +387,15 @@ export class DestinyApiClient {
         return null;
       }
 
-      let tokenRequest = await callUrl(
-        "POST",
+      let tokenRequest = await pluginClient.POSTJson(
         `${authGatewayUrl}/refresh/destiny2`,
         JSON.stringify({
           refresh_token: refreshToken,
-        }),
-        {
-          "Content-Type": "application/json;charset=UTF-8",
-        }
+        })
       );
 
-      if (tokenRequest.status === 200) {
-        let tokenResponse = await tokenRequest.json();
+      if (tokenRequest.Result.statusCode === 200) {
+        let tokenResponse = JSON.parse(tokenRequest.Result.content);
 
         handleTokenResponse(tokenResponse);
         eventEmitter.emit("destiny2-auth-refreshed");
