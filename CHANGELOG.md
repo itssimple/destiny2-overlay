@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.4](https://github.com/itssimple/destiny2-overlay/compare/v1.8.3...v1.8.4) (2022-10-13)
+
+
+### Bug Fixes
+
+* Third fix is the charm? ([83b35eb](https://github.com/itssimple/destiny2-overlay/commit/83b35eba8d53e054e0440ced2e0b02551ac89eb4))
+
 ### [1.8.3](https://github.com/itssimple/destiny2-overlay/compare/v1.8.2...v1.8.3) (2022-10-12)
 
 ### [1.8.2](https://github.com/itssimple/destiny2-overlay/compare/v1.8.1...v1.8.2) (2022-10-11)
